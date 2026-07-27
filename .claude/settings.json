@@ -15,7 +15,8 @@
       "Bash(cd /tmp/uipromax && echo \"=== cli tree ===\" && find cli -type f -name \"*.js\" -o -type f -name \"*.json\" -o -type f -name \"*.ts\" | head -20 && echo && echo \"=== grep CLAUDE_PLUGIN_ROOT across repo ===\" && grep -rl \"CLAUDE_PLUGIN_ROOT\" --include=\"*.md\" --include=\"*.js\" --include=\"*.py\" . | head -20)",
       "Bash(cd /tmp/uipromax && echo \"=== cli/assets/skills ===\" && ls cli/assets/skills && echo && echo \"=== search.py path refs in cli asset SKILL.md ===\" && grep -n \"search.py\\\\|scripts/\" cli/assets/skills/ui-ux-pro-max/SKILL.md | head -20)",
       "Read(//c/Users/rajya/.claude/skills/ui-ux-pro-max/**)",
-      "Edit(~/.claude/skills/ui-ux-pro-max/**)"
+      "Edit(~/.claude/skills/ui-ux-pro-max/**)",
+      "Bash(python \"C:/Users/rajya/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"component islands view transitions scoped styles\" --stack astro)"
     ]
   }
 }

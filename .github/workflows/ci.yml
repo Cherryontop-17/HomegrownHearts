@@ -33,5 +33,10 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      # Palette gate for task 6.3. Reads the tokens out of global.css and fails
+      # if any text pairing drops below WCAG AA on any section band.
+      - name: Contrast
+        run: npm run check:contrast
+
       - name: Build
         run: npm run build

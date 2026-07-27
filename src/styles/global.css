@@ -1,1 +1,220 @@
 @import 'tailwindcss';
+
+/* ============================================================================
+   Homegrown Hearts — design tokens
+   ----------------------------------------------------------------------------
+   Tailwind 4 is CSS-first: everything in @theme becomes a utility class.
+   --color-clay  →  bg-clay / text-clay / border-clay
+
+   `static` is load-bearing. By default Tailwind 4 tree-shakes theme variables
+   it cannot see used, which silently drops them from :root — and Astro's
+   component <style> blocks are NOT scanned by Tailwind, so a `var(--color-sand)`
+   in a component would resolve to nothing. `static` emits every token, always.
+   Verified: without it, --color-sand / --radius-* / --shadow-* were all absent.
+
+   Positioning: credible first, warm second. Warmth comes from the palette and
+   the photography — never from decoration. See docs/BRIEF.md §7.
+   ========================================================================== */
+
+@theme static {
+  /* --- Surfaces ------------------------------------------------------------
+     Warm neutrals. Never pure white for the page, never pure black for text —
+     both read as clinical and cheap against an earth palette. */
+  --color-cream: #fdfbf6; /* page background */
+  --color-sand: #f4ece0; /* alternating section band */
+  --color-parchment: #efe4d4; /* deeper band, footer */
+  --color-card: #ffffff; /* raised surfaces only */
+
+  /* --- Brand ---------------------------------------------------------------
+     Clay is identity (headings, eyebrows, the vine).
+     Garden is action — it appears on buttons and nowhere else. That single
+     rule does more for the premium feel than any effect. */
+  --color-clay: #9a3412; /* 7.1:1 on cream · 5.8:1 on parchment */
+  --color-clay-deep: #7c2d12;
+  --color-clay-soft: #c2703f; /* 3.6:1 — decorative ONLY, never text */
+  --color-garden: #2f6b4f; /* 6.1:1 with --color-ink-inverse */
+  --color-garden-deep: #1f4d38; /* 9.3:1 — button hover */
+  --color-leaf: #6a8659; /* 3.2:1 worst case — vine, dividers, rules */
+
+  /* Seasonal accent drift: sections shift down the page
+     grow (green) → harvest (gold) → care (terracotta).
+
+     All three carry section eyebrows and headings, and sections alternate
+     cream / sand / parchment — so each is checked against its WORST surface
+     (parchment), not just cream. The first pass failed that: harvest was
+     #b4791f (2.9:1 on parchment) and grow was #4f7c5a (3.8:1). Both were text
+     colors that would have failed the 6.3 accessibility gate.
+     Verified worst-case: grow 4.9:1 · harvest 4.7:1 · care 5.8:1. */
+  --color-season-grow: #426a4d;
+  --color-season-harvest: #8a5a12;
+  --color-season-care: #9a3412;
+
+  /* --- Text ---------------------------------------------------------------- */
+  --color-ink: #22201d; /* 15.7:1 on cream · 12.9:1 on parchment */
+  --color-ink-muted: #5f574d; /* 6.9:1 on cream · 5.7:1 on parchment */
+  --color-ink-inverse: #fdfbf6;
+  --color-line: #e3d7c6;
+  --color-line-strong: #d2c2ab;
+
+  /* --- Type ----------------------------------------------------------------
+     Fraunces for display (organic, editorial, expensive-feeling).
+     Inter for body (neutral, gets out of the way). */
+  --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Fluid scale. Every heading is clamp()ed so nothing needs a breakpoint. */
+  --text-display: clamp(2.75rem, 6.5vw, 5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-h1: clamp(2.25rem, 5vw, 3.5rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.025em;
+
+  --text-h2: clamp(1.75rem, 3.2vw, 2.5rem);
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.02em;
+
+  --text-h3: clamp(1.25rem, 2vw, 1.625rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-lead: clamp(1.125rem, 1.5vw, 1.3125rem);
+  --text-lead--line-height: 1.6;
+
+  --text-body: 1.0625rem; /* 17px — 16 reads small against generous whitespace */
+  --text-body--line-height: 1.7;
+
+  --text-small: 0.9375rem;
+  --text-small--line-height: 1.6;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.14em;
+
+  /* --- Space ---------------------------------------------------------------
+     Tailwind's 0.25rem step is already an 8px-compatible scale.
+     These are the section rhythms — premium sites breathe, cheap ones cram. */
+  --spacing-section: clamp(5rem, 12vh, 9rem);
+  --spacing-section-tight: clamp(3.5rem, 8vh, 6rem);
+  --spacing-gutter: clamp(1.25rem, 5vw, 3rem);
+  --container-content: 68ch; /* long-form measure */
+  --container-page: 78rem;
+
+  /* --- Radius --------------------------------------------------------------
+     Slightly varied, never uniform — organic rather than geometric. */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --radius-pill: 100vmax;
+
+  /* --- Elevation -----------------------------------------------------------
+     Warm-tinted shadows. Grey shadows on a cream page look like dirt. */
+  --shadow-soft: 0 1px 2px rgb(34 32 29 / 0.04), 0 8px 24px rgb(34 32 29 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(34 32 29 / 0.05), 0 16px 40px rgb(34 32 29 / 0.09);
+
+  /* --- Motion --------------------------------------------------------------
+     Ceiling is 600ms. See TASKS.md → Animation Spec for the full budget.
+     This audience includes first-trimester users; restraint is an
+     accessibility requirement here, not a stylistic preference.
+
+     `--ease-*` is a real Tailwind namespace, so `ease-out-soft` is a utility.
+     `--duration-*` is NOT — a bare `duration-base` class silently generates
+     nothing. In markup write `duration-[var(--duration-base)]`; in plain CSS
+     (motion.css, component <style>) use `var(--duration-base)` directly. */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-gentle: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-overshoot: cubic-bezier(0.34, 1.4, 0.64, 1);
+
+  --duration-instant: 150ms;
+  --duration-fast: 220ms;
+  --duration-base: 380ms;
+  --duration-slow: 600ms;
+}
+
+/* ============================================================================
+   Base layer
+   ========================================================================== */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Keeps anchored sections clear of the sticky header. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    /* Stops orphaned words in short display headings. */
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible focus for keyboard users, invisible for mouse users. */
+  :focus-visible {
+    outline: 2px solid var(--color-garden);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-clay) 18%, transparent);
+    color: var(--color-ink);
+  }
+
+  /* Cheap-site tell #1: clickable things that don't say so. */
+  button,
+  [role='button'],
+  a[href],
+  summary {
+    cursor: pointer;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ============================================================================
+   Global motion kill-switch
+
+   One rule, applied once, covering every animation on the site — including
+   third-party ones. Individual components must not re-implement this.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
