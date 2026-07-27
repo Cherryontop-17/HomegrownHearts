@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls ~/.claude/skills 2>/dev/null || echo \"no user skills dir\")",
+      "Read(//c/Users/rajya/.claude/**)",
+      "WebFetch(domain:github.com)",
+      "Bash(git --version)",
+      "Bash(npm --version)",
+      "Bash(rm -rf /tmp/uipromax)",
+      "Bash(git clone *)",
+      "Read(//tmp/**)",
+      "Read(//tmp/uipromax/**)",
+      "Bash(git -c http.sslBackend=schannel clone --depth 1 https://github.com/nextlevelbuilder/ui-ux-pro-max-skill /tmp/uipromax)",
+      "Bash(cd /tmp/uipromax && echo \"=== TOP ===\" && ls -a && echo \"=== src/ui-ux-pro-max ===\" && ls -a src/ui-ux-pro-max 2>/dev/null && echo \"=== .claude ===\" && ls -aR .claude 2>/dev/null | head -30)",
+      "Bash(cd /tmp/uipromax && echo \"=== cli tree ===\" && find cli -type f -name \"*.js\" -o -type f -name \"*.json\" -o -type f -name \"*.ts\" | head -20 && echo && echo \"=== grep CLAUDE_PLUGIN_ROOT across repo ===\" && grep -rl \"CLAUDE_PLUGIN_ROOT\" --include=\"*.md\" --include=\"*.js\" --include=\"*.py\" . | head -20)",
+      "Bash(cd /tmp/uipromax && echo \"=== cli/assets/skills ===\" && ls cli/assets/skills && echo && echo \"=== search.py path refs in cli asset SKILL.md ===\" && grep -n \"search.py\\\\|scripts/\" cli/assets/skills/ui-ux-pro-max/SKILL.md | head -20)",
+      "Read(//c/Users/rajya/.claude/skills/ui-ux-pro-max/**)",
+      "Edit(~/.claude/skills/ui-ux-pro-max/**)"
+    ]
+  }
+}
