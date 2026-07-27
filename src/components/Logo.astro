@@ -1,0 +1,172 @@
+---
+/**
+ * Homegrown Hearts logo — heart + sprout.
+ *
+ * Concept: the sprout rises out of the heart's cleft. It is the terminus of the
+ * Growing Vine that runs the page height (see TASKS.md → Animation Spec), so the
+ * mark is the payoff of the page's one idea rather than decoration bolted on top.
+ *
+ * Geometry notes:
+ *   - 48x48 grid, same as the icon set (task 1.10), so stroke weights match.
+ *   - Every path carries `pathLength="1"`, so a draw-in is
+ *     `stroke-dasharray: 1; stroke-dashoffset: 1 -> 0` at any rendered size.
+ *     Without it the dash values would have to be re-tuned per size.
+ *   - `stroke="currentColor"` throughout: the mark inherits from whatever it
+ *     sits in — clay in the header, cream on a dark footer — with no variants.
+ *
+ * The wordmark is live text, not outlined paths. It stays selectable, it is
+ * searchable, it costs no extra bytes because Fraunces is already loaded, and
+ * it cannot go blurry at any size.
+ */
+
+interface Props {
+  /** `lockup` = mark + wordmark. `mark` = the symbol alone. */
+  variant?: 'lockup' | 'mark';
+  /** Filled rather than stroked. Holds up below ~32px, so it is what the
+      favicon and OG images use (task 1.11). */
+  solid?: boolean;
+  /** Rendered size of the mark in px. The wordmark scales with it. */
+  size?: number;
+  /**
+   * Accessible name. Only used when the mark stands alone — in a lockup the
+   * wordmark is already readable text, so the SVG is hidden from screen readers
+   * to avoid announcing the brand name twice.
+   */
+  title?: string;
+  /** Adds the draw-in hook. The animation itself lands in Phase 2. */
+  animate?: boolean;
+  class?: string;
+}
+
+const {
+  variant = 'lockup',
+  solid = false,
+  size = 40,
+  title,
+  animate = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const isLockup = variant === 'lockup';
+// In a lockup the wordmark names the brand, so the symbol is decorative.
+const decorative = isLockup || !title;
+
+// Shared geometry. Kept in one place so the solid and outline builds can never
+// drift apart.
+const HEART =
+  'M24 40.8C20.6 37.2 10 30 10 22.8C10 18.2 13.4 15 17.2 15C20.4 15 22.9 17.1 24 20C25.1 17.1 27.6 15 30.8 15C34.6 15 38 18.2 38 22.8C38 30 27.4 37.2 24 40.8Z';
+const STEM = 'M24 19.8C24 16.5 24 14.2 24 12';
+const LEAF_L = 'M24 13.5C21.4 11.8 18.6 10.6 18 6.4C21.8 7.4 23.4 10.2 24 13.5Z';
+const LEAF_R = 'M24 13.5C26.6 11.8 29.4 10.6 30 6.4C26.2 7.4 24.6 10.2 24 13.5Z';
+---
+
+<span
+  class:list={['logo', isLockup && 'logo--lockup', className]}
+  style={`--mark-size:${size}px`}
+  {...rest}
+>
+  <svg
+    class:list={['mark', solid && 'mark--solid', animate && 'mark--animate']}
+    viewBox="0 0 48 48"
+    width={size}
+    height={size}
+    role={decorative ? undefined : 'img'}
+    aria-hidden={decorative ? 'true' : undefined}
+    focusable="false"
+  >
+    {!decorative && <title>{title}</title>}
+
+    {/* Order matters for the draw-in: heart first, then the sprout grows out of it. */}
+    <path class="mark__heart" d={HEART} pathLength="1"></path>
+    <path class="mark__stem" d={STEM} pathLength="1"></path>
+    <path class="mark__leaf mark__leaf--left" d={LEAF_L} pathLength="1"></path>
+    <path class="mark__leaf mark__leaf--right" d={LEAF_R} pathLength="1"></path>
+  </svg>
+
+  {isLockup && <span class="wordmark">Homegrown Hearts</span>}
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+  }
+
+  .logo--lockup {
+    /* Scales with the mark so the lockup holds its proportions at any size. */
+    gap: calc(var(--mark-size) * 0.28);
+  }
+
+  .mark {
+    display: block;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* Keeps the stroke weight optically constant if the SVG is ever scaled by
+       a transform rather than by width/height. */
+    vector-effect: non-scaling-stroke;
+  }
+
+  .mark--solid {
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* The stem stays a stroke even in the solid build — filling a 2px open path
+     would collapse it to nothing. */
+  .mark--solid .mark__stem {
+    fill: none;
+    stroke: currentColor;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: calc(var(--mark-size) * 0.52);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  /* --- Draw-in hook -------------------------------------------------------
+     Phase 2 drives this. Declared here so the geometry and its animation stay
+     in one file. `pathLength="1"` is what makes a single dash value correct at
+     every rendered size. */
+  .mark--animate path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: mark-draw var(--duration-slow) var(--ease-out-gentle) forwards;
+  }
+
+  .mark--animate .mark__stem {
+    animation-delay: 260ms;
+  }
+  .mark--animate .mark__leaf--left {
+    animation-delay: 380ms;
+  }
+  .mark--animate .mark__leaf--right {
+    animation-delay: 460ms;
+  }
+
+  @keyframes mark-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* The global kill-switch in global.css collapses the duration, but that would
+     leave the paths sitting at dashoffset 1 — an invisible logo. Reduced motion
+     has to mean "already drawn", not "drawn instantly". */
+  @media (prefers-reduced-motion: reduce) {
+    .mark--animate path {
+      stroke-dasharray: none;
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+  }
+</style>

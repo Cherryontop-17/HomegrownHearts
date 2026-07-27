@@ -1,0 +1,561 @@
+---
+/**
+ * Site header.
+ *
+ * Sticky, and transparent while it sits over a hero — it gains its cream
+ * background and blur only after 80px of scroll, so the hero image is not
+ * clipped by a bar at the top of the page.
+ *
+ * The mobile drawer is a real dialog: focus is trapped inside it, Escape
+ * closes it, the page behind is marked `inert`, and focus returns to the
+ * button that opened it.
+ */
+
+import { getLocale, localizePath, useTranslations } from '../i18n/utils';
+import { PRIMARY_NAV } from '../nav';
+import Logo from './Logo.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props {
+  /** Start transparent over a hero. Pages without a hero pass false. */
+  transparent?: boolean;
+}
+
+const { transparent = false } = Astro.props;
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const here = Astro.url.pathname;
+
+const items = PRIMARY_NAV.map((item) => {
+  const href = localizePath(item.path, locale);
+  return {
+    href,
+    label: t(item.labelKey),
+    // Marks the section, not just the exact page, so /impact/2026/ still
+    // highlights Impact. `href` already ends in a slash, so a prefix match is
+    // safe — /impacts/ cannot match /impact/.
+    isCurrent: here === href || here.startsWith(href),
+  };
+});
+
+const homeHref = localizePath('/', locale);
+---
+
+<header class:list={['header', transparent && 'header--transparent']} data-header>
+  <div class="header__inner">
+    <a class="header__home" href={homeHref} aria-label={t('a11y.homeLink')}>
+      <Logo variant="lockup" size={36} />
+    </a>
+
+    <nav class="header__nav" aria-label={t('a11y.mainNav')}>
+      <ul class="header__list">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                class="header__link"
+                href={item.href}
+                aria-current={item.isCurrent ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__end">
+      <LanguageSwitcher class="header__lang" />
+
+      <button
+        class="header__toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-drawer"
+        data-drawer-toggle
+      >
+        <span class="header__toggle-label">{t('nav.menu')}</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+{/* Outside <header> so `inert` on the rest of the page never covers the drawer. */}
+<div class="drawer" id="site-drawer" data-drawer hidden>
+  <div class="drawer__backdrop" data-drawer-close></div>
+
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label={t('a11y.mainNav')}>
+    <div class="drawer__head">
+      <Logo variant="mark" size={32} title={t('a11y.homeLink')} />
+      <button class="drawer__close" type="button" aria-label={t('nav.close')} data-drawer-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 6l12 12M18 6L6 18"></path>
+        </svg>
+      </button>
+    </div>
+
+    <nav aria-label={t('a11y.mainNav')}>
+      <ul class="drawer__list">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                class="drawer__link"
+                href={item.href}
+                aria-current={item.isCurrent ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="drawer__foot">
+      <LanguageSwitcher layout="stacked" />
+    </div>
+  </div>
+</div>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: var(--color-cream);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--duration-base) var(--ease-out-soft),
+      border-color var(--duration-base) var(--ease-out-soft),
+      box-shadow var(--duration-base) var(--ease-out-soft);
+  }
+
+  /* Over a hero: no background until the reader scrolls. */
+  .header--transparent {
+    background-color: transparent;
+  }
+
+  /* Set by the scroll listener at 80px. */
+  .header.is-stuck {
+    background-color: color-mix(in oklab, var(--color-cream) 82%, transparent);
+    border-bottom-color: var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Only apply blur where it is supported — the fallback above is an opaque
+     cream bar, which is fine, rather than unreadable transparency. */
+  @supports (backdrop-filter: blur(12px)) {
+    .header.is-stuck {
+      background-color: color-mix(in oklab, var(--color-cream) 72%, transparent);
+      backdrop-filter: blur(12px) saturate(1.4);
+    }
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Mobile-first: the gap only needs to be generous once there is a nav to
+       separate. At 320px every pixel of it competes with the logo. */
+    gap: 0.5rem;
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+    min-height: 4.5rem;
+  }
+
+  @media (min-width: 60rem) {
+    .header__inner {
+      gap: 1.5rem;
+    }
+  }
+
+  .header__home {
+    color: var(--color-clay);
+    text-decoration: none;
+    /* Shrinks before it overflows. `min-width: 0` is what lets a flex item
+       actually shrink — without it the nowrap wordmark sets an unshrinkable
+       floor and pushes the toggle off-screen. */
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  /* --- Desktop nav --------------------------------------------------------- */
+  .header__nav {
+    display: none;
+  }
+
+  .header__list {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .header__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-ink);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .header__link:hover {
+    color: var(--color-clay);
+  }
+
+  /* Underline draws from the centre out. Transform-only, so it cannot reflow. */
+  .header__link::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.6rem;
+    height: 1.5px;
+    border-radius: 2px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .header__link:hover::after,
+  .header__link[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .header__link[aria-current='page'] {
+    color: var(--color-clay);
+    font-weight: 600;
+  }
+
+  .header__end {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: none;
+  }
+
+  .header__lang {
+    display: none;
+  }
+
+  /* --- Drawer toggle -------------------------------------------------------
+     Icon-only. The visible "Menu" text pushed the header 36px past a 320px
+     viewport — caught by `npm run check:overflow`, not by eye. The label is
+     kept in the DOM but visually hidden, so the button still has an accessible
+     name and still meets the 44px target. */
+  .header__toggle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .header__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding-inline: 0.625rem;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .header__toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+  }
+
+  .header__toggle:hover {
+    color: var(--color-clay);
+  }
+
+  @media (min-width: 60rem) {
+    .header__nav,
+    .header__lang {
+      display: block;
+    }
+    .header__lang {
+      display: flex;
+    }
+    .header__toggle {
+      display: none;
+    }
+  }
+
+  /* --- Drawer -------------------------------------------------------------- */
+  .drawer[hidden] {
+    display: none;
+  }
+
+  .drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
+    opacity: 0;
+    transition: opacity var(--duration-base) var(--ease-out-soft);
+  }
+
+  .drawer.is-open .drawer__backdrop {
+    opacity: 1;
+  }
+
+  .drawer__panel {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    width: min(20rem, 85vw);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.25rem var(--spacing-gutter) 2rem;
+    background-color: var(--color-cream);
+    box-shadow: var(--shadow-lift);
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform var(--duration-base) var(--ease-out-gentle);
+  }
+
+  .drawer.is-open .drawer__panel {
+    transform: translateX(0);
+  }
+
+  .drawer__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--color-clay);
+  }
+
+  .drawer__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .drawer__close svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+  }
+
+  .drawer__list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .drawer__link {
+    display: block;
+    padding-block: 0.875rem;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .drawer__link[aria-current='page'] {
+    color: var(--color-clay);
+  }
+
+  .drawer__foot {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawer__panel,
+    .drawer__backdrop {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const FOCUSABLE = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
+  ].join(',');
+
+  function initHeader() {
+    const headerEl = document.querySelector<HTMLElement>('[data-header]');
+    const drawerEl = document.querySelector<HTMLElement>('[data-drawer]');
+    const toggleEl = document.querySelector<HTMLElement>('[data-drawer-toggle]');
+    if (!headerEl || !drawerEl || !toggleEl) return;
+
+    // Re-bound to consts so the nested open/close closures keep the non-null
+    // narrowing from the guard above.
+    const header = headerEl;
+    const drawer = drawerEl;
+    const toggle = toggleEl;
+
+    // --- Scroll state ------------------------------------------------------
+    // The header blurs in past 80px. Read in a rAF so the scroll handler never
+    // does layout work on the scroll thread.
+    let ticking = false;
+    const syncScroll = () => {
+      header.classList.toggle('is-stuck', window.scrollY > 80);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(syncScroll);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    syncScroll();
+
+    // --- Drawer ------------------------------------------------------------
+    // Everything that must be hidden from AT and untabbable while the drawer
+    // is open. `inert` handles focus and the accessibility tree in one go.
+    const background = [header, document.getElementById('main'), document.querySelector('footer')];
+
+    let lastFocused: HTMLElement | null = null;
+
+    const panel = drawer.querySelector<HTMLElement>('.drawer__panel');
+
+    function open() {
+      lastFocused = document.activeElement as HTMLElement | null;
+      drawer.hidden = false;
+      // Force a frame so the transform transition runs from its start value
+      // instead of being skipped by the `hidden` removal in the same tick.
+      requestAnimationFrame(() => drawer.classList.add('is-open'));
+
+      toggle.setAttribute('aria-expanded', 'true');
+      background.forEach((el) => el?.setAttribute('inert', ''));
+      document.body.style.overflow = 'hidden';
+
+      panel?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+      document.addEventListener('keydown', onKeydown);
+    }
+
+    function close() {
+      drawer.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', 'false');
+      background.forEach((el) => el?.removeAttribute('inert'));
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKeydown);
+
+      // Focus must return to the control that opened it, or the reader is
+      // dropped back at the top of the document.
+      lastFocused?.focus();
+
+      const done = () => {
+        drawer.hidden = true;
+        panel?.removeEventListener('transitionend', done);
+      };
+      // Guard against the transition being disabled by reduced motion, where
+      // `transitionend` never fires.
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced) {
+        drawer.hidden = true;
+      } else {
+        panel?.addEventListener('transitionend', done);
+      }
+    }
+
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !panel) return;
+
+      // --- Focus trap ---
+      const nodes = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        (el) => el.offsetParent !== null,
+      );
+      if (nodes.length === 0) return;
+
+      const first = nodes[0]!;
+      const last = nodes[nodes.length - 1]!;
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    toggle.addEventListener('click', () => {
+      if (toggle.getAttribute('aria-expanded') === 'true') close();
+      else open();
+    });
+
+    drawer.querySelectorAll('[data-drawer-close]').forEach((el) => {
+      el.addEventListener('click', close);
+    });
+
+    // Following a link inside the drawer should close it. With View Transitions
+    // the DOM persists across navigation, so without this the drawer would
+    // still be open on the next page.
+    drawer.querySelectorAll('a[href]').forEach((el) => {
+      el.addEventListener('click', close);
+    });
+  }
+
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
+</script>

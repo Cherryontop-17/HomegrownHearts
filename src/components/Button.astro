@@ -1,0 +1,172 @@
+---
+/**
+ * Button / link primitive.
+ *
+ * Renders an `<a>` when given an `href` and a `<button>` otherwise. That
+ * distinction is not cosmetic: a link navigates and belongs in the tab order
+ * with link semantics, a button acts. Styling one to look like the other is
+ * fine; swapping the element is not.
+ *
+ * Garden is the action color and appears on primary buttons and nowhere else on
+ * the site. Holding that line is most of what keeps the palette feeling
+ * deliberate rather than decorated.
+ */
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'md' | 'lg';
+  /** Native button type. Ignored when `href` is set. */
+  type?: 'button' | 'submit';
+  /** Marks an href as leaving the site: opens a new tab, adds rel + a11y hint. */
+  external?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  external = false,
+  disabled = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+
+// The two element types take different attributes, so this is a union that no
+// single JSX signature accepts. Widened deliberately — `Tag` is resolved at
+// runtime, and the branch above already guarantees the pairing is correct.
+const attrs: Record<string, unknown> = href
+  ? {
+      href,
+      ...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {}),
+      // A disabled link is not a thing; remove it from the tab order instead.
+      ...(disabled ? { 'aria-disabled': 'true', tabindex: -1 } : {}),
+    }
+  : { type, disabled };
+---
+
+<Tag class:list={['btn', `btn--${variant}`, `btn--${size}`, className]} {...rest} {...attrs}>
+  <span class="btn__label"><slot /></span>
+  {
+    external && (
+      <svg class="btn__external" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4" />
+      </svg>
+    )
+  }
+</Tag>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    /* 44px floor on both axes — the WCAG target-size minimum, and the reason
+       padding alone is not enough on a short label. */
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft),
+      color var(--duration-fast) var(--ease-out-soft),
+      transform var(--duration-fast) var(--ease-out-soft),
+      box-shadow var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .btn--lg {
+    padding: 1rem 2rem;
+    font-size: var(--text-body);
+  }
+
+  /* --- Primary: the only place garden appears ---------------------------- */
+  .btn--primary {
+    background-color: var(--color-garden);
+    color: var(--color-ink-inverse);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--color-garden-deep);
+  }
+
+  /* --- Secondary: outlined clay ------------------------------------------ */
+  .btn--secondary {
+    background-color: transparent;
+    border-color: var(--color-line-strong);
+    color: var(--color-clay);
+  }
+
+  .btn--secondary:hover {
+    border-color: var(--color-clay);
+    background-color: color-mix(in oklab, var(--color-clay) 6%, transparent);
+  }
+
+  /* --- Ghost: text-weight action ----------------------------------------- */
+  .btn--ghost {
+    background-color: transparent;
+    color: var(--color-clay);
+    padding-inline: 0.75rem;
+  }
+
+  .btn--ghost:hover {
+    color: var(--color-clay-deep);
+    background-color: color-mix(in oklab, var(--color-clay) 6%, transparent);
+  }
+
+  /* Lift is the site's one shared hover gesture. 1px — enough to feel
+     responsive, not enough to read as a toy. */
+  .btn:hover:not([aria-disabled='true']):not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .btn--primary:hover:not([aria-disabled='true']):not(:disabled) {
+    box-shadow: var(--shadow-lift);
+  }
+
+  .btn:active:not([aria-disabled='true']):not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn__external {
+    width: 1em;
+    height: 1em;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* The global kill-switch already zeroes the durations; this also removes the
+     displacement itself, which is the part that actually causes discomfort. */
+  @media (prefers-reduced-motion: reduce) {
+    .btn:hover:not([aria-disabled='true']):not(:disabled),
+    .btn:active {
+      transform: none;
+    }
+  }
+</style>

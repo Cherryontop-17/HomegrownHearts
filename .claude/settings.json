@@ -16,7 +16,11 @@
       "Bash(cd /tmp/uipromax && echo \"=== cli/assets/skills ===\" && ls cli/assets/skills && echo && echo \"=== search.py path refs in cli asset SKILL.md ===\" && grep -n \"search.py\\\\|scripts/\" cli/assets/skills/ui-ux-pro-max/SKILL.md | head -20)",
       "Read(//c/Users/rajya/.claude/skills/ui-ux-pro-max/**)",
       "Edit(~/.claude/skills/ui-ux-pro-max/**)",
-      "Bash(python \"C:/Users/rajya/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"component islands view transitions scoped styles\" --stack astro)"
+      "Bash(python \"C:/Users/rajya/.claude/skills/ui-ux-pro-max/scripts/search.py\" \"component islands view transitions scoped styles\" --stack astro)",
+      "Bash(node -e \"console.log\\(require.resolve\\('sharp'\\)\\)\")",
+      "Bash(npm run *)",
+      "PowerShell($sp = \"C:\\\\Users\\\\rajya\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--dev-code-homegrownhearts\\\\3a71ca3e-dd42-4272-a212-d96c62337acf\\\\scratchpad\"; $chrome = \"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"; & $chrome --headless=new --disable-gpu --no-sandbox --hide-scrollbars --virtual-time-budget=5000 --window-size=1440,1500 --user-data-dir=\"$sp\\\\chrome-profile\" \"--screenshot=$sp\\\\desktop-en.png\" \"http://localhost:4321/\"; Write-Output \"exit=$LASTEXITCODE\"; Get-ChildItem \"$sp\\\\desktop-en.png\" -ErrorAction SilentlyContinue | Select-Object Name,Length)",
+      "Bash(python -)"
     ]
   }
 }

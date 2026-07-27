@@ -1,17 +1,102 @@
 ---
+/**
+ * Homepage — shell only.
+ *
+ * Real copy lands in Phase 3 and the sections in Phase 4. What is here now
+ * exists to exercise the design system and the layout shell end to end, so
+ * every primitive is rendered at least once and any regression shows up in a
+ * build rather than three phases later.
+ */
 
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Button from '../components/Button.astro';
+import StatCard from '../components/StatCard.astro';
+import Reveal from '../components/Reveal.astro';
+import { getLocale, useTranslations, localizePath } from '../i18n/utils';
+import { ORG, IMPACT } from '../config';
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body>
-    <h1>Astro</h1>
-  </body>
-</html>
+<Base
+  title="Fresh food for new mothers"
+  description="Homegrown Hearts grows fresh produce in Union County, NC and delivers free bundles to pregnant and postpartum mothers through a partner clinic."
+>
+  <Section accent="grow" surface="cream">
+    <Reveal>
+      <Eyebrow>{ORG.location.county}, {ORG.location.stateCode}</Eyebrow>
+      <h1>Fresh food, grown close to home.</h1>
+      <p class="lead">
+        We grow produce in a small local garden and pack it into free bundles for pregnant and
+        postpartum mothers — delivered through a partner clinic.
+      </p>
+      <div class="actions">
+        <Button href={localizePath('/partners', locale)} size="lg">{t('cta.partner')}</Button>
+        <Button href={localizePath('/get-involved', locale)} variant="secondary" size="lg">
+          {t('cta.volunteer')}
+        </Button>
+      </div>
+    </Reveal>
+  </Section>
+
+  <Section accent="harvest" surface="sand">
+    <Reveal>
+      <Eyebrow>{t('nav.impact')}</Eyebrow>
+      <h2>Where we are today</h2>
+      <p class="lead">{t('impact.starting')}</p>
+    </Reveal>
+
+    <Reveal stagger={80} class="stats">
+      <StatCard value={String(IMPACT.bundlesDelivered)} label={t('impact.bundles')} />
+      <StatCard value={String(IMPACT.mothersServed)} label={t('impact.mothers')} />
+      <StatCard value={String(IMPACT.volunteers)} label={t('impact.volunteers')} />
+    </Reveal>
+  </Section>
+</Base>
+
+<style>
+  h1 {
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+    color: var(--color-clay);
+    max-width: 18ch;
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+    letter-spacing: var(--text-h2--letter-spacing);
+    color: var(--color-clay);
+  }
+
+  .lead {
+    margin-top: 1.25rem;
+    max-width: 56ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-ink-muted);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    margin-top: 2rem;
+  }
+
+  .stats {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  @media (min-width: 40rem) {
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

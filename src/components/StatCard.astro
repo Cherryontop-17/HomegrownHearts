@@ -1,0 +1,99 @@
+---
+/**
+ * A single number with its label and, where the number came from research
+ * rather than our own records, its source.
+ *
+ * The source slot is deliberately prominent. For the primary audience — clinic
+ * staff reading a cold email from two 15-year-olds — a cited number is the
+ * difference between a claim and evidence. An uncited statistic on this site is
+ * a liability, so `source` is part of the primitive rather than something a
+ * page remembers to add.
+ */
+
+interface Props {
+  /** The number itself. String, so "3 in 5" and "0" both work. */
+  value: string;
+  /** What the number counts. */
+  label: string;
+  /** Short attribution, e.g. "CDC, 2024". Omit for our own impact numbers. */
+  source?: string;
+  /** Links the source. Opens in a new tab. */
+  sourceHref?: string;
+  /** Hook for the Phase 2 count-up. Ignored until then. */
+  countUp?: boolean;
+  class?: string;
+}
+
+const {
+  value,
+  label,
+  source,
+  sourceHref,
+  countUp = false,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<div class:list={['stat', className]} {...rest}>
+  <p class="stat__value" data-count-up={countUp ? value : undefined}>{value}</p>
+  <p class="stat__label">{label}</p>
+  {
+    source && (
+      <p class="stat__source">
+        {sourceHref ? (
+          <a href={sourceHref} target="_blank" rel="noopener noreferrer">
+            {source}
+          </a>
+        ) : (
+          source
+        )}
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .stat__value {
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: var(--text-h1--letter-spacing);
+    color: var(--accent, var(--color-clay));
+    /* Reserves the line box before a count-up runs, so animating the digits
+       cannot shift the layout underneath. */
+    min-height: 1em;
+    /* Tabular figures stop the number jittering as digits change. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat__label {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .stat__source {
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+
+  .stat__source a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--color-line-strong);
+    transition: text-decoration-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .stat__source a:hover {
+    text-decoration-color: currentColor;
+  }
+</style>

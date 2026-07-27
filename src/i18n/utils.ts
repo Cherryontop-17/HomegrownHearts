@@ -46,13 +46,21 @@ export function stripLocale(pathname: string): string {
 
 /**
  * Build a locale-aware href. The default locale is unprefixed
- * (`prefixDefaultLocale: false`), so `/about` and `/es/about`.
+ * (`prefixDefaultLocale: false`), so `/about/` and `/es/about/`.
+ *
+ * Trailing slashes are mandatory here, and that is not cosmetic. Astro's
+ * directory build format serves every route with one, and `Astro.url.pathname`
+ * — which Base.astro uses to build the canonical — therefore ends in one too.
+ * An earlier version stripped it, so the Spanish homepage advertised
+ * `canonical=/es/` alongside `hreflang=/es`. Google requires hreflang URLs to
+ * match the canonical exactly; a mismatch invalidates the entire language
+ * cluster silently, which is the worst way for a bilingual site to fail.
+ * `trailingSlash: 'always'` in astro.config.mjs pins the other half of this.
  */
 export function localizePath(path: string, locale: Locale): string {
   const clean = stripLocale(path);
   const base = locale === DEFAULT_LOCALE ? clean : `/${locale}${clean}`;
-  // Normalize away a trailing slash on non-root paths.
-  return base.length > 1 ? base.replace(/\/$/, '') : '/';
+  return base.endsWith('/') ? base : `${base}/`;
 }
 
 /**

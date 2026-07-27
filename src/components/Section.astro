@@ -1,0 +1,103 @@
+---
+/**
+ * Section band.
+ *
+ * Owns the page's vertical rhythm and the alternating surface bands, so no page
+ * hand-rolls padding. Also carries the seasonal accent: sections shift from
+ * green (grow) through gold (harvest) to terracotta (care) down the page, and
+ * child components read `--accent` rather than picking a color themselves.
+ */
+
+interface Props {
+  /** Anchor target, e.g. `#how-it-works`. */
+  id?: string;
+  /** Surface band. Alternate these down a page so sections separate without rules. */
+  surface?: 'cream' | 'sand' | 'parchment';
+  /** Seasonal accent. Sets `--accent` for everything inside. */
+  accent?: 'grow' | 'harvest' | 'care';
+  /** `tight` for sections that read as a continuation of the one above. */
+  rhythm?: 'default' | 'tight';
+  /** Constrain content to the long-form reading measure (~68ch) instead of full width. */
+  measure?: boolean;
+  /** Renders a plain <div>. For wrappers that are not a landmark of their own. */
+  as?: 'section' | 'div';
+  /**
+   * Accessible name for the section. A <section> with no name is not exposed as
+   * a landmark at all, so an unnamed one should be a <div>.
+   */
+  label?: string;
+  class?: string;
+}
+
+const {
+  id,
+  surface = 'cream',
+  accent = 'grow',
+  rhythm = 'default',
+  measure = false,
+  as: Tag = 'section',
+  label,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+{/* `...rest` is not optional politeness — see the note in Reveal.astro. */}
+<Tag
+  id={id}
+  {...rest}
+  class:list={[
+    'section',
+    `section--${surface}`,
+    `section--accent-${accent}`,
+    rhythm === 'tight' && 'section--tight',
+    className,
+  ]}
+  aria-label={label}
+>
+  <div class:list={['section__inner', measure && 'section__inner--measure']}>
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .section {
+    padding-block: var(--spacing-section);
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .section--tight {
+    padding-block: var(--spacing-section-tight);
+  }
+
+  .section--cream {
+    background-color: var(--color-cream);
+  }
+  .section--sand {
+    background-color: var(--color-sand);
+  }
+  .section--parchment {
+    background-color: var(--color-parchment);
+  }
+
+  /* Every accent value is contrast-checked against all three surfaces by
+     `npm run check:contrast`, so any pairing here is safe for text. */
+  .section--accent-grow {
+    --accent: var(--color-season-grow);
+  }
+  .section--accent-harvest {
+    --accent: var(--color-season-harvest);
+  }
+  .section--accent-care {
+    --accent: var(--color-season-care);
+  }
+
+  .section__inner {
+    max-width: var(--container-page);
+    margin-inline: auto;
+  }
+
+  .section__inner--measure {
+    max-width: var(--container-content);
+  }
+</style>

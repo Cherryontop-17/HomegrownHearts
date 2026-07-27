@@ -13,6 +13,10 @@
     "generate-types": "wrangler types",
     "check": "astro check",
     "check:contrast": "node scripts/check-contrast.mjs",
+    "check:fonts": "python scripts/check-font-coverage.py",
+    "check:i18n": "node scripts/check-i18n-urls.mjs",
+    "check:overflow": "node scripts/check-overflow.mjs",
+    "sync:fonts": "node scripts/sync-fonts.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "deploy": "astro build && wrangler deploy"
@@ -20,6 +24,8 @@
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.5",
     "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.1.4",
     "tailwindcss": "^4.3.3",

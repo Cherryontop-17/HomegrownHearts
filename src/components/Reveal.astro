@@ -1,0 +1,186 @@
+---
+/**
+ * Scroll-triggered fade-up. Zero dependencies.
+ *
+ * Three rules from the Animation Spec are enforced here rather than left to
+ * each caller:
+ *   - `once: true`. The observer unobserves on first intersection, so nothing
+ *     re-animates on scroll-up. Re-animating is the single most nauseating
+ *     pattern for this audience.
+ *   - Small displacement. 12px, not 60px. Long travel reads as a slideshow.
+ *   - Reduced motion means *already revealed*, never "revealed instantly" —
+ *     collapsing the duration alone would leave content at opacity 0 if the
+ *     observer never fired.
+ *
+ * The pre-reveal hidden state is gated on `.js`, set synchronously in
+ * Base.astro's head. Without that gate, a JS failure would leave the entire
+ * page invisible — a reveal animation must never be able to hide content
+ * permanently.
+ *
+ * ── Why every primitive spreads `...rest` ─────────────────────────────────
+ * Astro scopes a component's styles by stamping `data-astro-cid-<hash>` onto
+ * the elements written in ITS OWN template. A class passed down as a prop does
+ * NOT carry the parent's scope with it, so a parent writing
+ *
+ *     <Reveal class="stats" />        <style>.stats { display: grid }</style>
+ *
+ * compiles to `.stats[data-astro-cid-parent]` while the element only ever
+ * carries `data-astro-cid-reveal`. The selector never matches and the rule
+ * silently does nothing — no warning, no build error.
+ *
+ * Astro does pass the parent's scope down as a prop; spreading `...rest` onto
+ * the root element is what lets it land. That is why every primitive here
+ * destructures `...rest` and spreads it. Removing it breaks parent styling
+ * across the whole design system, and it breaks it invisibly.
+ */
+
+interface Props {
+  /** Delay before this element animates, in ms. */
+  delay?: number;
+  /** Stagger direct children by `stagger` ms each instead of animating as one block. */
+  stagger?: number;
+  /**
+   * Element to render. A closed union rather than `string`: an open string
+   * defeats Astro's `Props` inference, and an arbitrary tag here would be a
+   * way to smuggle invalid nesting past the type-checker.
+   */
+  as?: 'div' | 'li' | 'section' | 'article' | 'ul' | 'ol' | 'span';
+  class?: string;
+}
+
+const { delay = 0, stagger, as: Tag = 'div', class: className, ...rest } = Astro.props;
+
+const style = [
+  delay ? `--reveal-delay:${delay}ms` : null,
+  stagger ? `--reveal-stagger:${stagger}ms` : null,
+]
+  .filter(Boolean)
+  .join(';');
+---
+
+<Tag
+  class:list={['reveal', stagger && 'reveal--stagger', className]}
+  data-reveal
+  style={style || undefined}
+  {...rest}
+>
+  <slot />
+</Tag>
+
+<style>
+  /* Only hide when scripting is confirmed available. */
+  :global(.js) .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  :global(.js) .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--duration-base) var(--ease-out-gentle) var(--reveal-delay, 0ms),
+      transform var(--duration-base) var(--ease-out-gentle) var(--reveal-delay, 0ms);
+  }
+
+  /* Stagger applies to the children, so the container itself must not fade. */
+  :global(.js) .reveal--stagger {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(.js) .reveal--stagger > * {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  :global(.js) .reveal--stagger.is-revealed > * {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--duration-base) var(--ease-out-gentle),
+      transform var(--duration-base) var(--ease-out-gentle);
+  }
+
+  /* Capped at 8. Beyond that the last item waits long enough to feel broken,
+     and the motion budget says two animated elements per viewport anyway. */
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(1) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 0);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(2) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 1);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(3) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 2);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(4) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 3);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(5) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 4);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(6) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 5);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(7) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 6);
+  }
+  :global(.js) .reveal--stagger.is-revealed > *:nth-child(n + 8) {
+    transition-delay: calc(var(--reveal-stagger, 60ms) * 7);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .reveal,
+    :global(.js) .reveal--stagger > * {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // One observer for the whole page rather than one per component.
+  function initReveals() {
+    const targets = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-revealed)');
+    if (targets.length === 0) return;
+
+    // No IntersectionObserver (very old browser): show everything rather than
+    // leave it hidden.
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-revealed');
+          // `once: true` — this is the line that makes it true.
+          observer.unobserve(entry.target);
+        }
+      },
+      {
+        // Fire slightly before the element reaches the viewport so the motion
+        // finishes as the reader arrives rather than starting then.
+        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.01,
+      },
+    );
+
+    targets.forEach((el) => {
+      // Already on screen at load: reveal immediately. Animating content the
+      // reader is already looking at is jarring, and it costs LCP.
+      const box = el.getBoundingClientRect();
+      if (box.top < window.innerHeight && box.bottom > 0) {
+        el.classList.add('is-revealed');
+        return;
+      }
+      observer.observe(el);
+    });
+  }
+
+  initReveals();
+  // View Transitions swap the DOM without a page load, so re-scan after each.
+  document.addEventListener('astro:page-load', initReveals);
+</script>

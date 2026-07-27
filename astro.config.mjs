@@ -11,6 +11,14 @@ import { SITE_URL, LOCALES, DEFAULT_LOCALE } from './src/config.ts';
 export default defineConfig({
   site: SITE_URL,
 
+  // Pinned rather than left to the default. Astro's directory build format
+  // serves every route with a trailing slash, so canonical URLs (built from
+  // Astro.url.pathname) end in one. `localizePath()` must produce the same
+  // shape or hreflang and canonical disagree and Google drops the language
+  // pairing. Declaring it here makes that contract explicit instead of
+  // implicit in a default that could change.
+  trailingSlash: 'always',
+
   // English at `/`, Spanish at `/es/`. See docs/BRIEF.md — bilingual is a
   // requirement of the mission, not a nice-to-have, so it is wired in from the
   // architecture up rather than retrofitted.

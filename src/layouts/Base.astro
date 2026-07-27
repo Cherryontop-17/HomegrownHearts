@@ -1,0 +1,152 @@
+---
+/**
+ * The document shell every page renders through.
+ *
+ * Owns four things no page should re-implement: the head, the skip link, the
+ * locale wiring (lang + canonical + hreflang), and the header/footer slots.
+ */
+
+import { ClientRouter } from 'astro:transitions';
+
+import { getLocale, useTranslations, getAlternates, LOCALE_TAGS } from '../i18n/utils';
+import { SITE_URL, ORG } from '../config';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+import '../styles/global.css';
+
+interface Props {
+  /** Page title, without the org name — this file appends it. */
+  title: string;
+  /** Meta description. Required: a page without one is a page we forgot to write for. */
+  description: string;
+  /** Set on pages that must not be indexed (e.g. thank-you routes). */
+  noindex?: boolean;
+  /** Lets the hero sit under a transparent header instead of below it. */
+  transparentHeader?: boolean;
+}
+
+const { title, description, noindex = false, transparentHeader = false } = Astro.props;
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const canonical = new URL(Astro.url.pathname, SITE_URL).href;
+const alternates = getAlternates(Astro.url.pathname);
+
+// The org name trails the page title so the distinguishing words come first in
+// a search result and a browser tab.
+const fullTitle = `${title} · ${ORG.name}`;
+---
+
+<!doctype html>
+<html lang={LOCALE_TAGS[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    {
+      /*
+      Both locales plus x-default. Google needs absolute URLs here, which
+      getAlternates() builds against SITE_URL.
+    */
+    }
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+
+    {
+      /*
+      Fonts are same-origin, but `crossorigin` is still required on font
+      preloads — without it the browser fetches the file a second time for the
+      CSS, and the preload is worse than useless.
+    */
+    }
+    <link
+      rel="preload"
+      href="/fonts/fraunces-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/inter-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <meta name="theme-color" content="#fdfbf6" />
+
+    {
+      /*
+      Synchronous and inline, before any content renders. Reveal.astro hides
+      its children only under `.js`, so if this never runs the page is fully
+      visible rather than blank. Deferring it would flash unstyled content;
+      omitting it would make a scroll animation capable of hiding the site.
+    */
+    }
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    <ClientRouter />
+
+    <slot name="head" />
+  </head>
+
+  <body>
+    {
+      /*
+      First focusable thing on the page. Off-screen until focused, then it
+      lands in the top-left — the convention keyboard users expect.
+    */
+    }
+    <a href="#main" class="skip-link">{t('a11y.skipToContent')}</a>
+
+    <slot name="header"><Header transparent={transparentHeader} /></slot>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <slot name="footer"><Footer /></slot>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-garden);
+    color: var(--color-ink-inverse);
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-decoration: none;
+    /* Moved rather than display:none, so it stays in the accessibility tree
+       and screen readers can still reach it. */
+    transform: translateY(-150%);
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
+  /* The sticky header would otherwise cover the top of whatever the skip link
+     jumps to. */
+  main {
+    scroll-margin-top: 6rem;
+  }
+</style>

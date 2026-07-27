@@ -1,0 +1,188 @@
+---
+/**
+ * English / Spanish switcher.
+ *
+ * Two locales, so this is a pair of links rather than a dropdown — a select for
+ * two options is a click more and a screen-reader mode change for nothing.
+ *
+ * Each link points at the *current page* in the other locale, not at that
+ * locale's homepage. Dumping a reader back to the homepage for choosing their
+ * own language is the most common bug in bilingual sites and the most annoying.
+ */
+
+import { getLocale, localizePath, LOCALES, LOCALE_TAGS, useTranslations } from '../i18n/utils';
+import type { Locale } from '../config';
+
+interface Props {
+  /** `inline` for the header, `stacked` for the footer column. */
+  layout?: 'inline' | 'stacked';
+  class?: string;
+}
+
+const { layout = 'inline', class: className, ...rest } = Astro.props;
+
+const current = getLocale(Astro.url);
+const t = useTranslations(current);
+
+// Native label for each locale — "Español", never "Spanish". A reader looking
+// for their language scans for the word as they write it.
+const NATIVE_LABEL: Record<Locale, string> = {
+  en: 'English',
+  es: 'Español',
+};
+
+const SHORT_LABEL: Record<Locale, string> = {
+  en: 'EN',
+  es: 'ES',
+};
+
+const options = LOCALES.map((locale) => ({
+  locale,
+  href: localizePath(Astro.url.pathname, locale),
+  label: NATIVE_LABEL[locale],
+  short: SHORT_LABEL[locale],
+  isCurrent: locale === current,
+}));
+---
+
+<nav
+  class:list={['lang', `lang--${layout}`, className]}
+  aria-label={t('a11y.langSwitch')}
+  {...rest}
+>
+  <ul class="lang__list">
+    {
+      options.map((option) => (
+        <li>
+          {/*
+            `hreflang` tells assistive tech and crawlers what is on the other
+            end; `lang` tells a screen reader to pronounce THIS label in that
+            language, so "Español" is not read with an English voice.
+          */}
+          <a
+            class="lang__link"
+            href={option.href}
+            hreflang={LOCALE_TAGS[option.locale]}
+            lang={LOCALE_TAGS[option.locale]}
+            aria-current={option.isCurrent ? 'true' : undefined}
+            data-lang-choice={option.locale}
+          >
+            <span class="lang__short" aria-hidden="true">
+              {option.short}
+            </span>
+            <span class="lang__full">{option.label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  .lang__list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .lang--inline .lang__list {
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .lang--stacked .lang__list {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .lang__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 44px target even though the label is two characters. */
+    min-height: 44px;
+    min-width: 44px;
+    padding-inline: 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink-muted);
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out-soft),
+      background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .lang__link:hover {
+    color: var(--color-ink);
+    background-color: color-mix(in oklab, var(--color-ink) 6%, transparent);
+  }
+
+  .lang__link[aria-current='true'] {
+    color: var(--color-clay);
+  }
+
+  /* Header shows EN / ES; footer has room for the full native name. */
+  .lang--inline .lang__full,
+  .lang--stacked .lang__short {
+    /* Not display:none — the inline variant still needs an accessible name,
+       which the visually-hidden full label provides. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .lang--stacked .lang__link {
+    min-width: 0;
+    padding-inline: 0.5rem;
+    margin-inline-start: -0.5rem;
+  }
+</style>
+
+<script>
+  /**
+   * Remembers the reader's choice.
+   *
+   * Applied in exactly one place: an unprefixed visit to `/`. Deep links are
+   * never rewritten — someone following a link to /partners must land on
+   * /partners, and silently redirecting shared URLs breaks them.
+   *
+   * `location.replace` rather than `assign` so Back does not bounce the reader
+   * straight forward into the redirect again.
+   */
+  const KEY = 'hgh:lang';
+
+  function rememberChoice(event: Event) {
+    const link = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-lang-choice]');
+    if (!link) return;
+    try {
+      localStorage.setItem(KEY, link.dataset.langChoice ?? '');
+    } catch {
+      // Private mode or storage disabled. The switch still works; it just
+      // will not be remembered.
+    }
+  }
+
+  function applyStoredChoice() {
+    if (window.location.pathname !== '/') return;
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch {
+      return;
+    }
+    if (stored === 'es') window.location.replace('/es/');
+  }
+
+  document.addEventListener('click', rememberChoice);
+  applyStoredChoice();
+  document.addEventListener('astro:page-load', applyStoredChoice);
+</script>

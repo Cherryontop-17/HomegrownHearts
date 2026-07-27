@@ -1,0 +1,58 @@
+---
+/**
+ * Small tracked label above a heading.
+ *
+ * Renders a plain <p> by default. It is a label, not a heading — putting it in
+ * an <h*> would inject a level into the outline that means nothing to a screen
+ * reader working through the page structure.
+ */
+
+interface Props {
+  /** Defaults to the section's seasonal `--accent`. */
+  color?: 'accent' | 'clay' | 'muted';
+  class?: string;
+}
+
+const { color = 'accent', class: className, ...rest } = Astro.props;
+---
+
+<p class:list={['eyebrow', `eyebrow--${color}`, className]} {...rest}>
+  <span class="eyebrow__mark" aria-hidden="true"></span>
+  <slot />
+</p>
+
+<style>
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.875rem;
+    font-family: var(--font-body);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    line-height: var(--text-eyebrow--line-height);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  /* Falls back to clay on the rare component used outside a Section, which is
+     the only place --accent is defined. */
+  .eyebrow--accent {
+    color: var(--accent, var(--color-clay));
+  }
+  .eyebrow--clay {
+    color: var(--color-clay);
+  }
+  .eyebrow--muted {
+    color: var(--color-ink-muted);
+  }
+
+  /* Short rule instead of a bullet — quieter, and it echoes the vine. */
+  .eyebrow__mark {
+    width: 1.5rem;
+    height: 1px;
+    flex: none;
+    background-color: currentColor;
+    opacity: 0.55;
+  }
+</style>
