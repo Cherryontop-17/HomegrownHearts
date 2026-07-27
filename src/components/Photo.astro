@@ -26,10 +26,23 @@ interface Props {
   width?: number;
   /** Above the fold. Skips lazy-loading and raises fetch priority. */
   eager?: boolean;
+  /**
+   * Slow 20s drift. Only applies to a real photograph — a gradient stand-in has
+   * nothing to pan across, and moving it would just be motion for its own sake.
+   */
+  kenBurns?: boolean;
   class?: string;
 }
 
-const { photo, alt, width = 1200, eager = false, class: className, ...rest } = Astro.props;
+const {
+  photo,
+  alt,
+  width = 1200,
+  eager = false,
+  kenBurns = false,
+  class: className,
+  ...rest
+} = Astro.props;
 
 const slot = PHOTO_SLOTS[photo];
 
@@ -89,7 +102,7 @@ const tone = TONES[slot.tone];
         loading={eager ? 'eager' : 'lazy'}
         fetchpriority={eager ? 'high' : undefined}
         decoding={eager ? 'sync' : 'async'}
-        class="photo__img"
+        class:list={['photo__img', kenBurns && 'photo__img--drift']}
       />
     ) : (
       /*
@@ -128,6 +141,20 @@ const tone = TONES[slot.tone];
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  /* 20s, 1.06 ceiling. Slow and shallow enough to read as the image breathing
+     rather than panning — see the note in motion.css. `alternate` so it drifts
+     back instead of snapping to the start. */
+  .photo__img--drift {
+    animation: ken-burns 20s var(--ease-in-out-soft) infinite alternate;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .photo__img--drift {
+      animation: none;
+    }
   }
 
   .photo__placeholder {

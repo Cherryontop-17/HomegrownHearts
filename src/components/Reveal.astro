@@ -48,7 +48,7 @@ interface Props {
   class?: string;
 }
 
-const { delay = 0, stagger, as: Tag = 'div', class: className, ...rest } = Astro.props;
+const { delay = 0, stagger, as: Tag = 'div', class: className, ...rest }: Props = Astro.props;
 
 const style = [
   delay ? `--reveal-delay:${delay}ms` : null,

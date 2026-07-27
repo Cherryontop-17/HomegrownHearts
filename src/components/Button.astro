@@ -53,6 +53,20 @@ const attrs: Record<string, unknown> = href
 ---
 
 <Tag class:list={['btn', `btn--${variant}`, `btn--${size}`, className]} {...rest} {...attrs}>
+  {
+    /*
+    Leaf unfurl — the one flourish on the site, reserved for the primary
+    action. Decorative and hover-only, so it can never be the sole indication
+    of anything; touch users lose nothing by not seeing it.
+  */
+  }
+  {
+    variant === 'primary' && (
+      <svg class="btn__leaf" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 20C7.2 17.4 4 12.8 3.4 6.4C9.8 7.4 13.4 12.4 12 20Z" />
+      </svg>
+    )
+  }
   <span class="btn__label"><slot /></span>
   {external && <Icon name="arrow-up-right" size={16} class="btn__external" />}
 </Tag>
@@ -149,6 +163,37 @@ const attrs: Record<string, unknown> = href
   /* Nudged up so the arrow reads as leaving the label, not sitting on it. */
   .btn__external {
     margin-inline-start: -0.125rem;
+  }
+
+  /* --- Leaf unfurl --------------------------------------------------------
+     Collapsed to zero width at rest, so it costs no layout until it opens. It
+     unfurls by rotating about its own stem rather than sliding, which is what
+     makes it read as growing rather than as an icon appearing. */
+  .btn__leaf {
+    width: 0;
+    height: 1.05em;
+    flex: none;
+    fill: currentColor;
+    opacity: 0;
+    transform: rotate(-35deg) scale(0.5);
+    transform-origin: 12px 20px;
+    transition:
+      width var(--duration-fast) var(--ease-out-soft),
+      opacity var(--duration-fast) var(--ease-out-soft),
+      transform var(--duration-base) var(--ease-overshoot);
+  }
+
+  .btn--primary:hover .btn__leaf,
+  .btn--primary:focus-visible .btn__leaf {
+    width: 1.05em;
+    opacity: 0.9;
+    transform: rotate(0deg) scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn__leaf {
+      transition: none;
+    }
   }
 
   /* The global kill-switch already zeroes the durations; this also removes the

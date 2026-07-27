@@ -62,15 +62,27 @@ jobs:
       - name: i18n URLs
         run: npm run check:i18n
 
-      # Mobile is the default case for this audience, so "no horizontal scroll"
-      # is a gate rather than a manual pass. Runs against the real build at
-      # 320/375/768/1024/1440 in BOTH locales — Spanish runs ~20% longer than
-      # English, so ES is where a layout breaks first.
-      - name: No horizontal overflow
+      # Both browser gates run against one server, started and stopped inside a
+      # single step. Backgrounding it in one step and using it from another
+      # relies on the process outliving the shell that owns it, which is not a
+      # guarantee worth depending on.
+      #
+      #   Overflow — mobile is the default case for this audience, so "no
+      #   horizontal scroll" is a gate rather than a manual pass. Both locales:
+      #   Spanish runs ~20% longer, so ES is where a layout breaks first.
+      #
+      #   Motion — the critical check is reduced-motion. Every reveal works by
+      #   hiding content then showing it, so a broken path leaves a
+      #   reduced-motion reader with a blank page, and a developer without the
+      #   OS setting on never sees it.
+      - name: Browser QA (overflow + motion)
         run: |
           node scripts/serve-dist.mjs 4399 &
+          SERVER_PID=$!
+          trap "kill $SERVER_PID 2>/dev/null || true" EXIT
           for i in $(seq 1 30); do
             curl -sf http://localhost:4399/ >/dev/null && break
             sleep 1
           done
           npm run check:overflow -- http://localhost:4399
+          npm run check:motion -- http://localhost:4399

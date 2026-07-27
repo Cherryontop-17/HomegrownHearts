@@ -1,0 +1,120 @@
+---
+/**
+ * Headline whose words rise from behind a mask, as if sprouting from soil.
+ *
+ * The split happens here, at build time, so this ships **zero client
+ * JavaScript** — no SplitText, no layout measurement, no flash of unsplit text.
+ * Each word gets a clipping box and slides up into it.
+ *
+ * Accessibility note: the text is split into spans but never into individual
+ * characters, and no `aria-label` is needed — a screen reader reads the
+ * concatenated text content of inline spans as continuous prose. Splitting per
+ * character is what breaks that, and is why this component refuses to.
+ *
+ * Line breaking still works: the mask boxes are `inline-block` inside normal
+ * inline flow, so the browser wraps between words exactly as it would in plain
+ * text. That matters most in Spanish, which runs ~20% longer.
+ */
+
+interface Props {
+  /** The headline. Plain text — this splits on whitespace. */
+  text: string;
+  /** Heading level. The visual size comes from CSS, not from this. */
+  as?: 'h1' | 'h2' | 'p';
+  /** Per-word stagger in ms. The spec calls for 60. */
+  stagger?: number;
+  /** Delay before the first word, in ms. */
+  delay?: number;
+  class?: string;
+}
+
+// Explicitly typed: a dynamic `<Tag>` plus a `...rest` spread defeats Astro's
+// implicit Props inference, which silently degrades every prop to `any`.
+const {
+  text,
+  as: Tag = 'h1',
+  stagger = 60,
+  delay = 0,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const words = text.split(/\s+/).filter(Boolean);
+---
+
+<Tag class:list={['word-rise', className]} data-word-rise {...rest}>
+  {
+    words.map((word, i) => (
+      <>
+        <span class="word-rise__mask">
+          <span class="word-rise__word" style={`--word-delay:${delay + i * stagger}ms`}>
+            {word}
+          </span>
+        </span>
+        {/*
+          A real space, outside the mask. Two things depend on it, and both
+          broke without it: the browser needs actual whitespace between the
+          inline-block masks to have a line-break opportunity, and the space
+          has to sit outside the clipping box or it would be animated and
+          clipped along with the word. `word-spacing` cannot substitute — it
+          scales existing spaces, and there were none.
+        */}
+        {i < words.length - 1 ? ' ' : ''}
+      </>
+    ))
+  }
+</Tag>
+
+<style>
+  .word-rise__mask {
+    display: inline-block;
+    /* The mask itself. Clips the word's travel so it appears from nothing. */
+    overflow: hidden;
+    /* Descenders (g, y, p) would be clipped by a tight box. This pads the box
+       and pulls the layout back, so nothing shifts. */
+    padding-block-end: 0.12em;
+    margin-block-end: -0.12em;
+    vertical-align: bottom;
+  }
+
+  .word-rise__word {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  /* Only hide when scripting is available to reveal it again — same contract as
+     Reveal.astro. Without the `.js` gate a script failure would leave the
+     headline permanently off-screen behind its own mask. */
+  :global(.js) .word-rise__word {
+    transform: translateY(100%);
+  }
+
+  :global(.js) .word-rise.is-revealed .word-rise__word {
+    animation: word-rise var(--duration-slow) var(--ease-out-gentle) var(--word-delay, 0ms) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .word-rise__word,
+    :global(.js) .word-rise.is-revealed .word-rise__word {
+      transform: none;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // Reuses the same trigger contract as Reveal.astro: add `.is-revealed` once,
+  // never remove it. The headline is above the fold on every page that uses it,
+  // so this fires immediately rather than waiting for an observer.
+  function initWordRise() {
+    for (const el of document.querySelectorAll<HTMLElement>('[data-word-rise]')) {
+      if (el.classList.contains('is-revealed')) continue;
+      // Next frame, so the initial transform is painted before the animation
+      // starts. Without it the first word can pop.
+      requestAnimationFrame(() => el.classList.add('is-revealed'));
+    }
+  }
+
+  initWordRise();
+  document.addEventListener('astro:page-load', initWordRise);
+</script>

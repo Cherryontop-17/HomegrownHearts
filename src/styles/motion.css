@@ -1,0 +1,180 @@
+/* ============================================================================
+   Motion system
+   ----------------------------------------------------------------------------
+   One idea, carried the length of the page: a seed becomes a vine becomes a
+   harvest becomes a heart.
+
+   ⚠️ READ THIS BEFORE ADDING AN ANIMATION.
+
+   A meaningful share of this audience is in the first trimester. Parallax,
+   scroll-jacking, and long travel distances trigger nausea. Restraint here is
+   an accessibility requirement, not a style preference. The budget below is not
+   advisory.
+
+     - Max TWO animated elements per viewport
+     - Every duration <= 600ms
+     - ease-out entering, ease-in exiting
+     - Every reveal is once-only. Never re-animate on scroll-up
+     - No parallax on text. No scroll-jacking. No smooth-scroll library
+     - Full prefers-reduced-motion path — see the kill-switch at the bottom
+
+   Durations and easings are tokens in global.css (`--duration-*`, `--ease-*`).
+   Keyframes live here. Component-specific choreography lives in the component.
+   ========================================================================== */
+
+/* ----------------------------------------------------------------------------
+   Reveal — the fade-up used by Reveal.astro.
+   12px of travel, not 60. Long travel reads as a slideshow and is the main
+   thing that makes scroll animation feel nauseating.
+   -------------------------------------------------------------------------- */
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Word rise — the hero headline sprouting from soil.
+
+   Each word sits in a clipping box and rises into it, so the words appear to
+   grow up out of the line rather than fade in. The split happens at build time
+   in WordRise.astro, so this costs no client JS.
+   -------------------------------------------------------------------------- */
+
+@keyframes word-rise {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Draw — stroke-based line drawing.
+
+   Every drawable path in this project carries `pathLength="1"`, which
+   normalizes its length regardless of its real geometry or rendered size. That
+   is what lets one dash value work everywhere.
+   -------------------------------------------------------------------------- */
+
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Ken Burns — a slow drift across a photograph.
+
+   20s and a 1.06 scale ceiling. Deliberately slower and shallower than the
+   usual implementation: at this speed the movement is below the threshold that
+   provokes motion sickness, and it reads as the image breathing rather than
+   panning.
+   -------------------------------------------------------------------------- */
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.06) translate3d(-1%, -1%, 0);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Grow in — the seed/sprout/basket/heart sequence.
+
+   `--ease-overshoot` gives a small back-out, like something being set down.
+   Applied to scale only; the overshoot is 4%, which is felt rather than seen.
+   -------------------------------------------------------------------------- */
+
+@keyframes grow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Bar grow — the impact bars, rising from their baseline.
+   Scale rather than height, so it never triggers layout.
+   -------------------------------------------------------------------------- */
+
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Heart pulse — one beat, where the vine terminates in the footer.
+   Once. A looping heartbeat on a page about pregnancy would be tasteless as
+   well as distracting.
+   -------------------------------------------------------------------------- */
+
+@keyframes heart-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================================================
+   Reduced-motion kill-switch
+
+   One rule, applied once, covering every animation on the site including any
+   third-party one. Individual components must NOT re-implement this.
+
+   The `0.01ms` duration rather than `none` is deliberate: it lets
+   `animation-fill-mode: forwards` still resolve to the END state, so anything
+   animating INTO visibility ends up visible. Setting `animation: none` would
+   strand such an element at its `from` keyframe — an invisible page.
+
+   Components whose resting state is hidden (drawn paths, the vine) must still
+   opt out explicitly. Grep for `prefers-reduced-motion` to find them.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Scroll-driven animations ignore duration entirely — they are driven by
+     position, not time — so the rule above cannot stop them. This can. */
+  * {
+    animation-timeline: auto !important;
+  }
+}

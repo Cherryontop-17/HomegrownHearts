@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import './fonts.css';
+@import './motion.css';
 
 /* ============================================================================
    Homegrown Hearts — design tokens
@@ -198,24 +199,6 @@
   }
 }
 
-/* ============================================================================
-   Global motion kill-switch
-
-   One rule, applied once, covering every animation on the site — including
-   third-party ones. Individual components must not re-implement this.
-   ========================================================================== */
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+/* The motion system — keyframes and the global reduced-motion kill-switch —
+   lives in ./motion.css, imported at the top of this file. Read the warning at
+   the head of it before adding any animation anywhere in this project. */

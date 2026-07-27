@@ -36,8 +36,16 @@ const {
 ---
 
 <div class:list={['stat', className]} {...rest}>
+  {
+    /*
+    The rendered text is always the FINAL value, never a zero the script counts
+    up from. If the script never runs — no JS, an error, a crawler — the number
+    is simply correct. An animation must not be load-bearing for the content.
+  */
+  }
   <p class="stat__value" data-count-up={countUp ? value : undefined}>{value}</p>
   <p class="stat__label">{label}</p>
+  {countUp && <span class="stat__bar" aria-hidden="true" />}
   {
     source && (
       <p class="stat__source">
@@ -96,4 +104,101 @@ const {
   .stat__source a:hover {
     text-decoration-color: currentColor;
   }
+
+  /* --- Bar ----------------------------------------------------------------
+     Grows from its baseline. `scaleY` on a fixed-height element, not an
+     animated `height`, so it never triggers layout and never contributes CLS. */
+  .stat__bar {
+    display: block;
+    height: 3px;
+    width: 100%;
+    max-width: 6rem;
+    margin-top: 0.875rem;
+    border-radius: 2px;
+    background-color: var(--accent, var(--color-clay));
+    opacity: 0.35;
+    transform-origin: left bottom;
+  }
+
+  :global(.js) .stat__bar {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  :global(.js) .stat.is-counted .stat__bar {
+    transform: scaleX(1);
+    transition: transform var(--duration-slow) var(--ease-out-gentle);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .stat__bar,
+    :global(.js) .stat.is-counted .stat__bar {
+      transform: none;
+      transition: none;
+    }
+  }
 </style>
+
+<script>
+  /**
+   * Count-up.
+   *
+   * Counts to the number already in the DOM rather than replacing it, so the
+   * text is correct before, during, and after. Bails out entirely under reduced
+   * motion, and for values that are not plain integers ("3 in 5"), where
+   * counting would be meaningless.
+   */
+  function initCountUp() {
+    const stats = document.querySelectorAll<HTMLElement>('[data-count-up]');
+    if (stats.length === 0) return;
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const run = (el: HTMLElement) => {
+      const card = el.closest<HTMLElement>('.stat');
+      card?.classList.add('is-counted');
+
+      const target = Number(el.dataset.countUp);
+      // Not a countable number, or zero — nothing to count. The bar still grows.
+      if (!Number.isFinite(target) || target === 0 || reduced) return;
+
+      const DURATION = 600; // the motion budget's ceiling
+      const start = performance.now();
+      // ease-out cubic: fast then settling, which reads as arriving at a value
+      // rather than ticking toward one.
+      const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+
+      const tick = (now: number) => {
+        const t = Math.min(1, (now - start) / DURATION);
+        el.textContent = String(Math.round(ease(t) * target));
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = String(target);
+      };
+
+      requestAnimationFrame(tick);
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      stats.forEach(run);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          run(entry.target as HTMLElement);
+          // Once only. Re-counting on scroll-up is exactly the pattern the
+          // motion budget forbids.
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.6 },
+    );
+
+    stats.forEach((el) => observer.observe(el));
+  }
+
+  initCountUp();
+  document.addEventListener('astro:page-load', initCountUp);
+</script>

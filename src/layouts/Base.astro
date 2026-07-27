@@ -12,6 +12,7 @@ import { getLocale, useTranslations, getAlternates, LOCALE_TAGS } from '../i18n/
 import { SITE_URL, ORG } from '../config';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Vine from '../components/Vine.astro';
 
 import '../styles/global.css';
 
@@ -24,9 +25,14 @@ interface Props {
   noindex?: boolean;
   /** Lets the hero sit under a transparent header instead of below it. */
   transparentHeader?: boolean;
+  /**
+   * The Growing Vine. On by default — it is the site's signature. Turn it off
+   * for pages where it would compete, like the print-oriented /partners view.
+   */
+  vine?: boolean;
 }
 
-const { title, description, noindex = false, transparentHeader = false } = Astro.props;
+const { title, description, noindex = false, transparentHeader = false, vine = true } = Astro.props;
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -136,7 +142,9 @@ const fullTitle = `${title} · ${ORG.name}`;
 
     <slot name="header"><Header transparent={transparentHeader} /></slot>
 
+    {/* Positioned relative so the vine can span exactly the main content. */}
     <main id="main">
+      {vine && <Vine />}
       <slot />
     </main>
 
@@ -171,5 +179,7 @@ const fullTitle = `${title} · ${ORG.name}`;
      jumps to. */
   main {
     scroll-margin-top: 6rem;
+    /* Containing block for the absolutely-positioned vine. */
+    position: relative;
   }
 </style>

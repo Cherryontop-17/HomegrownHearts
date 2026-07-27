@@ -1,12 +1,12 @@
 ---
 /**
- * Spanish homepage — shell only, mirroring `/`.
+ * Spanish homepage — mirrors `/` exactly, including every motion.
  *
- * The duplication here is temporary. Task 3.9 moves all prose into
+ * The duplication is temporary. Task 3.9 moves all prose into
  * `src/content/{en,es}/` behind one schema, at which point both locales render
- * from a single page component and a missing translation fails the build.
- * Until then this file exists so the ES route, the switcher, and hreflang are
- * all exercised by the build rather than assumed to work.
+ * from a single component. Until then this file exists so the ES route, the
+ * switcher, hreflang, and — critically — every animation against ~20% longer
+ * Spanish strings are all exercised by the build rather than assumed to work.
  */
 
 import Base from '../../layouts/Base.astro';
@@ -15,11 +15,34 @@ import Eyebrow from '../../components/Eyebrow.astro';
 import Button from '../../components/Button.astro';
 import StatCard from '../../components/StatCard.astro';
 import Reveal from '../../components/Reveal.astro';
+import Photo from '../../components/Photo.astro';
+import WordRise from '../../components/WordRise.astro';
+import Steps from '../../components/Steps.astro';
+import type { Step } from '../../components/Steps.astro';
 import { getLocale, useTranslations, localizePath } from '../../i18n/utils';
 import { ORG, IMPACT } from '../../config';
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
+
+const steps: Step[] = [
+  { icon: 'seed', title: 'Sembrar', body: 'Cuidamos un huerto pequeño durante toda la temporada.' },
+  {
+    icon: 'sprout',
+    title: 'Cosechar',
+    body: 'Recogemos las verduras la misma mañana de la entrega.',
+  },
+  {
+    icon: 'basket',
+    title: 'Empacar',
+    body: 'Armamos cada paquete según una lista aprobada por la clínica.',
+  },
+  {
+    icon: 'heart',
+    title: 'Entregar',
+    body: 'La clínica asociada los entrega a las familias que atiende.',
+  },
+];
 ---
 
 <Base
@@ -27,9 +50,9 @@ const t = useTranslations(locale);
   description="Homegrown Hearts cultiva alimentos frescos en el condado de Union, Carolina del Norte, y entrega paquetes gratuitos a madres embarazadas y recién dadas a luz a través de una clínica asociada."
 >
   <Section accent="grow" surface="cream">
-    <Reveal>
-      <Eyebrow>Condado de Union, {ORG.location.stateCode}</Eyebrow>
-      <h1>Alimentos frescos, cultivados aquí cerca.</h1>
+    <Eyebrow>Condado de Union, {ORG.location.stateCode}</Eyebrow>
+    <WordRise text="Alimentos frescos, cultivados aquí cerca." as="h1" class="hero__title" />
+    <Reveal delay={320}>
       <p class="lead">
         Cultivamos verduras en un huerto local y armamos paquetes gratuitos para madres embarazadas
         y recién dadas a luz. La entrega se hace a través de una clínica asociada.
@@ -41,25 +64,45 @@ const t = useTranslations(locale);
         </Button>
       </div>
     </Reveal>
+
+    <Reveal delay={120} class="hero-media">
+      <Photo photo="hero" eager kenBurns />
+    </Reveal>
   </Section>
 
-  <Section accent="harvest" surface="sand">
+  <Section accent="grow" surface="cream" rhythm="tight">
+    <Reveal>
+      <Eyebrow>Cómo funciona</Eyebrow>
+      <h2>De nuestro huerto a la sala de espera de la clínica</h2>
+    </Reveal>
+    <Steps steps={steps} class="process" />
+  </Section>
+
+  <Section accent="harvest" surface="sand" rhythm="tight">
+    <Reveal stagger={80} class="gallery">
+      <Photo photo="garden" alt="Camas de cultivo en el huerto de Homegrown Hearts." />
+      <Photo photo="harvest" alt="Verduras recién cosechadas en una canasta." />
+      <Photo photo="bundle" alt="Un paquete de verduras completo, listo para la clínica." />
+    </Reveal>
+  </Section>
+
+  <Section accent="care" surface="cream">
     <Reveal>
       <Eyebrow>{t('nav.impact')}</Eyebrow>
       <h2>Dónde estamos hoy</h2>
       <p class="lead">{t('impact.starting')}</p>
     </Reveal>
 
-    <Reveal stagger={80} class="stats">
-      <StatCard value={String(IMPACT.bundlesDelivered)} label={t('impact.bundles')} />
-      <StatCard value={String(IMPACT.mothersServed)} label={t('impact.mothers')} />
-      <StatCard value={String(IMPACT.volunteers)} label={t('impact.volunteers')} />
-    </Reveal>
+    <div class="stats">
+      <StatCard value={String(IMPACT.bundlesDelivered)} label={t('impact.bundles')} countUp />
+      <StatCard value={String(IMPACT.mothersServed)} label={t('impact.mothers')} countUp />
+      <StatCard value={String(IMPACT.volunteers)} label={t('impact.volunteers')} countUp />
+    </div>
   </Section>
 </Base>
 
 <style>
-  h1 {
+  .hero__title {
     font-size: var(--text-display);
     line-height: var(--text-display--line-height);
     letter-spacing: var(--text-display--letter-spacing);
@@ -72,6 +115,7 @@ const t = useTranslations(locale);
     line-height: var(--text-h2--line-height);
     letter-spacing: var(--text-h2--letter-spacing);
     color: var(--color-clay);
+    max-width: 22ch;
   }
 
   .lead {
@@ -89,14 +133,29 @@ const t = useTranslations(locale);
     margin-top: 2rem;
   }
 
-  .stats {
+  .hero-media {
+    margin-top: 3rem;
+  }
+
+  .process {
+    margin-top: 2.5rem;
+  }
+
+  .stats,
+  .gallery {
     display: grid;
     gap: 2rem;
     margin-top: 3rem;
   }
 
+  .gallery {
+    gap: 1.25rem;
+    margin-top: 0;
+  }
+
   @media (min-width: 40rem) {
-    .stats {
+    .stats,
+    .gallery {
       grid-template-columns: repeat(3, 1fr);
     }
   }

@@ -1,0 +1,198 @@
+---
+/**
+ * The Grow -> Harvest -> Pack -> Deliver sequence.
+ *
+ * Motion is the point: the four marks arrive in order, 150ms apart, so the
+ * reader watches a seed become a heart. That single sequence carries the whole
+ * concept of the site more efficiently than the copy does.
+ *
+ * The content is supplied by the caller (task 4.3 writes it); this owns the
+ * structure and the choreography.
+ *
+ * Ordered list, not a row of divs: these are steps in a process, and their
+ * order is meaning. A screen reader should announce "1 of 4".
+ */
+
+import Icon from './Icon.astro';
+import type { IconName } from '../icons';
+
+export interface Step {
+  icon: IconName;
+  title: string;
+  body: string;
+}
+
+interface Props {
+  steps: Step[];
+  /** Gap between each step's entrance, in ms. The spec calls for 150. */
+  stagger?: number;
+  class?: string;
+}
+
+const { steps, stagger = 150, class: className, ...rest } = Astro.props;
+---
+
+<ol class:list={['steps', className]} data-steps style={`--step-stagger:${stagger}ms`} {...rest}>
+  {
+    steps.map((step, i) => (
+      <li class="steps__item" style={`--step-index:${i}`}>
+        <span class="steps__mark">
+          <Icon name={step.icon} size={28} />
+          {/*
+            The connector is drawn between marks, not around them, and is
+            hidden on the last item and whenever the list wraps to one column.
+          */}
+          <span class="steps__connector" aria-hidden="true" />
+        </span>
+        <h3 class="steps__title">{step.title}</h3>
+        <p class="steps__body">{step.body}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .steps {
+    display: grid;
+    gap: 2.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: step;
+  }
+
+  @media (min-width: 48rem) {
+    .steps {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .steps__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .steps__mark {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    color: var(--accent, var(--color-clay));
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* The vine idea again, at component scale: a hairline running between marks. */
+  .steps__connector {
+    display: none;
+    position: absolute;
+    inset-inline-start: 100%;
+    top: 50%;
+    height: 1px;
+    width: 1.5rem;
+    background-color: var(--color-line-strong);
+    transform-origin: left center;
+  }
+
+  @media (min-width: 48rem) {
+    .steps__connector {
+      display: block;
+      /* Reaches across the grid gap to the next mark. */
+      width: calc(100% + 1.5rem);
+    }
+
+    .steps__item:last-child .steps__connector {
+      display: none;
+    }
+  }
+
+  .steps__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    color: var(--color-clay);
+    margin-bottom: 0.375rem;
+  }
+
+  .steps__body {
+    font-size: var(--text-small);
+    line-height: 1.65;
+    color: var(--color-ink-muted);
+  }
+
+  /* --- Choreography -------------------------------------------------------
+     Only the marks animate. Animating the text too would put eight moving
+     elements in one viewport, four times the budget, and it is the sequence of
+     symbols that tells the story. */
+  :global(.js) .steps__mark {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+
+  :global(.js) .steps.is-revealed .steps__mark {
+    animation: grow-in var(--duration-base) var(--ease-overshoot)
+      calc(var(--step-index) * var(--step-stagger)) both;
+  }
+
+  :global(.js) .steps__connector {
+    transform: scaleX(0);
+  }
+
+  :global(.js) .steps.is-revealed .steps__connector {
+    transform: scaleX(1);
+    transition: transform var(--duration-base) var(--ease-out-soft)
+      calc(var(--step-index) * var(--step-stagger) + var(--duration-fast));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .steps__mark,
+    :global(.js) .steps.is-revealed .steps__mark {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    :global(.js) .steps__connector,
+    :global(.js) .steps.is-revealed .steps__connector {
+      transform: scaleX(1);
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Shares the reveal contract: fire once on entry, then stop observing.
+  function initSteps() {
+    const lists = document.querySelectorAll<HTMLElement>('[data-steps]:not(.is-revealed)');
+    if (lists.length === 0) return;
+
+    if (!('IntersectionObserver' in window)) {
+      lists.forEach((el) => el.classList.add('is-revealed'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.25 },
+    );
+
+    lists.forEach((el) => observer.observe(el));
+  }
+
+  initSteps();
+  document.addEventListener('astro:page-load', initSteps);
+</script>

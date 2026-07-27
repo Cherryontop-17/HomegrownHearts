@@ -16,6 +16,7 @@
     "check:fonts": "python scripts/check-font-coverage.py",
     "check:i18n": "node scripts/check-i18n-urls.mjs",
     "check:overflow": "node scripts/check-overflow.mjs",
+    "check:motion": "node scripts/check-motion.mjs",
     "sync:fonts": "node scripts/sync-fonts.mjs",
     "sync:icons": "node scripts/sync-icons.mjs",
     "brand": "node scripts/generate-brand-assets.mjs",
