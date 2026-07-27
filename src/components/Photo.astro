@@ -1,0 +1,160 @@
+---
+/**
+ * A photo slot.
+ *
+ * Renders the real photograph if one exists in `src/assets/photos/`, and a
+ * generated on-brand stand-in if it does not. The page never knows which it
+ * got, so no component changes when the founders finally take the pictures —
+ * they drop `<id>.jpg` into that folder and it appears.
+ *
+ * The lookup is `import.meta.glob` with `eager`, which resolves at build time.
+ * A missing file is therefore not an error; it is simply an absent key.
+ */
+
+import { Image } from 'astro:assets';
+import { PHOTO_SLOTS, type PhotoId } from '../photos';
+
+interface Props {
+  photo: PhotoId;
+  /**
+   * Alt text. Required for `meaningful` slots and rejected for `decorative`
+   * ones — see the check below. Not optional-by-default on purpose: a photo
+   * component that lets you forget alt text is how sites fail an audit.
+   */
+  alt?: string;
+  /** Rendered width hint for srcset generation. */
+  width?: number;
+  /** Above the fold. Skips lazy-loading and raises fetch priority. */
+  eager?: boolean;
+  class?: string;
+}
+
+const { photo, alt, width = 1200, eager = false, class: className, ...rest } = Astro.props;
+
+const slot = PHOTO_SLOTS[photo];
+
+if (slot.role === 'meaningful' && !alt) {
+  throw new Error(
+    `Photo "${photo}" is a meaningful image and needs an \`alt\`. ` +
+      `If it is purely decorative, change its role in src/photos.ts instead of ` +
+      `inventing alt text for it.`,
+  );
+}
+
+// Eager so the manifest resolves at build time rather than returning promises.
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/photos/*.{jpg,jpeg,png,webp,avif}',
+  { eager: true },
+);
+
+const match = Object.entries(files).find(([path]) => {
+  const name = path
+    .split('/')
+    .pop()
+    ?.replace(/\.[^.]+$/, '');
+  return name === slot.id;
+});
+
+const source = match?.[1].default;
+
+// Decorative images take alt="" — an empty alt is a real instruction to a
+// screen reader ("skip this"), not a missing one.
+const altText = slot.role === 'decorative' ? '' : (alt ?? '');
+
+/**
+ * Two-stop gradient per tone, plus a vine motif. Deterministic, so a given slot
+ * always renders the same stand-in and screenshots stay stable.
+ */
+const TONES = {
+  garden: { from: 'var(--color-season-grow)', to: 'var(--color-leaf)' },
+  harvest: { from: 'var(--color-season-harvest)', to: 'var(--color-clay-soft)' },
+  care: { from: 'var(--color-clay)', to: 'var(--color-clay-soft)' },
+} as const;
+
+const tone = TONES[slot.tone];
+---
+
+<figure
+  class:list={['photo', className]}
+  style={`--photo-aspect:${slot.aspect};--tone-from:${tone.from};--tone-to:${tone.to}`}
+  {...rest}
+>
+  {
+    source ? (
+      <Image
+        src={source}
+        alt={altText}
+        width={width}
+        densities={[1, 2]}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchpriority={eager ? 'high' : undefined}
+        decoding={eager ? 'sync' : 'async'}
+        class="photo__img"
+      />
+    ) : (
+      /*
+        Stand-in. `aria-hidden` because it depicts nothing — announcing a
+        gradient to a screen reader as though it were the photograph would be
+        worse than silence. The surrounding copy carries the meaning until a
+        real image lands.
+      */
+      <div class="photo__placeholder" aria-hidden="true" data-photo-slot={slot.id}>
+        <svg class="photo__motif" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid slice">
+          <path
+            class="photo__vine"
+            d="M-10 110 C 40 110 30 60 70 58 C 110 56 100 12 150 14 C 180 15 195 8 210 4"
+          />
+          <path class="photo__leaf" d="M70 58C58 52 52 40 54 28C66 32 72 45 70 58Z" />
+          <path class="photo__leaf" d="M150 14C140 6 138 -6 143 -16C153 -9 155 4 150 14Z" />
+        </svg>
+      </div>
+    )
+  }
+</figure>
+
+<style>
+  .photo {
+    margin: 0;
+    /* Reserved before anything loads. This is what keeps CLS at zero when a
+       real photo replaces a stand-in. */
+    aspect-ratio: var(--photo-aspect);
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-sand);
+  }
+
+  .photo__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo__placeholder {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-image: linear-gradient(145deg, var(--tone-from), var(--tone-to));
+    /* Muted so a stand-in never competes with real content for attention.
+       It should read as "an image belongs here", not as a design element. */
+    opacity: 0.5;
+  }
+
+  .photo__motif {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: var(--color-cream);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.5;
+  }
+
+  .photo__leaf {
+    fill: var(--color-cream);
+    stroke: none;
+    opacity: 0.7;
+  }
+</style>

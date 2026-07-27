@@ -15,6 +15,7 @@ import { getLocale, localizePath, useTranslations } from '../i18n/utils';
 import { PRIMARY_NAV } from '../nav';
 import Logo from './Logo.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   /** Start transparent over a hero. Pages without a hero pass false. */
@@ -77,9 +78,7 @@ const homeHref = localizePath('/', locale);
         data-drawer-toggle
       >
         <span class="header__toggle-label">{t('nav.menu')}</span>
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M4 7h16M4 12h16M4 17h16"></path>
-        </svg>
+        <Icon name="menu" size={22} />
       </button>
     </div>
   </div>
@@ -93,9 +92,7 @@ const homeHref = localizePath('/', locale);
     <div class="drawer__head">
       <Logo variant="mark" size={32} title={t('a11y.homeLink')} />
       <button class="drawer__close" type="button" aria-label={t('nav.close')} data-drawer-close>
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M6 6l12 12M18 6L6 18"></path>
-        </svg>
+        <Icon name="x" size={22} />
       </button>
     </div>
 
@@ -289,15 +286,6 @@ const homeHref = localizePath('/', locale);
     cursor: pointer;
   }
 
-  .header__toggle svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.75;
-    stroke-linecap: round;
-  }
-
   .header__toggle:hover {
     color: var(--color-clay);
   }
@@ -376,15 +364,6 @@ const homeHref = localizePath('/', locale);
     background: transparent;
     color: var(--color-ink);
     cursor: pointer;
-  }
-
-  .drawer__close svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.75;
-    stroke-linecap: round;
   }
 
   .drawer__list {

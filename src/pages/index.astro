@@ -14,6 +14,7 @@ import Eyebrow from '../components/Eyebrow.astro';
 import Button from '../components/Button.astro';
 import StatCard from '../components/StatCard.astro';
 import Reveal from '../components/Reveal.astro';
+import Photo from '../components/Photo.astro';
 import { getLocale, useTranslations, localizePath } from '../i18n/utils';
 import { ORG, IMPACT } from '../config';
 
@@ -39,6 +40,18 @@ const t = useTranslations(locale);
           {t('cta.volunteer')}
         </Button>
       </div>
+    </Reveal>
+
+    <Reveal delay={120} class="hero-media">
+      <Photo photo="hero" eager />
+    </Reveal>
+  </Section>
+
+  <Section accent="grow" surface="cream" rhythm="tight">
+    <Reveal stagger={80} class="gallery">
+      <Photo photo="garden" alt="Raised vegetable beds in the Homegrown Hearts garden." />
+      <Photo photo="harvest" alt="Freshly picked vegetables in a harvest basket." />
+      <Photo photo="bundle" alt="A complete produce bundle, packed and ready for the clinic." />
     </Reveal>
   </Section>
 
@@ -94,8 +107,21 @@ const t = useTranslations(locale);
     margin-top: 3rem;
   }
 
+  .hero-media {
+    margin-top: 3rem;
+  }
+
+  .gallery {
+    display: grid;
+    gap: 1.25rem;
+  }
+
   @media (min-width: 40rem) {
     .stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .gallery {
       grid-template-columns: repeat(3, 1fr);
     }
   }

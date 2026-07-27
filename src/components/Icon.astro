@@ -1,0 +1,68 @@
+---
+/**
+ * Inline SVG icon.
+ *
+ * Inlined rather than sprited or fetched: there is no extra request, the icon
+ * inherits `currentColor` from its context, and it cannot flash in after paint.
+ * At this icon count a sprite sheet would cost more than it saves.
+ *
+ * Stroke weight, caps and joins are set here and only here, so every icon —
+ * Lucide's or ours — is drawn identically.
+ */
+
+import { ICONS, type IconName } from '../icons';
+
+interface Props {
+  name: IconName;
+  /** Size in px. Icons are drawn on a 24 grid and scale cleanly from 16 to 48. */
+  size?: number;
+  /**
+   * Accessible label. Omit for icons that sit beside real text — a decorative
+   * icon announced next to the words it duplicates just makes a screen reader
+   * say everything twice.
+   */
+  label?: string;
+  class?: string;
+}
+
+const { name, size = 20, label, class: className, ...rest } = Astro.props;
+
+const path = ICONS[name];
+if (!path) {
+  // Types catch this, but a bad dynamic name should fail loudly at build rather
+  // than render an invisible empty <svg>.
+  throw new Error(
+    `Unknown icon "${name}". Add it to scripts/sync-icons.mjs or src/icons/custom.ts.`,
+  );
+}
+---
+
+<svg
+  class:list={['icon', className]}
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  role={label ? 'img' : undefined}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+  {...rest}
+>
+  {label && <title>{label}</title>}
+  <Fragment set:html={path} />
+</svg>
+
+<style>
+  .icon {
+    display: inline-block;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    /* 1.75 rather than Lucide's default 2. The site's type is light and
+       generously spaced; 2 reads chunky against it. */
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* Aligns the icon's optical centre with the text baseline it sits on. */
+    vertical-align: -0.125em;
+  }
+</style>

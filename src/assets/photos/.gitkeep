@@ -1,0 +1,3 @@
+Drop real photographs here, named after the slot ids in src/photos.ts
+(hero.jpg, garden.jpg, harvest.jpg, bundle.jpg, founder-kreeshma.jpg,
+founder-charishya.jpg). See docs/PHOTOS.md. No code change is needed.

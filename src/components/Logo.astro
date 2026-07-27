@@ -7,7 +7,8 @@
  * mark is the payoff of the page's one idea rather than decoration bolted on top.
  *
  * Geometry notes:
- *   - 48x48 grid, same as the icon set (task 1.10), so stroke weights match.
+ *   - 48x48 grid. The icon set (task 1.10) uses Lucide's 24 grid instead, so
+ *     the two are matched optically by eye rather than by a shared unit.
  *   - Every path carries `pathLength="1"`, so a draw-in is
  *     `stroke-dasharray: 1; stroke-dashoffset: 1 -> 0` at any rendered size.
  *     Without it the dash values would have to be re-tuned per size.
@@ -17,7 +18,12 @@
  * The wordmark is live text, not outlined paths. It stays selectable, it is
  * searchable, it costs no extra bytes because Fraunces is already loaded, and
  * it cannot go blurry at any size.
+ *
+ * Path data lives in src/brand.js, shared with the favicon/OG generator, so a
+ * change to the mark reaches every rendered asset instead of only this file.
  */
+
+import { HEART, STEM, LEAF_LEFT, LEAF_RIGHT } from '../brand.js';
 
 interface Props {
   /** `lockup` = mark + wordmark. `mark` = the symbol alone. */
@@ -51,14 +57,6 @@ const {
 const isLockup = variant === 'lockup';
 // In a lockup the wordmark names the brand, so the symbol is decorative.
 const decorative = isLockup || !title;
-
-// Shared geometry. Kept in one place so the solid and outline builds can never
-// drift apart.
-const HEART =
-  'M24 40.8C20.6 37.2 10 30 10 22.8C10 18.2 13.4 15 17.2 15C20.4 15 22.9 17.1 24 20C25.1 17.1 27.6 15 30.8 15C34.6 15 38 18.2 38 22.8C38 30 27.4 37.2 24 40.8Z';
-const STEM = 'M24 19.8C24 16.5 24 14.2 24 12';
-const LEAF_L = 'M24 13.5C21.4 11.8 18.6 10.6 18 6.4C21.8 7.4 23.4 10.2 24 13.5Z';
-const LEAF_R = 'M24 13.5C26.6 11.8 29.4 10.6 30 6.4C26.2 7.4 24.6 10.2 24 13.5Z';
 ---
 
 <span
@@ -80,8 +78,8 @@ const LEAF_R = 'M24 13.5C26.6 11.8 29.4 10.6 30 6.4C26.2 7.4 24.6 10.2 24 13.5Z'
     {/* Order matters for the draw-in: heart first, then the sprout grows out of it. */}
     <path class="mark__heart" d={HEART} pathLength="1"></path>
     <path class="mark__stem" d={STEM} pathLength="1"></path>
-    <path class="mark__leaf mark__leaf--left" d={LEAF_L} pathLength="1"></path>
-    <path class="mark__leaf mark__leaf--right" d={LEAF_R} pathLength="1"></path>
+    <path class="mark__leaf mark__leaf--left" d={LEAF_LEFT} pathLength="1"></path>
+    <path class="mark__leaf mark__leaf--right" d={LEAF_RIGHT} pathLength="1"></path>
   </svg>
 
   {isLockup && <span class="wordmark">Homegrown Hearts</span>}

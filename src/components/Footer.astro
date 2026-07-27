@@ -17,6 +17,7 @@ import { PRIMARY_NAV } from '../nav';
 import { ORG, CONTACT, ADVISOR, SOCIAL, has } from '../config';
 import Logo from './Logo.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
+import Icon from './Icon.astro';
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -36,6 +37,7 @@ const year = new Date().getFullYear();
         <Logo variant="lockup" size={36} />
       </a>
       <p class="footer__place">
+        <Icon name="map-pin" size={16} />
         {ORG.location.town}, {ORG.location.county}, {ORG.location.stateCode}
       </p>
     </div>
@@ -59,7 +61,10 @@ const year = new Date().getFullYear();
       <h2 class="footer__heading">{t('nav.contact')}</h2>
       <ul class="footer__list">
         <li>
-          <a class="footer__link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+          <a class="footer__link" href={`mailto:${CONTACT.email}`}>
+            <Icon name="mail" size={16} />
+            {CONTACT.email}
+          </a>
         </li>
         {
           has.instagram() && (
@@ -70,6 +75,7 @@ const year = new Date().getFullYear();
                 target="_blank"
                 rel="noopener noreferrer"
               >
+                <Icon name="instagram" size={16} />
                 {t('footer.followUs')}
               </a>
             </li>
@@ -107,10 +113,12 @@ const year = new Date().getFullYear();
   <div class="footer__legal">
     <p class="footer__status">{t('legal.status')}</p>
     <p class="footer__privacy">{t('legal.privacy')}</p>
-    <p class="footer__copy">
-      {`© ${year} ${ORG.name}.`}
-      {t('footer.rights')}
-    </p>
+    {
+      /* One expression, not two. Adjacent JSX expressions separated by a
+        newline collapse the whitespace between them, which silently produced
+        "Homegrown Hearts.All rights reserved." */
+    }
+    <p class="footer__copy">{`© ${year} ${ORG.name}. ${t('footer.rights')}`}</p>
   </div>
 </footer>
 
@@ -149,6 +157,9 @@ const year = new Date().getFullYear();
   }
 
   .footer__place {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
     margin-top: 0.75rem;
     font-size: var(--text-small);
     color: var(--color-ink-muted);
@@ -176,6 +187,7 @@ const year = new Date().getFullYear();
   .footer__link {
     display: inline-flex;
     align-items: center;
+    gap: 0.4rem;
     /* 44px targets in the footer too — this is where thumbs land on mobile. */
     min-height: 44px;
     font-size: var(--text-small);
