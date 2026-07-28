@@ -1,0 +1,38 @@
+---
+/**
+ * Every page except the homepage, in every locale, from one file.
+ *
+ * `getStaticPaths` walks the declared PAGES × LOCALES, so adding a route is
+ * adding a YAML file in both languages plus one entry in `PAGES`. There is no
+ * per-page component to forget to duplicate for Spanish, which is the failure
+ * mode a set of hand-written route files invites.
+ *
+ * The homepage is excluded: it has a bespoke layout in HomePage.astro and is
+ * served by index.astro (and es/index.astro).
+ */
+
+import ContentPage from '../components/ContentPage.astro';
+import { PAGES } from '../copy';
+import { LOCALES, DEFAULT_LOCALE } from '../config';
+
+export function getStaticPaths() {
+  const paths = [];
+
+  for (const locale of LOCALES) {
+    for (const page of PAGES) {
+      if (page === 'home') continue;
+
+      // The default locale is unprefixed (`prefixDefaultLocale: false`), so
+      // `/partners/` and `/es/partners/`.
+      const slug = locale === DEFAULT_LOCALE ? page : `${locale}/${page}`;
+      paths.push({ params: { slug }, props: { page, locale } });
+    }
+  }
+
+  return paths;
+}
+
+const { page, locale } = Astro.props;
+---
+
+<ContentPage page={page} locale={locale} />

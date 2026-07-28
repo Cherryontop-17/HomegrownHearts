@@ -1,0 +1,160 @@
+---
+/**
+ * The delivery updates log on /impact.
+ *
+ * Reads the `updates` collection, newest first. Prefers entries in the reader's
+ * language and falls back to showing everything if that language has none —
+ * an empty page is a worse outcome than a page with an entry in the other
+ * language, which a reader can at least see the date and shape of.
+ *
+ * The empty state is deliberately plain and honest. A new project with no
+ * deliveries yet should say so; inventing a "coming soon" flourish would be the
+ * first small dishonesty on a site whose whole argument is that its numbers are
+ * real.
+ */
+
+import { getCollection, render } from 'astro:content';
+import Reveal from './Reveal.astro';
+import type { Locale } from '../config';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+
+const all = await getCollection('updates');
+
+const inLocale = all.filter((entry) => entry.data.locale === locale);
+const shown = (inLocale.length > 0 ? inLocale : all).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+// Rendered here rather than in the template so the whole list is resolved
+// before anything paints.
+const entries = await Promise.all(
+  shown.map(async (entry) => ({
+    entry,
+    Content: (await render(entry)).Content,
+  })),
+);
+
+const dateFormat = new Intl.DateTimeFormat(locale === 'es' ? 'es-US' : 'en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const EMPTY = {
+  en: 'No deliveries yet. The first one will be logged here on the day it happens.',
+  es: 'Todavía no hay entregas. La primera se registrará aquí el día que ocurra.',
+};
+
+const BUNDLES = { en: 'bundles', es: 'entregas' };
+---
+
+{
+  entries.length === 0 ? (
+    <p class="updates__empty">{EMPTY[locale]}</p>
+  ) : (
+    <Reveal as="ol" stagger={80} class="updates">
+      {entries.map(({ entry, Content }) => (
+        <li class="updates__item">
+          {/* `datetime` gives the machine-readable form; the visible text is
+              formatted for the reader's locale. */}
+          <time class="updates__date" datetime={entry.data.date.toISOString().slice(0, 10)}>
+            {dateFormat.format(entry.data.date)}
+          </time>
+          <h3 class="updates__title">{entry.data.title}</h3>
+          {typeof entry.data.bundles === 'number' && (
+            <p class="updates__count">
+              {entry.data.bundles} {BUNDLES[locale]}
+            </p>
+          )}
+          <div class="updates__body">
+            <Content />
+          </div>
+        </li>
+      ))}
+    </Reveal>
+  )
+}
+
+<style>
+  .updates__empty {
+    margin-top: 1.5rem;
+    max-width: 56ch;
+    font-size: var(--text-body);
+    color: var(--color-ink-muted);
+  }
+
+  .updates {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 2.5rem 0 0;
+    max-width: 62ch;
+  }
+
+  .updates__item {
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--color-line);
+  }
+
+  /* A node on the timeline — the vine idea again, at list scale. */
+  .updates__item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 0.45rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--accent, var(--color-clay));
+  }
+
+  .updates__date {
+    display: block;
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .updates__title {
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    color: var(--color-clay);
+    text-wrap: balance;
+  }
+
+  .updates__count {
+    margin-top: 0.25rem;
+    font-size: var(--text-small);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink);
+  }
+
+  .updates__body {
+    margin-top: 0.6rem;
+    font-size: var(--text-body);
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+  }
+
+  .updates__body :global(p + p) {
+    margin-top: 0.8rem;
+  }
+
+  .updates__body :global(a) {
+    color: var(--color-clay);
+    text-underline-offset: 0.2em;
+  }
+</style>

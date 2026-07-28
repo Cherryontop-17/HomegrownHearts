@@ -82,6 +82,22 @@ const style = [
       transform var(--duration-base) var(--ease-out-gentle) var(--reveal-delay, 0ms);
   }
 
+  /*
+    Already on screen when the page loaded. Shown with no transition at all —
+    NOT merely a faster one. Two reasons: animating content the reader is
+    already looking at reads as a glitch and costs LCP, and on a short page
+    every above-the-fold section would otherwise animate at once, which is how
+    /impact and /contact were putting four elements in motion simultaneously
+    against a budget of two. Caught by `npm run check:motion`.
+  */
+  :global(.js) .reveal.is-instant,
+  :global(.js) .reveal.is-instant > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+
   /* Stagger applies to the children, so the container itself must not fade. */
   :global(.js) .reveal--stagger {
     opacity: 1;
@@ -161,9 +177,11 @@ const style = [
         }
       },
       {
-        // Fire slightly before the element reaches the viewport so the motion
-        // finishes as the reader arrives rather than starting then.
-        rootMargin: '0px 0px -10% 0px',
+        // Negative bottom margin: reveal when the element is properly ON
+        // screen, not when it first peeks over the fold. At -10% a fast scroll
+        // brought three sections into view together and animated all of them;
+        // -18% spaces them out without the reader ever seeing an unrevealed box.
+        rootMargin: '0px 0px -18% 0px',
         threshold: 0.01,
       },
     );
@@ -173,7 +191,7 @@ const style = [
       // reader is already looking at is jarring, and it costs LCP.
       const box = el.getBoundingClientRect();
       if (box.top < window.innerHeight && box.bottom > 0) {
-        el.classList.add('is-revealed');
+        el.classList.add('is-instant', 'is-revealed');
         return;
       }
       observer.observe(el);

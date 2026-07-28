@@ -20,8 +20,21 @@ import { launch, evaluate, goto } from './lib/cdp.mjs';
 
 const BASE = process.argv[2] ?? 'http://localhost:4321';
 
-/** Both locales. ES is the one that breaks; EN is the control. */
-const ROUTES = ['/', '/es/'];
+/** Every route, both locales. ES is where a layout breaks first. */
+const ROUTES = [
+  '/',
+  '/partners/',
+  '/about/',
+  '/get-involved/',
+  '/impact/',
+  '/contact/',
+  '/es/',
+  '/es/partners/',
+  '/es/about/',
+  '/es/get-involved/',
+  '/es/impact/',
+  '/es/contact/',
+];
 
 /** The widths the QA tasks name, plus 320 — the narrowest phone still in use. */
 const WIDTHS = [320, 375, 768, 1024, 1440];

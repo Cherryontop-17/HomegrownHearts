@@ -1,0 +1,106 @@
+---
+/**
+ * 404.
+ *
+ * Served for any unmatched URL, in either language, which is the constraint
+ * that shapes it: a static error page cannot know the reader's locale, because
+ * the URL that produced it was by definition not one of ours. So this page is
+ * **bilingual on its face** — English first, Spanish immediately after, with a
+ * route home in both. Guessing a language here and getting it wrong strands
+ * exactly the reader who is already lost.
+ *
+ * Kept out of the nav, out of the sitemap, and marked noindex. It is on-brand
+ * rather than jokey: someone arriving here has already had something go wrong,
+ * and cleverness at that moment reads as indifference.
+ */
+
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import Button from '../components/Button.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Logo from '../components/Logo.astro';
+import { ui } from '../i18n/ui';
+---
+
+<Base
+  title={ui.en['error.404.title']}
+  description="This page does not exist. Find your way back to Homegrown Hearts."
+  noindex
+  vine={false}
+>
+  <Section accent="grow" surface="cream" class="notfound">
+    <div class="notfound__inner">
+      <Logo variant="mark" size={56} title="Homegrown Hearts" class="notfound__mark" />
+
+      <div class="notfound__lang" lang="en-US">
+        <Eyebrow>404</Eyebrow>
+        <h1>{ui.en['error.404.title']}</h1>
+        <p class="lead">{ui.en['error.404.body']}</p>
+        <div class="actions">
+          <Button href="/" size="lg">{ui.en['error.backHome']}</Button>
+        </div>
+      </div>
+
+      <hr class="notfound__rule" />
+
+      <div class="notfound__lang" lang="es-US">
+        <h2>{ui.es['error.404.title']}</h2>
+        <p class="lead">{ui.es['error.404.body']}</p>
+        <div class="actions">
+          <Button href="/es/" variant="secondary" size="lg">{ui.es['error.backHome']}</Button>
+        </div>
+      </div>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .notfound__inner {
+    max-width: 42rem;
+    /* Vertically settled rather than pinned to the top — an error page with a
+       header and footer either side needs the middle to feel deliberate. */
+    padding-block: clamp(1rem, 6vh, 4rem);
+  }
+
+  .notfound__mark {
+    color: var(--color-clay);
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+    letter-spacing: var(--text-h1--letter-spacing);
+    color: var(--color-clay);
+    text-wrap: balance;
+  }
+
+  /* The Spanish heading is a peer of the English one in meaning, but the page
+     may only have one h1. It is styled to match, not to look secondary. */
+  h2 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+    letter-spacing: var(--text-h1--letter-spacing);
+    color: var(--color-clay);
+    text-wrap: balance;
+  }
+
+  .lead {
+    margin-top: 1rem;
+    max-width: 46ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-ink-muted);
+  }
+
+  .actions {
+    margin-top: 1.75rem;
+  }
+
+  .notfound__rule {
+    height: 1px;
+    border: 0;
+    background-color: var(--color-line);
+    margin-block: 3rem;
+  }
+</style>

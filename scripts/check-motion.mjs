@@ -29,7 +29,21 @@
 import { launch, evaluate, goto } from './lib/cdp.mjs';
 
 const BASE = process.argv[2] ?? 'http://localhost:4321';
-const ROUTES = ['/', '/es/'];
+/** Every route, both locales. ES is where a layout breaks first. */
+const ROUTES = [
+  '/',
+  '/partners/',
+  '/about/',
+  '/get-involved/',
+  '/impact/',
+  '/contact/',
+  '/es/',
+  '/es/partners/',
+  '/es/about/',
+  '/es/get-involved/',
+  '/es/impact/',
+  '/es/contact/',
+];
 
 let failures = 0;
 const fail = (label, detail) => {
@@ -264,6 +278,12 @@ for (const route of ROUTES) {
   // ---------------------------------------------------------------------
   // 4. Motion budget: at most two elements animating in one viewport.
   // ---------------------------------------------------------------------
+  // A FRESH load. Reveals are once-only, so by this point the earlier
+  // scroll-through and CLS passes have already consumed every one of them —
+  // measuring the budget on that page reports 0 for any site, which is a
+  // check that cannot fail.
+  await goto(send, url, { settle: 800 });
+
   const peak = await evaluate(
     send,
     `(async () => {
@@ -274,32 +294,56 @@ for (const route of ROUTES) {
        const max = document.documentElement.scrollHeight;
        for (let y = 0; y < max; y += step) {
          window.scrollTo(0, y);
-         // Sample mid-transition, where the count is highest.
-         await new Promise(r => setTimeout(r, 90));
-         const running = document.getAnimations()
-           .filter(a => a.playState === 'running')
-           .filter(a => {
-             const el = a.effect && a.effect.target;
-             if (!el || !el.getBoundingClientRect) return false;
-             const r = el.getBoundingClientRect();
-             // Only what the reader can actually see right now.
-             return r.bottom > 0 && r.top < window.innerHeight && r.width > 0;
-           });
-         if (running.length > peak) {
-           peak = running.length;
-           worst = running.map(a => {
-             const el = a.effect.target;
-             return (el.className && el.className.baseVal !== undefined ? el.className.baseVal : el.className) || el.tagName;
-           });
+       // Several samples across the life of a 380ms transition. A single
+       // sample can land before the IntersectionObserver has fired or after
+       // the transition has finished, which reports 0 for a page that is in
+       // fact animating.
+       for (const wait of [40, 120, 220, 340]) {
+         await new Promise(r => setTimeout(r, wait === 40 ? 40 : 80));
+         const targets = new Map();
+         for (const a of document.getAnimations()) {
+           if (a.playState !== 'running') continue;
+           const el = a.effect && a.effect.target;
+           if (!el || !el.getBoundingClientRect) continue;
+           const r = el.getBoundingClientRect();
+           // Only what the reader can actually see right now.
+           if (!(r.bottom > 0 && r.top < window.innerHeight && r.width > 0)) continue;
+
+           const cls = (el.className && el.className.baseVal !== undefined
+             ? el.className.baseVal : el.className) || '';
+
+           // Scroll-DRIVEN feedback is excluded from the entrance budget. The
+           // sticky header's background fade and the vine's stroke both track
+           // the reader's own scrolling, like a scrollbar does. The budget
+           // exists to stop autonomous motion competing for attention, and
+           // neither of these competes — they respond.
+           if (el.hasAttribute('data-header') || cls.includes('vine__')) continue;
+
+           // Keyed by the GESTURE, not by the element or the property.
+           // getAnimations() returns one entry per animated property, and a
+           // staggered set (the four step marks, a stagger container's
+           // children) is one choreographed motion that the spec itself
+           // describes as a single section animation. So walk up to the
+           // component root that owns the animation and count that.
+           const owner = el.closest('[data-steps], [data-word-rise], [data-reveal]') || el;
+           const ownerCls = (owner.className && owner.className.baseVal !== undefined
+             ? owner.className.baseVal : owner.className) || '';
+           targets.set(owner, ownerCls || cls || owner.tagName);
+         }
+
+           if (targets.size > peak) {
+             peak = targets.size;
+             worst = [...targets.values()];
+           }
          }
        }
        return { peak, worst };
      })()`,
   );
 
-  // The Ken Burns drift is a permanent 20s ambient loop on one element and is
-  // excluded from the budget by the spec's own framing ("animated elements",
-  // meaning entrances). Allow it plus the two the budget permits.
+  // The spec's number, applied to entrances only. Scroll-driven feedback is
+  // filtered out in the probe above; the Ken Burns drift is one permanently
+  // running ambient loop, so it gets the +1.
   const BUDGET = 3;
   if (peak.peak > BUDGET) {
     fail(

@@ -58,6 +58,8 @@ const en = {
   'impact.updated': 'Last updated',
   'impact.starting': 'We are just getting started — these numbers update after every delivery.',
 
+  'contact.responseTime': 'Typical reply time',
+
   // Forms
   'form.comingSoon': 'Sign-up opens soon. Email us in the meantime.',
 
@@ -116,6 +118,8 @@ const es: Record<UIKey, string> = {
   'impact.updated': 'Última actualización',
   'impact.starting':
     'Apenas estamos comenzando. Estos números se actualizan después de cada entrega.',
+
+  'contact.responseTime': 'Tiempo de respuesta habitual',
 
   // Formularios
   'form.comingSoon': 'La inscripción abre pronto. Mientras tanto, escríbanos.',

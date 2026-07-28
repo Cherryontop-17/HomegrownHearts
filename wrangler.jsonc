@@ -7,6 +7,11 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
+    // Serve our own on-brand 404.html for unmatched URLs instead of
+    // Cloudflare's bare default. Without this a mistyped link — or a stale
+    // link in an outreach email — lands on an unbranded error page, which is
+    // the worst possible first impression for a clinic reader.
+    "not_found_handling": "404-page",
   },
   "observability": {
     "enabled": true,

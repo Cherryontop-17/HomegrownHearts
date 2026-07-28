@@ -77,4 +77,37 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { pages };
+/**
+ * Delivery updates for /impact.
+ *
+ * Markdown, one file per update, named `YYYY-MM-DD-slug.md`. Founders write
+ * these after a delivery without touching a component — this is the one part of
+ * the site expected to change monthly, and docs/BRIEF.md names "site launches
+ * then goes stale" as a real risk.
+ *
+ * Unlike `pages`, updates are NOT parity-checked. An update is a real event
+ * with a date; forcing a Spanish translation of every one would either block
+ * publishing or produce machine translation nobody reviewed. Each entry
+ * declares its own `locale`, and the log shows what exists in the reader's
+ * language, falling back to showing all of them rather than an empty page.
+ */
+const updates = defineCollection({
+  // `[^_]*` so an `_README.md` sitting in the folder for the founders' benefit
+  // is not loaded as an entry and does not fail schema validation.
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/updates' }),
+  schema: z.object({
+    /** Shown as the entry heading. */
+    title: z.string().min(3).max(90),
+    /** Delivery date. Drives ordering. */
+    date: z.coerce.date(),
+    locale: z.enum(['en', 'es']).default('en'),
+    /**
+     * Optional honest counts for this delivery. These do NOT feed the totals in
+     * config.ts — those are still updated by hand, so the two can be compared
+     * and a mistake in either is visible.
+     */
+    bundles: z.number().int().nonnegative().optional(),
+  }),
+});
+
+export const collections = { pages, updates };

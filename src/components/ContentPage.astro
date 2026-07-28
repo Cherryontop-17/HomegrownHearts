@@ -1,0 +1,273 @@
+---
+/**
+ * Generic renderer for every page except the homepage.
+ *
+ * One component drives /partners, /about, /get-involved, /impact, and /contact
+ * in both languages. Sections render from their shape — a section with `items`
+ * becomes cards, a section with only `body` becomes prose — so a new section in
+ * a YAML file appears on the page with no code change, which is the whole point
+ * of the content collections.
+ *
+ * A handful of sections need real behaviour rather than text (the forms, the
+ * impact numbers, the contact address). Those are keyed by section `id` in the
+ * switch below. Everything else falls through to the generic path.
+ */
+
+import Base from '../layouts/Base.astro';
+import Section from './Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Button from './Button.astro';
+import StatCard from './StatCard.astro';
+import Reveal from './Reveal.astro';
+import Cards from './Cards.astro';
+import Icon from './Icon.astro';
+import UpdatesLog from './UpdatesLog.astro';
+
+import { getCopy, type PageId } from '../copy';
+import { localizePath, useTranslations } from '../i18n/utils';
+import { CONTACT, IMPACT, FORMS, has } from '../config';
+import type { Locale } from '../config';
+
+interface Props {
+  page: PageId;
+  locale: Locale;
+}
+
+const { page, locale }: Props = Astro.props;
+
+const copy = await getCopy(page, locale);
+const t = useTranslations(locale);
+
+/**
+ * Surfaces alternate down the page so sections separate without rules, and the
+ * seasonal accent drifts grow -> harvest -> care. Derived from position rather
+ * than hard-coded per page, so reordering a YAML file cannot produce two
+ * identical bands in a row.
+ */
+const SURFACES = ['cream', 'sand'] as const;
+const ACCENTS = ['grow', 'harvest', 'care'] as const;
+
+const impactStats = [
+  { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
+  { value: IMPACT.mothersServed, label: t('impact.mothers') },
+  { value: IMPACT.volunteers, label: t('impact.volunteers') },
+];
+
+/** Volunteer and supply forms. Config-driven — real URLs are a one-line change. */
+const formLinks = [
+  { href: FORMS.volunteer, label: t('cta.volunteer'), ready: has.volunteerForm() },
+  { href: FORMS.supplies, label: t('cta.donate'), ready: has.suppliesForm() },
+];
+---
+
+<Base title={copy.title} description={copy.description}>
+  <Section accent="grow" surface="cream" class="page-hero">
+    {copy.hero?.eyebrow && <Eyebrow>{copy.hero.eyebrow}</Eyebrow>}
+    {copy.hero?.title && <h1>{copy.hero.title}</h1>}
+    <Reveal delay={80}>
+      {copy.hero?.lead && <p class="lead">{copy.hero.lead}</p>}
+      {
+        (copy.hero?.ctas ?? []).length > 0 && (
+          <div class="actions">
+            {(copy.hero?.ctas ?? []).map((c) => (
+              <Button
+                href={c.href.startsWith('#') ? c.href : localizePath(c.href, locale)}
+                variant={c.primary ? 'primary' : 'secondary'}
+                size="lg"
+                external={c.external}
+              >
+                {c.label}
+              </Button>
+            ))}
+          </div>
+        )
+      }
+    </Reveal>
+  </Section>
+
+  {
+    copy.sections.map((s, i) => (
+      <Section
+        id={s.id}
+        surface={SURFACES[i % SURFACES.length]}
+        accent={ACCENTS[Math.min(i, ACCENTS.length - 1)]}
+      >
+        <Reveal>
+          {s.eyebrow && <Eyebrow>{s.eyebrow}</Eyebrow>}
+          {s.title && <h2>{s.title}</h2>}
+          {(s.body ?? []).map((p) => (
+            <p class="lead">{p}</p>
+          ))}
+        </Reveal>
+
+        {/* --- Sections that do something, keyed by id ------------------- */}
+
+        {s.id === 'numbers' && (
+          <Reveal stagger={80} class="stats">
+            {impactStats.map((stat) => (
+              <StatCard value={String(stat.value)} label={stat.label} countUp />
+            ))}
+          </Reveal>
+        )}
+
+        {s.id === 'updates' && <UpdatesLog locale={locale} />}
+
+        {s.id === 'reach' && (
+          <Reveal class="contact">
+            <a class="contact__email" href={`mailto:${CONTACT.email}`}>
+              <Icon name="mail" size={20} />
+              {CONTACT.email}
+            </a>
+            <p class="contact__meta">
+              {t('contact.responseTime')}: {CONTACT.responseTime}
+            </p>
+          </Reveal>
+        )}
+
+        {s.id === 'forms' && (
+          <Reveal class="actions">
+            {formLinks.map((form) =>
+              form.ready && form.href ? (
+                <Button href={form.href} variant="primary" size="lg" external>
+                  {form.label}
+                </Button>
+              ) : null,
+            )}
+            {/* Every form still a placeholder: say so rather than link nowhere. */}
+            {!has.volunteerForm() && !has.suppliesForm() && (
+              <p class="note note--inline">{t('form.comingSoon')}</p>
+            )}
+          </Reveal>
+        )}
+
+        {/* --- Generic: items become cards ------------------------------- */}
+        {(s.items ?? []).length > 0 && s.id !== 'numbers' && (
+          <Cards
+            items={[...(s.items ?? [])]}
+            columns={(s.items ?? []).length === 4 ? 4 : (s.items ?? []).length === 2 ? 2 : 3}
+            variant={
+              s.id === 'founders' || s.id === 'method' || s.id === 'reach' ? 'plain' : 'raised'
+            }
+            class="page-cards"
+          />
+        )}
+
+        {s.note && <p class="note">{s.note}</p>}
+
+        {(s.ctas ?? []).length > 0 && s.id !== 'forms' && (
+          <Reveal class="actions">
+            {(s.ctas ?? []).map((c) => (
+              <Button
+                href={c.href.startsWith('#') ? c.href : localizePath(c.href, locale)}
+                variant={c.primary ? 'primary' : 'secondary'}
+                size="lg"
+                external={c.external}
+              >
+                {c.label}
+              </Button>
+            ))}
+          </Reveal>
+        )}
+      </Section>
+    ))
+  }
+</Base>
+
+<style>
+  h1 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+    letter-spacing: var(--text-h1--letter-spacing);
+    color: var(--color-clay);
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+    letter-spacing: var(--text-h2--letter-spacing);
+    color: var(--color-clay);
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+
+  .lead {
+    margin-top: 1.25rem;
+    max-width: 60ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-ink-muted);
+  }
+
+  .note {
+    margin-top: 2rem;
+    max-width: 62ch;
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--color-ink-muted);
+    border-left: 2px solid var(--color-line-strong);
+    padding-left: 1rem;
+  }
+
+  .note--inline {
+    margin-top: 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem;
+    margin-top: 2rem;
+  }
+
+  .page-cards {
+    margin-top: 2.5rem;
+  }
+
+  .stats {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+
+  .contact {
+    margin-top: 2rem;
+  }
+
+  .contact__email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    /* An email address is a single unbreakable token. At h3 size this one was
+       302px wide and pushed a 320px viewport into horizontal scroll, so it
+       scales down on narrow screens and is allowed to break if it still will
+       not fit. A wrapped address is fine; a scrolling page is not. */
+    font-size: clamp(1.0625rem, 4.6vw, 1.625rem);
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    color: var(--color-clay);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-line-strong);
+    padding-bottom: 0.15rem;
+    transition: border-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .contact__email:hover {
+    border-bottom-color: currentColor;
+  }
+
+  .contact__meta {
+    margin-top: 0.75rem;
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+  }
+
+  @media (min-width: 40rem) {
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

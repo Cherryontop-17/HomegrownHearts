@@ -32,6 +32,8 @@ export default defineConfig({
 
   integrations: [
     sitemap({
+      // 404 is noindex; submitting it would be asking Google to crawl an error.
+      filter: (page) => !page.includes('/404'),
       i18n: {
         defaultLocale: DEFAULT_LOCALE,
         locales: { en: 'en-US', es: 'es-US' },

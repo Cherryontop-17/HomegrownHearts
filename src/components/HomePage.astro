@@ -141,19 +141,23 @@ const impactStats = [
 
   {/* --- 4.4 What is in a bundle ---------------------------------------- */}
   <Section accent="harvest" surface="sand" id={bundle.id}>
-    <div class="split">
-      <Reveal class="split__text">
+    {
+      /* One Reveal for the whole unit, staggered internally. Two sibling
+        Reveals made a single section enter as two competing gestures. */
+    }
+    <Reveal stagger={120} class="split">
+      <div class="split__text">
         {bundle.eyebrow && <Eyebrow>{bundle.eyebrow}</Eyebrow>}
         {bundle.title && <h2>{bundle.title}</h2>}
         {(bundle.body ?? []).map((p) => <p class="lead">{p}</p>)}
         {/* Rule 4: pending approval is stated on the page, not just in a doc. */}
         {bundle.note && <p class="note">{bundle.note}</p>}
-      </Reveal>
+      </div>
 
-      <Reveal delay={100} class="split__media">
+      <div class="split__media">
         <Photo photo="bundle" alt={bundle.title ?? ''} />
-      </Reveal>
-    </div>
+      </div>
+    </Reveal>
   </Section>
 
   {/* --- 4.5 Founders ---------------------------------------------------- */}
