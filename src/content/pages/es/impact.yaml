@@ -1,0 +1,41 @@
+title: Nuestro impacto
+description: Cifras honestas de Homegrown Hearts en el condado de Union, Carolina del Norte, actualizadas a mano después de cada entrega. Los ceros incluidos.
+
+hero:
+  eyebrow: Nuestro impacto
+  title: Las cifras, tal como están.
+  lead: >-
+    Se actualizan a mano después de cada entrega. Cuando sean pequeñas, lo dirán.
+
+sections:
+  - id: numbers
+    eyebrow: Hasta hoy
+    title: Dónde estamos hoy.
+    body:
+      - >-
+        Apenas estamos comenzando. Estas cifras son bajas porque el trabajo es
+        nuevo, y redondearlas hacia arriba sería la forma más rápida de perder a
+        una institución que decidiera comprobarlas.
+
+  - id: method
+    eyebrow: Cómo contamos
+    title: Qué significa cada cifra.
+    items:
+      - title: Entregas realizadas
+        body: >-
+          Una entrega es una bolsa puesta en manos de la clínica asociada.
+          Contamos bolsas, no libras.
+      - title: Madres atendidas
+        body: >-
+          La clínica nos informa únicamente una cantidad. Nunca recibimos nombres
+          ni ningún otro dato.
+      - title: Voluntarios
+        body: Personas que han trabajado al menos un turno con nosotras.
+
+  - id: updates
+    eyebrow: Novedades
+    title: Qué ha pasado últimamente.
+    body:
+      - >-
+        Las notas de cada entrega aparecerán aquí: qué había de temporada, cuánto
+        salió y qué aprendimos.

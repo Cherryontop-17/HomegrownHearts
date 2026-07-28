@@ -22,7 +22,10 @@
       "PowerShell($sp = \"C:\\\\Users\\\\rajya\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--dev-code-homegrownhearts\\\\3a71ca3e-dd42-4272-a212-d96c62337acf\\\\scratchpad\"; $chrome = \"C:\\\\Program Files\\\\Google\\\\Chrome\\\\Application\\\\chrome.exe\"; & $chrome --headless=new --disable-gpu --no-sandbox --hide-scrollbars --virtual-time-budget=5000 --window-size=1440,1500 --user-data-dir=\"$sp\\\\chrome-profile\" \"--screenshot=$sp\\\\desktop-en.png\" \"http://localhost:4321/\"; Write-Output \"exit=$LASTEXITCODE\"; Get-ChildItem \"$sp\\\\desktop-en.png\" -ErrorAction SilentlyContinue | Select-Object Name,Length)",
       "Bash(python -)",
       "Bash(node shot.mjs \"http://localhost:4321/\" motion-desktop.png 1400 2600)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(rm -rf dist)",
+      "Bash(npx astro *)",
+      "Bash(grep -v \"^$\")"
     ]
   }
 }

@@ -1,0 +1,73 @@
+title: Quiénes somos
+description: Homegrown Hearts es una iniciativa estudiantil en Waxhaw, Carolina del Norte, que cultiva paquetes gratuitos de verduras para madres a través de una clínica.
+
+hero:
+  eyebrow: Quiénes somos
+  title: Un huerto, dos estudiantes y una clínica.
+  lead: >-
+    Homegrown Hearts nació en Waxhaw, Carolina del Norte, con una idea sencilla:
+    cultivar verduras y darlas a familias que las necesitan, a través de quienes
+    ya saben quiénes son esas familias.
+
+sections:
+  - id: mission
+    eyebrow: Qué hacemos
+    title: Cultivamos alimentos y los regalamos.
+    body:
+      - >-
+        Cuidamos un huerto pequeño durante la temporada de cultivo de Carolina
+        del Norte, cosechamos la misma mañana de la entrega, lavamos, empacamos y
+        llevamos los paquetes a una clínica asociada. La clínica decide quién los
+        recibe.
+      - >-
+        No somos un banco de alimentos ni un servicio de entregas. Cultivamos una
+        cantidad modesta de comida, bien hecha, y la ponemos en manos de quienes
+        están mejor situados que nosotras para hacerla llegar.
+
+  - id: founders
+    eyebrow: Fundadoras
+    title: Quién lleva esto adelante.
+    items:
+      - title: Kreeshma Vasikarla — Misión y enlace médico
+        body: >-
+          Coordina el contacto con clínicas, la lista de verduras y el protocolo
+          de inocuidad. Si usted trabaja en una clínica, Kreeshma será quien le
+          escriba.
+      - title: Charishya Yarram — Operaciones y tecnología
+        body: >-
+          Coordina el calendario de cultivo, la logística de voluntarios, las
+          rutas de entrega y este sitio web.
+
+  - id: advisor
+    eyebrow: Supervisión
+    title: Trabajamos con una persona adulta responsable.
+    body:
+      - >-
+        Ambas fundadoras son estudiantes de preparatoria. Una persona adulta
+        responsable supervisa lo que cultivamos, cómo lo manejamos y lo que
+        entregamos, y está disponible para cualquier institución que quiera
+        hablar con ella.
+
+  - id: status
+    eyebrow: Situación legal
+    title: Qué somos, con precisión.
+    body:
+      - >-
+        Homegrown Hearts es una iniciativa estudiantil sin constitución legal. No
+        tiene exención de impuestos ni cuenta bancaria.
+      - >-
+        Solo aceptamos donaciones de materiales. No aceptamos dinero de nadie,
+        por ningún motivo. Si desea apoyar con algo material, la lista está en la
+        página Participe.
+
+  - id: timeline
+    eyebrow: En qué punto estamos
+    title: Al principio, y lo decimos.
+    body:
+      - >-
+        El huerto está sembrado, el protocolo de inocuidad está escrito y estamos
+        conversando con clínicas del condado de Union, Carolina del Norte, y sus
+        alrededores. Nuestras primeras entregas todavía no ocurren.
+      - >-
+        Preferimos que una institución lo lea aquí y no que lo descubra en una
+        reunión.

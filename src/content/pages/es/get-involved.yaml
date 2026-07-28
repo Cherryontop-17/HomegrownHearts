@@ -1,0 +1,75 @@
+title: Participe
+description: Sea voluntario en Homegrown Hearts en Waxhaw, Carolina del Norte, o done materiales de huerto. Solo aceptamos donaciones de materiales, nunca dinero.
+
+hero:
+  eyebrow: Participe
+  title: Venga a cultivar algo.
+  lead: >-
+    Todo lo que entregamos lo cultivan, cosechan, lavan, empacan y llevan
+    voluntarios. Hay lugar para más.
+
+sections:
+  - id: volunteer
+    eyebrow: Voluntariado
+    title: En qué consiste ser voluntario.
+    body:
+      - >-
+        Sobre todo, mañanas en un huerto en Waxhaw. No hace falta experiencia y
+        nadie le va a examinar de nada.
+    items:
+      - icon: sprout
+        title: Días de cultivo
+        body: >-
+          Sembrar, deshierbar, regar y cubrir con mantillo durante la temporada.
+          Un par de horas cada vez.
+      - icon: basket
+        title: Mañanas de cosecha y empaque
+        body: >-
+          Cosechar, lavar y empacar los días de entrega. Es el turno con más
+          trabajo y el más útil.
+      - icon: calendar
+        title: Transporte
+        body: >-
+          Llevar los paquetes del huerto a la clínica. Necesita licencia, carro y
+          alrededor de una hora.
+    note: >-
+      Los voluntarios menores de 18 años necesitan la autorización de su padre,
+      madre o tutor. Toda persona reconocible en una fotografía de este sitio dio
+      su consentimiento para aparecer.
+
+  - id: supplies
+    eyebrow: Donar materiales
+    title: Qué nos sirve de verdad.
+    body:
+      - >-
+        Solo aceptamos donaciones de materiales, nunca dinero, y no por modestia.
+        No tenemos figura legal, ni tesorería, ni cuenta bancaria, así que
+        aceptar efectivo nos crearía un problema real en lugar de un atajo.
+    items:
+      - icon: seed
+        title: Semillas y plántulas
+        body: Variedades de hortalizas aptas para el Piedmont de Carolina del Norte.
+      - icon: leaf
+        title: Tierra, composta y mantillo
+        body: En bolsa o a granel. Es nuestro gasto recurrente más grande.
+      - icon: basket
+        title: Bolsas y envases limpios
+        body: >-
+          Bolsas de papel nuevas o envases aptos para alimentos. Nunca los
+          reutilizamos entre entregas.
+      - icon: sun
+        title: Herramientas y riego
+        body: >-
+          Herramienta de mano, mangueras, regaderas, manta térmica y tutores.
+
+  - id: forms
+    eyebrow: Inscripción
+    title: Díganos que le interesa.
+    body:
+      - >-
+        Los formularios de inscripción abren muy pronto. Mientras tanto, un
+        correo funciona igual de bien y respondemos en dos o tres días.
+    ctas:
+      - label: Escríbanos
+        href: /contact
+        primary: true

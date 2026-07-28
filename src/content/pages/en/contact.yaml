@@ -1,0 +1,42 @@
+title: Contact
+description: Get in touch with Homegrown Hearts in Waxhaw, Union County, North Carolina. One shared inbox reaches both founders, and we answer within two to three days.
+
+hero:
+  eyebrow: Contact
+  title: Get in touch.
+  lead: >-
+    One shared inbox reaches both of us. We answer within two to three days.
+
+sections:
+  - id: reach
+    eyebrow: Email
+    title: Who you will hear from.
+    body:
+      - >-
+        Clinic enquiries usually reach Kreeshma; anything about volunteering,
+        supplies, or this site usually reaches Charishya. Either way, use the
+        same address.
+    items:
+      - title: Kreeshma Vasikarla
+        body: Mission and medical lead — clinic partnerships and the produce list.
+      - title: Charishya Yarram
+        body: Operations and technology lead — volunteers, supplies, logistics.
+
+  - id: expectations
+    eyebrow: What to expect
+    title: How we handle enquiries.
+    body:
+      - >-
+        We are students, so we answer in the evenings. Two to three days is
+        normal. If a clinic writes to us, we will reply the same week.
+      - >-
+        We publish one shared project inbox rather than personal contact details,
+        because both founders are minors.
+
+  - id: privacy
+    eyebrow: Privacy
+    title: What we do with what you send.
+    body:
+      - >-
+        We read your message and reply to it. We do not add you to a list, we
+        have no newsletter, and we share nothing with anyone.

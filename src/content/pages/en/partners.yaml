@@ -1,0 +1,151 @@
+# /partners — the clinic conversion page.
+#
+# This is the highest-stakes writing on the site. The reader is a clinic staffer
+# who has just opened a cold email from two 15-year-olds and is deciding whether
+# to spend twenty minutes on a meeting. Their real question is not "is this a
+# nice idea" — it is "how much work and how much risk is this for me".
+#
+# So the page answers, in this order: what you get, what it costs you, how we
+# handle safety, who supervises us, and what happens next. Warmth is in the
+# palette. This page is competence.
+#
+# Governed by docs/COMPLIANCE.md. Not one word about what food does to a body.
+
+title: For clinics
+description: 'What a Homegrown Hearts partnership involves for your clinic in Union County, North Carolina: free seasonal produce, our food-safety protocol, a low-burden ask.'
+
+hero:
+  eyebrow: For clinics and pregnancy centers
+  title: Free produce for the families you already serve.
+  lead: >-
+    We grow vegetables in Waxhaw, North Carolina and deliver them, washed and packed, to your
+    door. You hand them out however already works for you. There is no cost, no
+    paperwork, and nothing to store long-term.
+  ctas:
+    - label: Talk to us
+      href: /contact
+      primary: true
+    - label: Read our food-safety protocol
+      href: '#safety'
+
+sections:
+  - id: what-you-get
+    eyebrow: What you get
+    title: A delivery, on a schedule you set.
+    items:
+      - icon: basket
+        title: Seasonal produce bundles
+        body: >-
+          Whole, raw vegetables picked the morning they reach you. Contents
+          change with the season — spring greens, summer tomatoes and squash,
+          fall collards and sweet potatoes.
+      - icon: calendar
+        title: A fixed day and time
+        body: >-
+          You tell us what fits your schedule. We deliver on that day, or we
+          tell you in advance that we cannot.
+      - icon: clipboard-list
+        title: A contents card in every bundle
+        body: >-
+          Each bundle lists what is inside, the date it was picked, and how to
+          wash it. Available in English, Spanish, or both.
+      - icon: users
+        title: Volunteers, not obligations
+        body: >-
+          We bring our own people to grow, pack, and drive. We are not asking
+          your staff to do anything beyond receiving a delivery.
+
+  - id: what-we-ask
+    eyebrow: What we ask of you
+    title: One conversation, then a delivery slot.
+    body:
+      - >-
+        We know what an unfunded request costs a clinic, so we have tried to
+        make ours as small as it can be while still being useful.
+      - >-
+        We do not ask for funding, staff time beyond receiving a delivery,
+        storage space, patient information, or a formal agreement.
+    items:
+      - icon: check
+        title: Tell us what you can use
+        body: Anything you would rather we did not send, we will not send.
+      - icon: check
+        title: Give us a day and a contact
+        body: One person we can reach if a delivery needs to change.
+      - icon: check
+        title: Hand the bundles out
+        body: >-
+          You decide who receives them, using whatever you already know about
+          the families you serve. We never see that information.
+
+  - id: safety
+    eyebrow: Food safety
+    title: How we handle produce.
+    body:
+      - >-
+        Our protocol follows FDA guidance for selecting, washing, and storing
+        fresh produce. The full written version is available before any first
+        delivery, and we will walk through it with you.
+    items:
+      - icon: shield-check
+        title: Picked and delivered the same morning
+        body: >-
+          Harvested in the cool of the day, delivered within four hours of
+          packing, in a cooler when it is warm out.
+      - icon: shield-check
+        title: Washed in plain running water only
+        body: >-
+          Never soap, detergent, or produce wash — FDA guidance is explicit that
+          these can be absorbed into produce.
+      - icon: shield-check
+        title: Whole and raw, never cut or cooked
+        body: >-
+          We do not process food. No sprouts, no melons, no unpasteurised
+          anything, no home-canned goods.
+      - icon: shield-check
+        title: Clean hands, clean containers, no exceptions
+        body: >-
+          Twenty seconds with soap before handling. Nobody who has been ill in
+          the last 48 hours goes near a bundle. Containers are never reused
+          between deliveries.
+    note: >-
+      Our produce list and safety protocol are pending review by our partner
+      clinic. We will not describe them as approved until they are.
+
+  - id: privacy
+    eyebrow: Privacy
+    title: We never learn who receives a bundle.
+    body:
+      - >-
+        This is deliberate, and it is structural rather than a promise. Bundles
+        go to your staff and your staff distribute them. We hold no list, take
+        no names, and photograph no one.
+      - >-
+        It is also why we work through a clinic at all rather than handing food
+        out ourselves.
+
+  - id: who-we-are
+    eyebrow: Who you would be working with
+    title: Two students and an adult advisor.
+    body:
+      - >-
+        Homegrown Hearts was founded by Kreeshma Vasikarla and Charishya Yarram,
+        two high-school students in Waxhaw, North Carolina. We operate under an
+        adult advisor,
+        and we would introduce you to them before anything begins.
+      - >-
+        We would rather tell you that plainly at the start than have it come up
+        later.
+
+  - id: next
+    eyebrow: Next step
+    title: A twenty-minute conversation.
+    body:
+      - >-
+        Tell us whether this is useful to you and what you would change about
+        it. If it is not a fit, saying so costs you nothing and we will not
+        follow up repeatedly.
+    ctas:
+      - label: Get in touch
+        href: /contact
+        primary: true

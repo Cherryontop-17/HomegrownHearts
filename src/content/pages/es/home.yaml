@@ -1,0 +1,153 @@
+# Página principal — español.
+#
+# Registro: español latinoamericano, lenguaje sencillo, forma «usted».
+# Traducido por sentido, nunca palabra por palabra.
+#
+# Trampas evitadas (docs/COMPLIANCE.md, regla 6):
+#   - «saludable» / «nutritivo» se acercan demasiado a una afirmación de salud.
+#     Se usa «fresco», «de temporada», «recién cosechado».
+#   - «ayudar a» es una afirmación de salud en cuanto toca un cuerpo.
+#     «ayudar a las familias» sí; «ayudar a su embarazo» jamás.
+
+title: Alimentos frescos para nuevas madres
+description: Cultivamos verduras en Waxhaw, Carolina del Norte, y entregamos paquetes gratuitos de temporada a madres embarazadas y recién dadas a luz vía una clínica asociada.
+
+hero:
+  eyebrow: Waxhaw · Condado de Union, Carolina del Norte
+  title: Alimentos frescos, cultivados aquí cerca.
+  lead: >-
+    Cultivamos verduras en un huerto pequeño en Waxhaw, Carolina del Norte, y
+    armamos paquetes gratuitos para madres embarazadas y recién dadas a luz. Una
+    clínica asociada los entrega a las familias que atiende.
+  ctas:
+    - label: Colabore con nosotras
+      href: /partners
+      primary: true
+    - label: Sea voluntario
+      href: /get-involved
+
+sections:
+  - id: why
+    eyebrow: Por qué verduras
+    title: Las verduras frescas son lo primero que se recorta.
+    body:
+      - >-
+        Cuestan caro, se echan a perder pronto y toman tiempo de preparar. Cuando
+        el dinero no alcanza, son lo primero que se deja de comprar. Por eso una
+        bolsa gratuita, ya lavada, vale más de lo que parece.
+    items:
+      - value: '1 de cada 10'
+        title: adultos come la cantidad de verduras recomendada
+        body: >-
+          Cerca de 1 de cada 15 entre quienes viven cerca del nivel de pobreza.
+        source: CDC, MMWR 2022
+        sourceHref: https://www.cdc.gov/mmwr/volumes/71/wr/mm7101a1.htm
+      - value: '18.4%'
+        title: >-
+          de los hogares con niños en EE. UU. vivió inseguridad alimentaria en
+          2024
+        source: USDA ERS, 2025
+        sourceHref: https://ers.usda.gov/sites/default/files/_laserfiche/publications/113623/ERR-358.pdf
+      - value: '11.1%'
+        title: >-
+          de las personas del condado de Union, Carolina del Norte, vive
+          inseguridad alimentaria
+        body: >-
+          Menos que en la mayor parte del estado. Aun así, casi 1 de cada 9
+          vecinos nuestros.
+        source: Feeding America, Map the Meal Gap 2025
+        sourceHref: https://map.feedingamerica.org/
+    note: >-
+      Estas cifras hablan de lo que las personas pueden comprar y comer. No
+      hacemos ninguna afirmación médica. Para orientación sobre la alimentación
+      durante el embarazo, consulte a su profesional de salud.
+
+  - id: how
+    eyebrow: Cómo funciona
+    title: De nuestro huerto a la sala de espera de la clínica.
+    items:
+      - icon: seed
+        title: Sembrar
+        body: >-
+          Cuidamos un huerto pequeño en Waxhaw durante toda la temporada de
+          cultivo de Carolina del Norte.
+      - icon: sprout
+        title: Cosechar
+        body: >-
+          Recogemos las verduras temprano, la misma mañana en que salen.
+      - icon: basket
+        title: Empacar
+        body: >-
+          Se lavan solo con agua corriente y se empacan en bolsas limpias, con
+          una tarjeta que indica el contenido.
+      - icon: heart
+        title: Entregar
+        body: >-
+          La clínica asociada recibe los paquetes y los entrega a las familias
+          que atiende.
+
+  - id: bundle
+    eyebrow: Qué trae un paquete
+    title: Lo que esté listo esa semana.
+    body:
+      - >-
+        El paquete no es una caja fija. Trae lo que el huerto dio esa semana:
+        verduras de hoja y rábanos en primavera; tomates y calabacitas en verano;
+        berzas y camotes en otoño, todo cultivado en el Piedmont de Carolina del
+        Norte.
+      - >-
+        Todo va entero y crudo. No cortamos, no cocinamos y no conservamos nada.
+    note: >-
+      Nuestra lista de verduras está pendiente de revisión por parte de la
+      clínica asociada. No la describiremos como aprobada hasta que lo esté.
+
+  - id: founders
+    eyebrow: Quiénes somos
+    title: Dos estudiantes en Waxhaw, Carolina del Norte.
+    items:
+      - title: Kreeshma Vasikarla
+        body: >-
+          Responsable de misión y enlace médico. Coordina el contacto con
+          clínicas y la lista de verduras.
+      - title: Charishya Yarram
+        body: >-
+          Responsable de operaciones y tecnología. Coordina los calendarios de
+          cultivo, la logística y este sitio.
+    body:
+      - >-
+        Trabajamos con el apoyo de una persona adulta responsable, que supervisa
+        todo lo que entregamos.
+
+  - id: impact
+    eyebrow: Nuestro impacto
+    title: Dónde estamos hoy.
+    body:
+      - >-
+        Apenas estamos comenzando, así que estas cifras son pequeñas. Preferimos
+        publicarlas con honestidad antes que redondearlas hacia arriba.
+
+  - id: cta
+    eyebrow: Participe
+    title: Tres maneras de apoyar.
+    items:
+      - icon: users
+        title: Sea voluntario
+        body: >-
+          Sembrar, cosechar, empacar y llevar las entregas. No hace falta
+          experiencia.
+      - icon: basket
+        title: Done materiales
+        body: >-
+          Semillas, plántulas, herramientas, tierra y bolsas limpias. Solo
+          materiales; nunca dinero.
+      - icon: heart
+        title: Colabore con nosotras
+        body: >-
+          Si trabaja en una clínica o en un centro de embarazo en el condado de
+          Union, Carolina del Norte, o cerca, nos gustaría conversar.
+    ctas:
+      - label: Participe
+        href: /get-involved
+        primary: true
+      - label: Para clínicas
+        href: /partners

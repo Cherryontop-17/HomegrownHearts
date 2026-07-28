@@ -12,6 +12,7 @@
     "astro": "astro",
     "generate-types": "wrangler types",
     "check": "astro check",
+    "check:compliance": "node scripts/check-compliance.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:fonts": "python scripts/check-font-coverage.py",
     "check:i18n": "node scripts/check-i18n-urls.mjs",
@@ -39,6 +40,7 @@
     "lucide-static": "^1.27.0",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "zod": "^4.4.3"
   }
 }

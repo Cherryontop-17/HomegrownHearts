@@ -1,0 +1,74 @@
+title: Get involved
+description: Volunteer with Homegrown Hearts in Waxhaw, North Carolina, or donate garden supplies. We accept donated supplies only, never money.
+
+hero:
+  eyebrow: Get involved
+  title: Come and grow something.
+  lead: >-
+    Everything we deliver is grown, picked, washed, packed, and driven by
+    volunteers. There is room for more of them.
+
+sections:
+  - id: volunteer
+    eyebrow: Volunteer
+    title: What volunteering actually involves.
+    body:
+      - >-
+        Mornings in a garden in Waxhaw, mostly. No experience needed, and nobody
+        will test you on anything.
+    items:
+      - icon: sprout
+        title: Growing days
+        body: >-
+          Planting, weeding, watering, and mulching through the season. A couple
+          of hours at a time.
+      - icon: basket
+        title: Harvest and pack mornings
+        body: >-
+          Picking, washing, and packing on delivery days. This is the busiest and
+          most useful shift.
+      - icon: calendar
+        title: Driving
+        body: >-
+          Getting bundles from the garden to the clinic. You need a licence, a
+          car, and about an hour.
+    note: >-
+      Volunteers under 18 need a parent or guardian to sign off. Anyone
+      recognisable in a photograph on this site has agreed to be there.
+
+  - id: supplies
+    eyebrow: Donate supplies
+    title: What we can actually use.
+    body:
+      - >-
+        We accept donated supplies only — never money, and not because we are
+        being modest about it. We have no entity, no treasurer, and no bank
+        account, so accepting cash would create a real problem rather than a
+        shortcut.
+    items:
+      - icon: seed
+        title: Seeds and seedlings
+        body: Vegetable varieties suited to the North Carolina Piedmont.
+      - icon: leaf
+        title: Soil, compost, and mulch
+        body: Bagged or bulk. This is our largest recurring cost.
+      - icon: basket
+        title: Clean bags and containers
+        body: >-
+          New paper bags or food-safe containers. We never reuse them between
+          deliveries.
+      - icon: sun
+        title: Tools and watering gear
+        body: Hand tools, hoses, watering cans, row cover, stakes.
+
+  - id: forms
+    eyebrow: Sign up
+    title: Tell us you are interested.
+    body:
+      - >-
+        The sign-up forms are opening shortly. In the meantime an email reaches
+        us just as well, and we answer within two to three days.
+    ctas:
+      - label: Email us
+        href: /contact
+        primary: true

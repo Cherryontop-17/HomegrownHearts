@@ -1,0 +1,137 @@
+# Homepage. Answers "what do you do and who do you serve" in the first screen —
+# the fresh-eyes 10-second test in docs/BRIEF.md §4.
+#
+# North Carolina is named in full in the hero, the meta description, and the
+# founders section: a reader arriving from a search or a shared link should not
+# have to decode "NC", and a clinic staffer should see immediately that we are
+# local to them rather than a national organisation.
+#
+# Statistics come from docs/SOURCES.md and are access/consumption facts only.
+# Never a health outcome. See docs/COMPLIANCE.md Rule 1.
+
+title: Fresh food for new mothers
+description: Homegrown Hearts grows vegetables in Waxhaw, North Carolina and delivers free seasonal bundles to pregnant and postpartum mothers through a partner clinic.
+
+hero:
+  eyebrow: Waxhaw · Union County, North Carolina
+  title: Fresh food, grown close to home.
+  lead: >-
+    We grow vegetables in a small garden in Waxhaw, North Carolina and pack them
+    into free bundles for pregnant and postpartum mothers. A partner clinic hands
+    them to the families it serves.
+  ctas:
+    - label: Partner with us
+      href: /partners
+      primary: true
+    - label: Volunteer with us
+      href: /get-involved
+
+sections:
+  - id: why
+    eyebrow: Why produce
+    title: Fresh vegetables are the first thing a tight budget loses.
+    body:
+      - >-
+        They are expensive, they spoil, and they take time to cook. When money
+        is short they are what gets cut first — which is why a free bag of them,
+        already washed, is worth more than it looks.
+    items:
+      - value: '1 in 10'
+        title: adults eat the recommended amount of vegetables
+        body: About 1 in 15 among adults living near the poverty line.
+        source: CDC, MMWR 2022
+        sourceHref: https://www.cdc.gov/mmwr/volumes/71/wr/mm7101a1.htm
+      - value: '18.4%'
+        title: of US households with children faced food insecurity in 2024
+        source: USDA ERS, 2025
+        sourceHref: https://ers.usda.gov/sites/default/files/_laserfiche/publications/113623/ERR-358.pdf
+      - value: '11.1%'
+        title: of people in Union County, North Carolina face food insecurity
+        body: Lower than most of the state. Still roughly 1 in 9 of our neighbours.
+        source: Feeding America, Map the Meal Gap 2025
+        sourceHref: https://map.feedingamerica.org/
+    note: >-
+      These are figures about what people can buy and eat. We make no claims
+      about health — for guidance on eating during pregnancy, ask your clinician.
+
+  - id: how
+    eyebrow: How it works
+    title: From our garden to a clinic waiting room.
+    items:
+      - icon: seed
+        title: Grow
+        body: >-
+          We plant and tend a small garden in Waxhaw through the North Carolina
+          growing season.
+      - icon: sprout
+        title: Harvest
+        body: Vegetables are picked in the cool of the morning they go out.
+      - icon: basket
+        title: Pack
+        body: >-
+          Washed in plain running water, packed into clean bags with a card
+          listing what is inside.
+      - icon: heart
+        title: Deliver
+        body: >-
+          Our partner clinic receives the bundles and hands them to the families
+          it serves.
+
+  - id: bundle
+    eyebrow: What is in a bundle
+    title: Whatever is ready that week.
+    body:
+      - >-
+        A bundle is not a fixed box. It holds what the garden actually produced
+        that week — spring greens and radishes, summer tomatoes and squash, fall
+        collards and sweet potatoes, all grown in the North Carolina Piedmont.
+      - >-
+        Everything is whole and raw. We do not cut, cook, or preserve anything.
+    note: >-
+      Our produce list is pending review by our partner clinic. We will not
+      describe it as approved until it is.
+
+  - id: founders
+    eyebrow: Who we are
+    title: Two students in Waxhaw, North Carolina.
+    items:
+      - title: Kreeshma Vasikarla
+        body: Mission and medical lead. Runs clinic outreach and the produce list.
+      - title: Charishya Yarram
+        body: >-
+          Operations and technology lead. Runs growing schedules, logistics, and
+          this site.
+    body:
+      - We work under an adult advisor, who supervises everything we deliver.
+
+  - id: impact
+    eyebrow: Our impact
+    title: Where we are today.
+    body:
+      - >-
+        We are just getting started, so these numbers are small. We would rather
+        publish them honestly than round them up.
+
+  - id: cta
+    eyebrow: Get involved
+    title: Three ways to help.
+    items:
+      - icon: users
+        title: Volunteer
+        body: Growing, harvesting, packing, and driving. No experience needed.
+      - icon: basket
+        title: Donate supplies
+        body: >-
+          Seeds, seedlings, tools, soil, and clean bags. Supplies only — never
+          money.
+      - icon: heart
+        title: Partner with us
+        body: >-
+          If you work at a clinic or pregnancy center in or near Union County,
+          North Carolina, we would like to talk.
+    ctas:
+      - label: Get involved
+        href: /get-involved
+        primary: true
+      - label: For clinics
+        href: /partners

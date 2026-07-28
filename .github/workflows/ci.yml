@@ -33,6 +33,12 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      # docs/COMPLIANCE.md. Rules 1 and 2 are the line between a student food
+      # project and two minors making unlicensed medical claims and
+      # misrepresenting a charity. Scans both languages.
+      - name: Compliance
+        run: npm run check:compliance
+
       # Palette gate for task 6.3. Reads the tokens out of global.css and fails
       # if any text pairing drops below WCAG AA on any section band.
       - name: Contrast

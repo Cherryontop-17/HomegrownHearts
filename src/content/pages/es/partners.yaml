@@ -1,0 +1,148 @@
+# /partners — español. El texto de mayor peso del sitio.
+#
+# Quien lee es personal de una clínica que acaba de abrir un correo de dos
+# estudiantes de 15 años y está decidiendo si vale veinte minutos. Su pregunta
+# real no es «¿qué linda idea?» sino «¿cuánto trabajo y cuánto riesgo es esto
+# para mí?». El texto responde en ese orden.
+#
+# Registro «usted». Ni una palabra sobre lo que la comida le hace al cuerpo.
+
+title: Para clínicas
+description: 'Qué implica colaborar con Homegrown Hearts para su clínica en el condado de Union, Carolina del Norte: verduras gratuitas y un protocolo de inocuidad.'
+
+hero:
+  eyebrow: Para clínicas y centros de embarazo
+  title: Verduras gratuitas para las familias que ya atiende.
+  lead: >-
+    Cultivamos verduras en Waxhaw, Carolina del Norte, y se las llevamos lavadas
+    y empacadas hasta su puerta. Usted las reparte como ya le funcione. No tiene
+    ningún costo, no genera papeleo y no hay nada que almacenar por mucho tiempo.
+  ctas:
+    - label: Conversemos
+      href: /contact
+      primary: true
+    - label: Lea nuestro protocolo de inocuidad
+      href: '#safety'
+
+sections:
+  - id: what-you-get
+    eyebrow: Qué recibe
+    title: Una entrega, en el horario que usted defina.
+    items:
+      - icon: basket
+        title: Paquetes de verduras de temporada
+        body: >-
+          Verduras enteras y crudas, cosechadas la misma mañana en que llegan a
+          usted. El contenido cambia con la temporada: verduras de hoja en
+          primavera; tomates y calabacitas en verano; berzas y camotes en otoño.
+      - icon: calendar
+        title: Un día y una hora fijos
+        body: >-
+          Usted nos dice qué le acomoda. Entregamos ese día, o le avisamos con
+          anticipación si no podemos.
+      - icon: clipboard-list
+        title: Una tarjeta de contenido en cada paquete
+        body: >-
+          Cada paquete indica qué trae, la fecha de cosecha y cómo lavarlo.
+          Disponible en inglés, en español o en ambos.
+      - icon: users
+        title: Voluntarios, no obligaciones
+        body: >-
+          Ponemos nuestra propia gente para cultivar, empacar y manejar. No le
+          pedimos a su personal nada más allá de recibir la entrega.
+
+  - id: what-we-ask
+    eyebrow: Qué le pedimos
+    title: Una conversación y un horario de entrega.
+    body:
+      - >-
+        Sabemos lo que le cuesta a una clínica una petición sin financiamiento,
+        así que hicimos la nuestra lo más pequeña posible sin dejar de ser útil.
+      - >-
+        No pedimos dinero, ni tiempo de su personal más allá de recibir la
+        entrega, ni espacio de almacenamiento, ni datos de pacientes, ni un
+        convenio formal.
+    items:
+      - icon: check
+        title: Díganos qué les sirve
+        body: Lo que prefiera que no enviemos, no lo enviamos.
+      - icon: check
+        title: Denos un día y un contacto
+        body: Una sola persona a quien avisar si una entrega cambia.
+      - icon: check
+        title: Reparta los paquetes
+        body: >-
+          Usted decide quién los recibe, con lo que ya sabe de las familias que
+          atiende. Nosotras nunca vemos esa información.
+
+  - id: safety
+    eyebrow: Inocuidad de los alimentos
+    title: Cómo manejamos las verduras.
+    body:
+      - >-
+        Nuestro protocolo sigue las recomendaciones de la FDA para seleccionar,
+        lavar y guardar verduras frescas. Le entregamos la versión escrita
+        completa antes de cualquier primera entrega y la repasamos con usted.
+    items:
+      - icon: shield-check
+        title: Cosechadas y entregadas la misma mañana
+        body: >-
+          Se cosechan a primera hora, cuando está fresco, y se entregan dentro de
+          las cuatro horas siguientes al empaque, en hielera si hace calor.
+      - icon: shield-check
+        title: Lavadas solo con agua corriente
+        body: >-
+          Nunca con jabón, detergente ni productos para lavar verduras. La FDA es
+          explícita: esos productos pueden quedar absorbidos en la verdura.
+      - icon: shield-check
+        title: Enteras y crudas, nunca cortadas ni cocidas
+        body: >-
+          No procesamos alimentos. Nada de germinados, ni melones, ni productos
+          sin pasteurizar, ni conservas caseras.
+      - icon: shield-check
+        title: Manos limpias, envases limpios, sin excepciones
+        body: >-
+          Veinte segundos con jabón antes de manipular. Nadie que haya estado
+          enfermo en las últimas 48 horas se acerca a un paquete. Los envases
+          nunca se reutilizan entre entregas.
+    note: >-
+      Nuestra lista de verduras y nuestro protocolo están pendientes de revisión
+      por parte de la clínica asociada. No los describiremos como aprobados hasta
+      que lo estén.
+
+  - id: privacy
+    eyebrow: Privacidad
+    title: Nunca sabemos quién recibe un paquete.
+    body:
+      - >-
+        Es intencional, y es estructural más que una promesa. Los paquetes llegan
+        a su personal y su personal los reparte. No tenemos ninguna lista, no
+        tomamos nombres y no fotografiamos a nadie.
+      - >-
+        Es también la razón por la que trabajamos a través de una clínica en
+        lugar de repartir nosotras mismas.
+
+  - id: who-we-are
+    eyebrow: Con quiénes trabajaría
+    title: Dos estudiantes y una persona adulta responsable.
+    body:
+      - >-
+        Homegrown Hearts fue fundada por Kreeshma Vasikarla y Charishya Yarram,
+        dos estudiantes de preparatoria en Waxhaw, Carolina del Norte. Trabajamos
+        con el apoyo de una persona adulta responsable, y se la presentaríamos
+        antes de comenzar.
+      - >-
+        Preferimos decírselo con claridad desde el principio y no que salga
+        después.
+
+  - id: next
+    eyebrow: Siguiente paso
+    title: Una conversación de veinte minutos.
+    body:
+      - >-
+        Díganos si esto le sirve y qué le cambiaría. Si no encaja, decirlo no le
+        cuesta nada y no volveremos a insistir.
+    ctas:
+      - label: Escríbanos
+        href: /contact
+        primary: true

@@ -1,0 +1,200 @@
+---
+/**
+ * The homepage, rendered entirely from `src/content/pages/<locale>/home.yaml`.
+ *
+ * Both `/` and `/es/` render this same component. That is the point: there is
+ * one layout and two copy files, so a change to the page structure cannot land
+ * in English and be forgotten in Spanish. It also retires the duplicated page
+ * components Phase 1 shipped as a stopgap.
+ *
+ * Phase 4 fills in the remaining sections (bundle, founders, full impact strip)
+ * against this same pattern.
+ */
+
+import Base from '../layouts/Base.astro';
+import Section from './Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Button from './Button.astro';
+import StatCard from './StatCard.astro';
+import Reveal from './Reveal.astro';
+import Photo from './Photo.astro';
+import WordRise from './WordRise.astro';
+import Steps from './Steps.astro';
+import type { Step } from './Steps.astro';
+
+import { getCopy, section, assertParity } from '../copy';
+import { localizePath } from '../i18n/utils';
+import type { Locale } from '../config';
+import type { IconName } from '../icons';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale }: Props = Astro.props;
+
+// Runs on every build. A page missing from either language, or a section that
+// exists in one and not the other, fails here with a filename.
+await assertParity();
+
+const copy = await getCopy('home', locale);
+
+const why = section(copy, 'why');
+const how = section(copy, 'how');
+const impact = section(copy, 'impact');
+
+const steps: Step[] = (how.items ?? []).map((item) => ({
+  icon: (item.icon ?? 'leaf') as IconName,
+  title: item.title,
+  body: item.body ?? '',
+}));
+---
+
+<Base title={copy.title} description={copy.description}>
+  <Section accent="grow" surface="cream">
+    {copy.hero?.eyebrow && <Eyebrow>{copy.hero.eyebrow}</Eyebrow>}
+    <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
+
+    <Reveal delay={320}>
+      {copy.hero?.lead && <p class="lead">{copy.hero.lead}</p>}
+      <div class="actions">
+        {
+          (copy.hero?.ctas ?? []).map((cta) => (
+            <Button
+              href={localizePath(cta.href, locale)}
+              variant={cta.primary ? 'primary' : 'secondary'}
+              size="lg"
+              external={cta.external}
+            >
+              {cta.label}
+            </Button>
+          ))
+        }
+      </div>
+    </Reveal>
+
+    <Reveal delay={120} class="hero-media">
+      <Photo photo="hero" eager kenBurns />
+    </Reveal>
+  </Section>
+
+  {/* Why produce — the cited statistics. Access data only, per COMPLIANCE Rule 1. */}
+  <Section accent="harvest" surface="sand" id={why.id}>
+    <Reveal>
+      {why.eyebrow && <Eyebrow>{why.eyebrow}</Eyebrow>}
+      {why.title && <h2>{why.title}</h2>}
+      {(why.body ?? []).map((p) => <p class="lead">{p}</p>)}
+    </Reveal>
+
+    <Reveal stagger={80} class="stats">
+      {
+        (why.items ?? []).map((item) => (
+          <StatCard
+            value={item.value ?? ''}
+            label={item.title}
+            source={item.source}
+            sourceHref={item.sourceHref}
+            countUp
+          />
+        ))
+      }
+    </Reveal>
+
+    {why.note && <p class="note">{why.note}</p>}
+  </Section>
+
+  <Section accent="grow" surface="cream" id={how.id}>
+    <Reveal>
+      {how.eyebrow && <Eyebrow>{how.eyebrow}</Eyebrow>}
+      {how.title && <h2>{how.title}</h2>}
+    </Reveal>
+    <Steps steps={steps} class="process" />
+  </Section>
+
+  <Section accent="harvest" surface="sand" rhythm="tight">
+    <Reveal stagger={80} class="gallery">
+      <Photo photo="garden" alt={copy.hero?.title ?? ''} />
+      <Photo photo="harvest" alt={how.title ?? ''} />
+      <Photo photo="bundle" alt={section(copy, 'bundle').title ?? ''} />
+    </Reveal>
+  </Section>
+
+  <Section accent="care" surface="cream" id={impact.id}>
+    <Reveal>
+      {impact.eyebrow && <Eyebrow>{impact.eyebrow}</Eyebrow>}
+      {impact.title && <h2>{impact.title}</h2>}
+      {(impact.body ?? []).map((p) => <p class="lead">{p}</p>)}
+    </Reveal>
+  </Section>
+</Base>
+
+<style>
+  .hero__title {
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+    color: var(--color-clay);
+    max-width: 18ch;
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+    letter-spacing: var(--text-h2--letter-spacing);
+    color: var(--color-clay);
+    max-width: 22ch;
+  }
+
+  .lead {
+    margin-top: 1.25rem;
+    max-width: 56ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-ink-muted);
+  }
+
+  /* Compliance notes and pending-approval flags. Quieter than body copy, but
+     never hidden — a caveat nobody can read is not a caveat. */
+  .note {
+    margin-top: 2rem;
+    max-width: 62ch;
+    font-size: var(--text-small);
+    color: var(--color-ink-muted);
+    border-left: 2px solid var(--color-line-strong);
+    padding-left: 1rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    margin-top: 2rem;
+  }
+
+  .hero-media {
+    margin-top: 3rem;
+  }
+
+  .process {
+    margin-top: 2.5rem;
+  }
+
+  .stats,
+  .gallery {
+    display: grid;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .gallery {
+    gap: 1.25rem;
+    margin-top: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .stats,
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

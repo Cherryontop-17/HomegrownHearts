@@ -1,0 +1,46 @@
+title: Contacto
+description: Escriba a Homegrown Hearts en Waxhaw, condado de Union, Carolina del Norte. Un solo correo compartido llega a ambas fundadoras y respondemos en dos o tres días.
+
+hero:
+  eyebrow: Contacto
+  title: Escríbanos.
+  lead: >-
+    Un solo correo compartido nos llega a las dos. Respondemos en dos o tres
+    días.
+
+sections:
+  - id: reach
+    eyebrow: Correo
+    title: Quién le va a responder.
+    body:
+      - >-
+        Las consultas de clínicas suelen llegarle a Kreeshma; lo relacionado con
+        voluntariado, materiales o este sitio suele llegarle a Charishya. En
+        cualquier caso, use la misma dirección.
+    items:
+      - title: Kreeshma Vasikarla
+        body: >-
+          Misión y enlace médico: colaboraciones con clínicas y lista de
+          verduras.
+      - title: Charishya Yarram
+        body: >-
+          Operaciones y tecnología: voluntariado, materiales y logística.
+
+  - id: expectations
+    eyebrow: Qué esperar
+    title: Cómo atendemos los mensajes.
+    body:
+      - >-
+        Somos estudiantes, así que respondemos por las tardes. Dos o tres días es
+        lo normal. Si nos escribe una clínica, respondemos esa misma semana.
+      - >-
+        Publicamos un solo correo compartido del proyecto en lugar de datos de
+        contacto personales, porque ambas fundadoras son menores de edad.
+
+  - id: privacy
+    eyebrow: Privacidad
+    title: Qué hacemos con lo que nos envía.
+    body:
+      - >-
+        Leemos su mensaje y le respondemos. No lo agregamos a ninguna lista, no
+        tenemos boletín y no compartimos nada con nadie.
