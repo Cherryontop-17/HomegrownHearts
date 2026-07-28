@@ -59,6 +59,15 @@ export const PHOTO_SLOTS = {
     brief: 'A complete packed bundle as a clinic would receive it. This is the credibility shot.',
     role: 'meaningful',
   },
+  'break-produce': {
+    id: 'break-produce',
+    aspect: '21 / 9',
+    tone: 'harvest',
+    brief:
+      'Wide, edge-to-edge shot of mixed produce. Used as a full-bleed break ' +
+      'between chapters, so it must read at a very shallow crop.',
+    role: 'decorative',
+  },
   'founder-kreeshma': {
     id: 'founder-kreeshma',
     aspect: '1 / 1',

@@ -44,7 +44,7 @@ export const ORG = {
  * TODO(founders): create the shared inbox and replace the placeholder below.
  */
 export const CONTACT = {
-  email: 'hello@homegrownhearts.org', // TODO: replace with the real shared inbox
+  email: 'info@homegrownhearts.org', // TODO: replace with the real shared inbox
   /** Intentionally null. Do not add a personal number here. */
   phone: null,
   responseTime: '2-3 days',

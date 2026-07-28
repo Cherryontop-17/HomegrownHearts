@@ -2,14 +2,21 @@
 /**
  * The homepage. Rendered entirely from `src/content/pages/<locale>/home.yaml`.
  *
- * Both `/` and `/es/` render this component, so a structural change cannot land
- * in English and be forgotten in Spanish.
+ * Editorial layout. What makes it read as a publication rather than a template:
  *
- * Section order follows the reader's questions, not ours: what is this (hero),
- * why does it matter (why), how does it work (how), what do I actually get
- * (bundle), who are you (founders), what have you done (impact), what can I do
- * (cta). See docs/BRIEF.md §4 — a stranger should be able to state what we do
- * and who we serve within ten seconds.
+ *   - SCALE CONTRAST. The hero runs at --text-mega (up to 8.5rem) against
+ *     section headings at --text-display. When everything is the same size,
+ *     nothing is emphasised and the page reads flat.
+ *   - ASYMMETRY. Sections offset against a 12-column grid instead of stacking
+ *     centred blocks, so the eye has somewhere to travel.
+ *   - PACE. A full-bleed photograph and one deliberately dark band interrupt
+ *     the run of cream sections, giving the page chapters rather than a
+ *     uniform rhythm.
+ *   - FOLIOS. 01 / 02 / 03 in the margin. Cheap, and it helps a reader keep
+ *     their place on a long page.
+ *
+ * Both `/` and `/es/` render this, so a structural change cannot land in
+ * English and be forgotten in Spanish.
  */
 
 import Base from '../layouts/Base.astro';
@@ -22,6 +29,7 @@ import Photo from './Photo.astro';
 import WordRise from './WordRise.astro';
 import Steps from './Steps.astro';
 import Cards from './Cards.astro';
+import Botanical from './Botanical.astro';
 import type { Step } from './Steps.astro';
 
 import { getCopy, section, assertParity } from '../copy';
@@ -36,8 +44,6 @@ interface Props {
 
 const { locale }: Props = Astro.props;
 
-// Runs on every build. A page missing from either language, or a section
-// present in one and not the other, fails here with a filename.
 await assertParity();
 
 const copy = await getCopy('home', locale);
@@ -56,11 +62,6 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
   body: item.body ?? '',
 }));
 
-/**
- * Impact numbers come from config.ts, never from the copy files — they change
- * after every delivery and must only ever be typed in one place.
- * COMPLIANCE.md Rule 5: zeros are fine, inflated numbers are not recoverable.
- */
 const impactStats = [
   { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
   { value: IMPACT.mothersServed, label: t('impact.mothers') },
@@ -68,53 +69,49 @@ const impactStats = [
 ];
 ---
 
-<Base title={copy.title} description={copy.description}>
-  {/* --- 4.1 Hero ------------------------------------------------------- */}
-  <Section accent="grow" surface="cream">
-    {copy.hero?.eyebrow && <Eyebrow>{copy.hero.eyebrow}</Eyebrow>}
-    <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
+<Base title={copy.title} description={copy.description} transparentHeader>
+  {/* ============ HERO — full bleed, type over photograph ============== */}
+  <section class="hero">
+    <div class="hero__media">
+      <Photo photo="hero" eager kenBurns scrim aspect="16 / 10" class="hero__photo" />
+    </div>
 
-    <Reveal delay={320}>
-      {copy.hero?.lead && <p class="lead">{copy.hero.lead}</p>}
-      <div class="actions">
-        {
-          (copy.hero?.ctas ?? []).map((c) => (
-            <Button
-              href={localizePath(c.href, locale)}
-              variant={c.primary ? 'primary' : 'secondary'}
-              size="lg"
-              external={c.external}
-            >
-              {c.label}
-            </Button>
-          ))
-        }
+    <div class="hero__content">
+      {copy.hero?.eyebrow && <p class="hero__eyebrow">{copy.hero.eyebrow}</p>}
+      <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
+      <Reveal delay={420}>
+        {copy.hero?.lead && <p class="hero__lead">{copy.hero.lead}</p>}
+        <div class="hero__actions">
+          {
+            (copy.hero?.ctas ?? []).map((c) => (
+              <Button
+                href={localizePath(c.href, locale)}
+                variant={c.primary ? 'primary' : 'secondary'}
+                size="lg"
+                class={c.primary ? undefined : 'btn-on-dark'}
+              >
+                {c.label}
+              </Button>
+            ))
+          }
+        </div>
+      </Reveal>
+    </div>
+  </section>
+
+  {/* ============ 01 — WHY. Asymmetric: heading left, prose offset ===== */}
+  <Section accent="grow" surface="cream" id={why.id} numeral="01" rhythm="loose">
+    <Reveal stagger={130} class="offset">
+      <div class="offset__lead">
+        {why.eyebrow && <Eyebrow>{why.eyebrow}</Eyebrow>}
+        {why.title && <h2 class="h-display">{why.title}</h2>}
+      </div>
+      <div class="offset__body">
+        {(why.body ?? []).map((p) => <p class="lead">{p}</p>)}
       </div>
     </Reveal>
 
-    <Reveal delay={120} class="hero-media">
-      <Photo photo="hero" eager kenBurns scrim>
-        {
-          /*
-          Over the scrim. The scrim's opacity is set so cream text clears AA
-          even against a pure-white photograph, so this stays readable whatever
-          the founders eventually upload.
-        */
-        }
-        <p class="hero__caption">{t('legal.privacy')}</p>
-      </Photo>
-    </Reveal>
-  </Section>
-
-  {/* --- 4.2 Why fresh food matters — cited access data, never health ---- */}
-  <Section accent="harvest" surface="sand" id={why.id}>
-    <Reveal>
-      {why.eyebrow && <Eyebrow>{why.eyebrow}</Eyebrow>}
-      {why.title && <h2>{why.title}</h2>}
-      {(why.body ?? []).map((p) => <p class="lead">{p}</p>)}
-    </Reveal>
-
-    <Reveal stagger={80} class="stats">
+    <Reveal stagger={110} class="figures">
       {
         (why.items ?? []).map((item) => (
           <StatCard
@@ -122,56 +119,78 @@ const impactStats = [
             label={item.title}
             source={item.source}
             sourceHref={item.sourceHref}
+            class="figures__item"
           />
         ))
       }
     </Reveal>
 
     {why.note && <p class="note">{why.note}</p>}
+
+    <Botanical plate="sprig" size={132} class="deco deco--why" />
   </Section>
 
-  {/* --- 4.3 How it works ----------------------------------------------- */}
-  <Section accent="grow" surface="cream" id={how.id}>
-    <Reveal>
-      {how.eyebrow && <Eyebrow>{how.eyebrow}</Eyebrow>}
-      {how.title && <h2>{how.title}</h2>}
+  {/* ============ Full-bleed break ===================================== */}
+  <Section surface="cream" bleed accent="harvest">
+    <Photo
+      photo="break-produce"
+      alt={bundle.title ?? ''}
+      aspect="21 / 9"
+      wipe="up"
+      class="fullbleed"
+    />
+  </Section>
+
+  {/* ============ 02 — HOW. The dark chapter ========================== */}
+  <Section accent="harvest" surface="ink" id={how.id} numeral="02" rhythm="loose">
+    <Reveal stagger={130} class="offset">
+      <div class="offset__lead">
+        {how.eyebrow && <Eyebrow>{how.eyebrow}</Eyebrow>}
+        {how.title && <h2 class="h-display h-display--inverse">{how.title}</h2>}
+      </div>
     </Reveal>
     <Steps steps={steps} class="process" />
+    <Botanical plate="vine" size={150} class="deco deco--how" />
   </Section>
 
-  {/* --- 4.4 What is in a bundle ---------------------------------------- */}
-  <Section accent="harvest" surface="sand" id={bundle.id}>
-    {
-      /* One Reveal for the whole unit, staggered internally. Two sibling
-        Reveals made a single section enter as two competing gestures. */
-    }
-    <Reveal stagger={120} class="split">
-      <div class="split__text">
-        {bundle.eyebrow && <Eyebrow>{bundle.eyebrow}</Eyebrow>}
-        {bundle.title && <h2>{bundle.title}</h2>}
-        {(bundle.body ?? []).map((p) => <p class="lead">{p}</p>)}
-        {/* Rule 4: pending approval is stated on the page, not just in a doc. */}
-        {bundle.note && <p class="note">{bundle.note}</p>}
-      </div>
+  {/* ============ 03 — BUNDLE. Narrow text, tall image ================ */}
+  <Section accent="harvest" surface="sand" id={bundle.id} numeral="03">
+    <div class="split">
+      <Reveal stagger={140} class="split__text">
+        <div>
+          {bundle.eyebrow && <Eyebrow>{bundle.eyebrow}</Eyebrow>}
+          {bundle.title && <h2 class="h-display">{bundle.title}</h2>}
+        </div>
+        <div>
+          {(bundle.body ?? []).map((p) => <p class="lead">{p}</p>)}
+          {bundle.note && <p class="note note--tight">{bundle.note}</p>}
+        </div>
+      </Reveal>
 
       <div class="split__media">
-        <Photo photo="bundle" alt={bundle.title ?? ''} />
+        <Photo photo="bundle" alt={bundle.title ?? ''} aspect="4 / 5" wipe="up" />
       </div>
-    </Reveal>
+    </div>
   </Section>
 
-  {/* --- 4.5 Founders ---------------------------------------------------- */}
-  <Section accent="care" surface="cream" id={founders.id}>
-    <Reveal>
-      {founders.eyebrow && <Eyebrow>{founders.eyebrow}</Eyebrow>}
-      {founders.title && <h2>{founders.title}</h2>}
+  {/* ============ 04 — FOUNDERS ======================================= */}
+  <Section accent="care" surface="cream" id={founders.id} numeral="04">
+    <Reveal stagger={130} class="offset">
+      <div class="offset__lead">
+        {founders.eyebrow && <Eyebrow>{founders.eyebrow}</Eyebrow>}
+        {founders.title && <h2 class="h-display">{founders.title}</h2>}
+      </div>
     </Reveal>
 
     <div class="founders">
-      <Reveal stagger={100} class="founders__portraits">
-        <Photo photo="founder-kreeshma" alt={founders.items?.[0]?.title ?? ''} />
-        <Photo photo="founder-charishya" alt={founders.items?.[1]?.title ?? ''} />
-      </Reveal>
+      {
+        /* One choreographed pair. `data-photo-group` tells the motion gate to
+          count them as a single gesture, which is what they are. */
+      }
+      <div class="founders__portraits" data-photo-group>
+        <Photo photo="founder-kreeshma" alt={founders.items?.[0]?.title ?? ''} wipe="up" />
+        <Photo photo="founder-charishya" alt={founders.items?.[1]?.title ?? ''} wipe="up" />
+      </div>
       <Cards
         items={[...(founders.items ?? [])]}
         columns={2}
@@ -183,135 +202,289 @@ const impactStats = [
     {(founders.body ?? []).map((p) => <p class="note">{p}</p>)}
   </Section>
 
-  {/* --- 4.6 Impact strip — numbers from config.ts, zeros included ------- */}
-  <Section accent="care" surface="parchment" id={impact.id}>
-    <Reveal>
-      {impact.eyebrow && <Eyebrow>{impact.eyebrow}</Eyebrow>}
-      {impact.title && <h2>{impact.title}</h2>}
-      {(impact.body ?? []).map((p) => <p class="lead">{p}</p>)}
+  {/* ============ 05 — IMPACT ========================================= */}
+  <Section accent="care" surface="parchment" id={impact.id} numeral="05">
+    <Reveal stagger={130} class="offset">
+      <div class="offset__lead">
+        {impact.eyebrow && <Eyebrow>{impact.eyebrow}</Eyebrow>}
+        {impact.title && <h2 class="h-display">{impact.title}</h2>}
+      </div>
+      <div class="offset__body">
+        {(impact.body ?? []).map((p) => <p class="lead">{p}</p>)}
+      </div>
     </Reveal>
 
-    <Reveal stagger={80} class="stats">
-      {impactStats.map((s) => <StatCard value={String(s.value)} label={s.label} countUp />)}
+    <Reveal stagger={110} class="figures">
+      {
+        impactStats.map((s) => (
+          <StatCard value={String(s.value)} label={s.label} countUp class="figures__item" />
+        ))
+      }
     </Reveal>
 
     <p class="note">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
   </Section>
 
-  {/* --- 4.7 Three-way CTA ----------------------------------------------- */}
-  <Section accent="grow" surface="cream" id={cta.id}>
-    <Reveal>
-      {cta.eyebrow && <Eyebrow>{cta.eyebrow}</Eyebrow>}
-      {cta.title && <h2>{cta.title}</h2>}
+  {/* ============ 06 — CTA ============================================ */}
+  <Section accent="grow" surface="cream" id={cta.id} numeral="06" rhythm="loose">
+    <Reveal stagger={130} class="offset">
+      <div class="offset__lead">
+        {cta.eyebrow && <Eyebrow>{cta.eyebrow}</Eyebrow>}
+        {cta.title && <h2 class="h-display">{cta.title}</h2>}
+      </div>
     </Reveal>
 
     <Cards items={[...(cta.items ?? [])]} columns={3} class="cta-cards" />
 
-    <Reveal class="actions actions--centred">
+    <Reveal class="actions">
       {
         (cta.ctas ?? []).map((c) => (
           <Button
             href={localizePath(c.href, locale)}
             variant={c.primary ? 'primary' : 'secondary'}
             size="lg"
-            external={c.external}
           >
             {c.label}
           </Button>
         ))
       }
     </Reveal>
+
+    <Botanical plate="leafpair" size={120} class="deco deco--cta" />
   </Section>
 </Base>
 
 <style>
+  /* ================= HERO ============================================== */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    /* Media and content share one cell, so the type sits over the photograph
+       without either being positioned absolutely. */
+    grid-template-areas: 'stack';
+    /* `minmax(0, 1fr)`, not `auto`. The hero photo has an aspect-ratio and is
+       stretched to the hero's height, and an aspect-ratio box with a definite
+       height resolves its WIDTH from that height — 1354px here. An auto-sized
+       grid column then grows to fit it and the whole page scrolls sideways.
+       Pinning the column makes the width authoritative instead. This is the
+       second time this exact interaction has bitten; see Photo.astro's
+       `width: 100%`. */
+    grid-template-columns: minmax(0, 1fr);
+    min-height: min(94svh, 54rem);
+    align-items: end;
+    /* Belt and braces: the photograph is decorative and may be cropped. */
+    overflow: hidden;
+  }
+
+  .hero__media,
+  .hero__content {
+    grid-area: stack;
+  }
+
+  .hero__media {
+    position: relative;
+    height: 100%;
+  }
+
+  .hero__photo {
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+    padding-block: clamp(3rem, 9vh, 7rem);
+    color: var(--color-ink-inverse);
+  }
+
+  .hero__eyebrow {
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-ink-inverse);
+    opacity: 0.85;
+    margin-bottom: 1.25rem;
+  }
+
+  /* The scale-contrast moment the whole page is built around. */
   .hero__title {
+    font-size: var(--text-mega);
+    line-height: var(--text-mega--line-height);
+    letter-spacing: var(--text-mega--letter-spacing);
+    font-weight: 600;
+    color: var(--color-ink-inverse);
+    max-width: 15ch;
+  }
+
+  .hero__lead {
+    margin-top: 1.75rem;
+    max-width: 46ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--color-ink-inverse);
+    opacity: 0.92;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.875rem;
+    margin-top: 2.25rem;
+  }
+
+  /* A secondary button on a photograph needs its own border and label colour;
+     the clay-on-cream pairing used on light bands disappears here. */
+  .hero__actions :global(.btn-on-dark) {
+    border-color: rgb(253 251 246 / 0.5);
+    color: var(--color-ink-inverse);
+  }
+
+  .hero__actions :global(.btn-on-dark:hover) {
+    border-color: var(--color-ink-inverse);
+    background-color: rgb(253 251 246 / 0.12);
+  }
+
+  /* ================= EDITORIAL GRID ==================================== */
+  /* Heading in the left six columns, supporting prose offset into the right
+     five. Stacked below the breakpoint. */
+  .offset {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 60rem) {
+    .offset {
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2rem 3rem;
+      align-items: start;
+    }
+    .offset__lead {
+      grid-column: 1 / span 6;
+    }
+    .offset__body {
+      grid-column: 8 / span 5;
+      /* Optical alignment: sits the prose against the heading's baseline
+         rather than its cap height. */
+      padding-top: 0.6rem;
+    }
+  }
+
+  .h-display {
     font-size: var(--text-display);
     line-height: var(--text-display--line-height);
     letter-spacing: var(--text-display--letter-spacing);
-    color: var(--color-clay);
-    max-width: 18ch;
-  }
-
-  h2 {
-    font-size: var(--text-h2);
-    line-height: var(--text-h2--line-height);
-    letter-spacing: var(--text-h2--letter-spacing);
-    color: var(--color-clay);
-    max-width: 22ch;
+    color: var(--text-heading);
+    max-width: 16ch;
     text-wrap: balance;
   }
 
-  .lead {
-    margin-top: 1.25rem;
-    max-width: 56ch;
-    font-size: var(--text-lead);
-    line-height: var(--text-lead--line-height);
-    color: var(--color-ink-muted);
+  .h-display--inverse {
+    color: var(--color-ink-inverse);
   }
 
-  /* Compliance notes, pending-approval flags, and last-updated stamps. Quieter
-     than body copy but never hidden — a caveat nobody can read is not a caveat. */
+  .lead {
+    max-width: 54ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--text-muted);
+  }
+
+  .lead + .lead {
+    margin-top: 1rem;
+  }
+
+  /* Muted ink disappears on the dark band; --color-line is the checked
+     equivalent there at 12.5:1. */
+  :global(.section--ink) .lead {
+    color: var(--color-line);
+  }
+
   .note {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
     max-width: 62ch;
     font-size: var(--text-small);
     line-height: 1.6;
-    color: var(--color-ink-muted);
-    border-left: 2px solid var(--color-line-strong);
+    color: var(--text-muted);
+    border-left: 2px solid var(--rule-color);
     padding-left: 1rem;
+  }
+
+  .note--tight {
+    margin-top: 1.5rem;
   }
 
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.875rem;
-    margin-top: 2rem;
-  }
-
-  .actions--centred {
     margin-top: 2.5rem;
   }
 
-  .hero-media {
-    margin-top: 3rem;
-  }
-
-  /* Sits over the scrim. Deliberately the privacy statement rather than a
-     slogan: it is the single most reassuring thing a clinic reader can see
-     early, and it costs nothing to say twice. */
-  .hero__caption {
-    max-width: 34ch;
-    margin-inline: clamp(1.25rem, 4vw, 3rem);
-    font-family: var(--font-display);
-    font-size: var(--text-h3);
-    line-height: 1.35;
-    color: var(--color-ink-inverse);
-    text-wrap: balance;
-  }
-
-  .process {
-    margin-top: 2.5rem;
-  }
-
-  .stats {
+  /* ================= FIGURES — the cited statistics ==================== */
+  .figures {
     display: grid;
-    gap: 2rem;
-    margin-top: 3rem;
+    gap: 2.5rem;
+    margin-top: clamp(3rem, 7vh, 5rem);
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--rule-color);
   }
 
-  /* --- Bundle: text beside the photograph ------------------------------ */
+  @media (min-width: 48rem) {
+    .figures {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+    }
+    /* Hairlines BETWEEN the figures rather than boxes around them. */
+    .figures__item + .figures__item {
+      padding-left: 3rem;
+      border-left: 1px solid var(--rule-color);
+    }
+  }
+
+  /* ================= FULL-BLEED BREAK ================================== */
+  .fullbleed {
+    border-radius: 0;
+    width: 100%;
+  }
+
+  /* ================= SPLIT — bundle ==================================== */
   .split {
     display: grid;
-    gap: 2rem;
-    align-items: center;
+    gap: 2.5rem;
   }
 
-  /* --- Founders -------------------------------------------------------- */
+  .split__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 60rem) {
+    .split {
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4rem;
+      align-items: center;
+    }
+    .split__text {
+      grid-column: 1 / span 5;
+    }
+    .split__media {
+      grid-column: 7 / span 6;
+    }
+  }
+
+  /* ================= FOUNDERS ========================================== */
   .founders {
     display: grid;
     gap: 2rem;
-    margin-top: 2.5rem;
+    margin-top: 3rem;
   }
 
   .founders__portraits {
@@ -320,26 +493,51 @@ const impactStats = [
     gap: 1.25rem;
   }
 
-  .cta-cards {
-    margin-top: 2.5rem;
-  }
-
-  @media (min-width: 40rem) {
-    .stats {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media (min-width: 56rem) {
-    .split {
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-    }
-
+  @media (min-width: 60rem) {
     .founders {
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
+      grid-template-columns: 5fr 6fr;
+      gap: 3.5rem;
       align-items: center;
+    }
+  }
+
+  .process,
+  .cta-cards {
+    margin-top: clamp(2.5rem, 6vh, 4rem);
+  }
+
+  /* ================= BOTANICAL DECORATION ============================== */
+  /* Margin ornament, shown only where there is a margin to put it in.
+     Squeezed against the text column it would be clutter, not detail. */
+  .deco {
+    display: none;
+    position: absolute;
+    color: var(--color-leaf);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  :global(.section--ink) .deco {
+    color: var(--color-clay-soft);
+    opacity: 0.4;
+  }
+
+  @media (min-width: 82rem) {
+    .deco {
+      display: block;
+    }
+    .deco--why {
+      top: -1rem;
+      right: -1rem;
+    }
+    .deco--how {
+      bottom: -2rem;
+      right: -1rem;
+      transform: scaleX(-1);
+    }
+    .deco--cta {
+      top: 0;
+      right: -1rem;
     }
   }
 </style>

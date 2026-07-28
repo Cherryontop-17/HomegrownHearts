@@ -2,29 +2,35 @@
 /**
  * Section band.
  *
- * Owns the page's vertical rhythm and the alternating surface bands, so no page
- * hand-rolls padding. Also carries the seasonal accent: sections shift from
- * green (grow) through gold (harvest) to terracotta (care) down the page, and
- * child components read `--accent` rather than picking a color themselves.
+ * Owns the page's vertical rhythm, the alternating surfaces, and the seasonal
+ * accent, so no page hand-rolls padding.
+ *
+ * Editorial additions:
+ *   - `numeral` prints a tracked 01 / 02 / 03 in the margin. On a wide screen
+ *     it sits OUTSIDE the content column, which is what makes it read as a
+ *     printed folio rather than as a label bolted to the heading.
+ *   - `surface="ink"` is a deliberately dark full-bleed band. Not a dark mode —
+ *     one or two of these make every cream section feel lighter by comparison,
+ *     which is most of what gives a print layout its sense of pace.
+ *   - `bleed` removes the container so a child can run edge to edge.
  */
 
 interface Props {
-  /** Anchor target, e.g. `#how-it-works`. */
   id?: string;
   /** Surface band. Alternate these down a page so sections separate without rules. */
-  surface?: 'cream' | 'sand' | 'parchment';
+  surface?: 'cream' | 'sand' | 'parchment' | 'ink';
   /** Seasonal accent. Sets `--accent` for everything inside. */
   accent?: 'grow' | 'harvest' | 'care';
   /** `tight` for sections that read as a continuation of the one above. */
-  rhythm?: 'default' | 'tight';
-  /** Constrain content to the long-form reading measure (~68ch) instead of full width. */
+  rhythm?: 'default' | 'tight' | 'loose';
+  /** Constrain content to the long-form reading measure (~68ch). */
   measure?: boolean;
-  /** Renders a plain <div>. For wrappers that are not a landmark of their own. */
+  /** Edge to edge — no container, no gutter. For full-bleed imagery. */
+  bleed?: boolean;
+  /** Folio number, e.g. "01". Rendered in the margin on wide screens. */
+  numeral?: string;
   as?: 'section' | 'div';
-  /**
-   * Accessible name for the section. A <section> with no name is not exposed as
-   * a landmark at all, so an unnamed one should be a <div>.
-   */
+  /** Accessible name. A <section> with no name is not exposed as a landmark. */
   label?: string;
   class?: string;
 }
@@ -35,39 +41,69 @@ const {
   accent = 'grow',
   rhythm = 'default',
   measure = false,
+  bleed = false,
+  numeral,
   as: Tag = 'section',
   label,
   class: className,
   ...rest
-} = Astro.props;
+}: Props = Astro.props;
 ---
 
-{/* `...rest` is not optional politeness — see the note in Reveal.astro. */}
 <Tag
   id={id}
-  {...rest}
   class:list={[
     'section',
     `section--${surface}`,
     `section--accent-${accent}`,
-    rhythm === 'tight' && 'section--tight',
+    rhythm !== 'default' && `section--${rhythm}`,
+    bleed && 'section--bleed',
+    numeral && 'section--numbered',
     className,
   ]}
   aria-label={label}
+  {...rest}
 >
   <div class:list={['section__inner', measure && 'section__inner--measure']}>
+    {
+      numeral && (
+        <span class="section__numeral" aria-hidden="true">
+          {numeral}
+        </span>
+      )
+    }
     <slot />
   </div>
 </Tag>
 
 <style>
   .section {
+    position: relative;
+    /* Own stacking context, so the fixed paper grain on <body> sits behind
+       content rather than over it. */
+    isolation: isolate;
     padding-block: var(--spacing-section);
     padding-inline: var(--spacing-gutter);
   }
 
   .section--tight {
     padding-block: var(--spacing-section-tight);
+  }
+
+  /* For the one or two moments that should feel like turning a page. */
+  .section--loose {
+    padding-block: clamp(7rem, 18vh, 13rem);
+  }
+
+  .section--bleed {
+    padding-inline: 0;
+    padding-block: 0;
+  }
+
+  /* The container has to go too, or "full bleed" is just a centred image with
+     no gutter. */
+  .section--bleed .section__inner {
+    max-width: none;
   }
 
   .section--cream {
@@ -80,7 +116,24 @@ const {
     background-color: var(--color-parchment);
   }
 
-  /* Every accent value is contrast-checked against all three surfaces by
+  .section--ink {
+    background-color: var(--color-ink-deep);
+    color: var(--color-ink-inverse);
+    /* Inverts the semantic roles for everything inside. Verified by
+       check:contrast — ink-inverse 17.1:1 and line 12.5:1 on this surface,
+       against clay's 2.4:1 and ink-muted's 2.5:1. */
+    --text-heading: var(--color-ink-inverse);
+    --text-muted: var(--color-line);
+    --rule-color: color-mix(in oklab, var(--color-line) 30%, transparent);
+  }
+
+  /* On ink, the accent inverts: clay-soft fails AA on cream but reaches 4.8:1
+     here, and the seasonal greens go muddy. Verified by check:contrast. */
+  .section--ink {
+    --accent: var(--color-clay-soft);
+  }
+
+  /* Every accent value is contrast-checked against all surfaces by
      `npm run check:contrast`, so any pairing here is safe for text. */
   .section--accent-grow {
     --accent: var(--color-season-grow);
@@ -91,13 +144,46 @@ const {
   .section--accent-care {
     --accent: var(--color-season-care);
   }
+  /* Re-assert after the accent rules — the ink band's inversion wins. */
+  .section--ink.section--accent-grow,
+  .section--ink.section--accent-harvest,
+  .section--ink.section--accent-care {
+    --accent: var(--color-clay-soft);
+  }
 
   .section__inner {
+    position: relative;
     max-width: var(--container-page);
     margin-inline: auto;
   }
 
   .section__inner--measure {
     max-width: var(--container-content);
+  }
+
+  /* --- Folio numeral ------------------------------------------------------
+     In flow on narrow screens, in the left margin once there is room for it.
+     Absolute positioning only above the breakpoint, so it can never overlap
+     the text column. */
+  .section__numeral {
+    display: block;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-body);
+    font-size: var(--text-numeral);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--text-numeral--letter-spacing);
+    color: var(--accent, var(--color-clay));
+    opacity: 0.75;
+  }
+
+  @media (min-width: 86rem) {
+    .section__numeral {
+      position: absolute;
+      top: 0.5rem;
+      right: calc(100% + 2.5rem);
+      margin-bottom: 0;
+      white-space: nowrap;
+    }
   }
 </style>

@@ -92,6 +92,55 @@
 }
 
 /* ----------------------------------------------------------------------------
+   Clip wipe — how photographs enter.
+
+   The image is uncovered rather than faded. A photograph that fades in reads as
+   a slow network; a photograph that is wiped open reads as deliberate, and it
+   is the one gesture that most separates an editorial layout from a template.
+
+   `inset()` on clip-path, so nothing moves and nothing can reflow — the box is
+   already at its final size and position throughout, which is why this costs
+   zero CLS. Paired with a small counter-scale on the image inside so the frame
+   opens while the picture settles.
+   -------------------------------------------------------------------------- */
+
+@keyframes clip-wipe-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: scale(1.06);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
+}
+
+@keyframes clip-wipe-in {
+  from {
+    clip-path: inset(0 100% 0 0);
+    transform: scale(1.06);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: scale(1);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Rule draw — hairlines that arrive rather than appear.
+   Transform-only, so a rule can never push layout while it draws.
+   -------------------------------------------------------------------------- */
+
+@keyframes rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ----------------------------------------------------------------------------
    Grow in — the seed/sprout/basket/heart sequence.
 
    `--ease-overshoot` gives a small back-out, like something being set down.

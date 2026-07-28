@@ -42,6 +42,14 @@ interface Props {
    * Measured worst case: 5.8:1.
    */
   scrim?: boolean;
+  /**
+   * Enter by clip-wipe rather than fade. The frame opens and the picture
+   * settles inside it. Costs zero CLS because the box is already at its final
+   * size throughout — only `clip-path` and a counter-scale change.
+   */
+  wipe?: false | 'up' | 'in';
+  /** Crop override. Defaults to the slot's declared aspect. */
+  aspect?: string;
   class?: string;
 }
 
@@ -52,6 +60,8 @@ const {
   eager = false,
   kenBurns = false,
   scrim = false,
+  wipe = false,
+  aspect,
   class: className,
   ...rest
 } = Astro.props;
@@ -100,8 +110,9 @@ const tone = TONES[slot.tone];
 ---
 
 <figure
-  class:list={['photo', scrim && 'photo--scrim', className]}
-  style={`--photo-aspect:${slot.aspect};--tone-from:${tone.from};--tone-to:${tone.to}`}
+  class:list={['photo', scrim && 'photo--scrim', wipe && `photo--wipe-${wipe}`, className]}
+  style={`--photo-aspect:${aspect ?? slot.aspect};--tone-from:${tone.from};--tone-to:${tone.to}`}
+  data-photo
   {...rest}
 >
   {
@@ -138,6 +149,43 @@ const tone = TONES[slot.tone];
   {scrim && <span class="photo__scrim" aria-hidden="true" />}
   <div class="photo__overlay"><slot /></div>
 </figure>
+
+<script>
+  /**
+   * Opens a photo's clip once it enters view. Separate from Reveal because a
+   * photograph wipes rather than fades, and because the two must not double up
+   * on the same element — a fade inside a wipe reads as a rendering fault.
+   *
+   * Once-only, like every other reveal on the site.
+   */
+  function initPhotoWipes() {
+    const shots = document.querySelectorAll<HTMLElement>(
+      '[data-photo][class*="photo--wipe"]:not(.is-shown)',
+    );
+    if (shots.length === 0) return;
+
+    if (!('IntersectionObserver' in window)) {
+      shots.forEach((el) => el.classList.add('is-shown'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-shown');
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px', threshold: 0.15 },
+    );
+
+    shots.forEach((el) => observer.observe(el));
+  }
+
+  initPhotoWipes();
+  document.addEventListener('astro:page-load', initPhotoWipes);
+</script>
 
 <style>
   .photo {
@@ -194,6 +242,57 @@ const tone = TONES[slot.tone];
   .photo--scrim {
     /* Text needs room to breathe on a short viewport. */
     min-height: 26rem;
+  }
+
+  /* --- Clip wipe entrance ------------------------------------------------
+     The clip goes on the INNER media, never on the <figure> itself.
+
+     That is not a style choice. The figure is what IntersectionObserver
+     watches, and an element clipped to `inset(100% 0 0 0)` has no visible area
+     for the observer to intersect — so it could never become visible in order
+     to be revealed. The first version did exactly that and the observer sat at
+     zero hits forever while four photographs stayed invisible.
+
+     Gated on `.js` like every other reveal: without scripting the photograph is
+     simply visible, never stuck behind a clip that will not open. */
+  :global(.js) .photo--wipe-up .photo__img,
+  :global(.js) .photo--wipe-up .photo__placeholder {
+    clip-path: inset(100% 0 0 0);
+  }
+
+  :global(.js) .photo--wipe-in .photo__img,
+  :global(.js) .photo--wipe-in .photo__placeholder {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  :global(.js) .photo--wipe-up.is-shown .photo__img,
+  :global(.js) .photo--wipe-up.is-shown .photo__placeholder {
+    animation: clip-wipe-up var(--duration-slow) var(--ease-out-gentle) forwards;
+  }
+
+  /* A deliberately paired set opens in sequence rather than together. */
+  :global([data-photo-group]) .photo:nth-child(2).is-shown .photo__img,
+  :global([data-photo-group]) .photo:nth-child(2).is-shown .photo__placeholder {
+    animation-delay: 140ms;
+  }
+
+  :global(.js) .photo--wipe-in.is-shown .photo__img,
+  :global(.js) .photo--wipe-in.is-shown .photo__placeholder {
+    animation: clip-wipe-in var(--duration-slow) var(--ease-out-gentle) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.js) .photo--wipe-up .photo__img,
+    :global(.js) .photo--wipe-up .photo__placeholder,
+    :global(.js) .photo--wipe-in .photo__img,
+    :global(.js) .photo--wipe-in .photo__placeholder,
+    :global(.js) .photo--wipe-up.is-shown .photo__img,
+    :global(.js) .photo--wipe-up.is-shown .photo__placeholder,
+    :global(.js) .photo--wipe-in.is-shown .photo__img,
+    :global(.js) .photo--wipe-in.is-shown .photo__placeholder {
+      clip-path: none;
+      animation: none;
+    }
   }
 
   /* 20s, 1.06 ceiling. Slow and shallow enough to read as the image breathing

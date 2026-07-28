@@ -23,6 +23,12 @@
      Warm neutrals. Never pure white for the page, never pure black for text —
      both read as clinical and cheap against an earth palette. */
   --color-cream: #fdfbf6; /* page background */
+  /* Editorial contrast moment, not a dark mode. The brief cuts dark mode
+     (docs/BRIEF.md §5) — this is one or two deliberately dark full-bleed
+     sections that make the cream ones feel lighter by comparison, which is
+     most of what makes a print layout feel expensive. */
+  --color-ink-deep: #1a1815;
+  --color-ink-deep-soft: #2a2622;
   --color-sand: #f4ece0; /* alternating section band */
   --color-parchment: #efe4d4; /* deeper band, footer */
   --color-card: #ffffff; /* raised surfaces only */
@@ -65,6 +71,14 @@
   --font-body: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   /* Fluid scale. Every heading is clamp()ed so nothing needs a breakpoint. */
+  /* Scale CONTRAST is the single biggest lever on perceived quality. The old
+     display size topped out at 5rem, which sat too close to h1 and made every
+     section read at the same volume. The hero now goes properly large and the
+     supporting sizes stay put, so the jump between them does the work. */
+  --text-mega: clamp(3.25rem, 10.5vw, 8.5rem);
+  --text-mega--line-height: 0.94;
+  --text-mega--letter-spacing: -0.045em;
+
   --text-display: clamp(2.75rem, 6.5vw, 5rem);
   --text-display--line-height: 1.02;
   --text-display--letter-spacing: -0.03em;
@@ -94,6 +108,11 @@
   --text-eyebrow--line-height: 1.4;
   --text-eyebrow--letter-spacing: 0.14em;
 
+  /* Section numerals — 01, 02, 03. Small, tracked, monospaced figures. The
+     cheapest editorial signal there is, and it also helps a reader keep place. */
+  --text-numeral: 0.8125rem;
+  --text-numeral--letter-spacing: 0.18em;
+
   /* --- Space ---------------------------------------------------------------
      Tailwind's 0.25rem step is already an 8px-compatible scale.
      These are the section rhythms — premium sites breathe, cheap ones cram. */
@@ -112,8 +131,16 @@
 
   /* --- Elevation -----------------------------------------------------------
      Warm-tinted shadows. Grey shadows on a cream page look like dirt. */
-  --shadow-soft: 0 1px 2px rgb(34 32 29 / 0.04), 0 8px 24px rgb(34 32 29 / 0.06);
-  --shadow-lift: 0 2px 4px rgb(34 32 29 / 0.05), 0 16px 40px rgb(34 32 29 / 0.09);
+  /* Multi-stop rather than one blur. A single large shadow reads as a drop
+     shadow; three stacked stops read as an object resting on a surface. */
+  --shadow-soft:
+    0 1px 1px rgb(34 32 29 / 0.03), 0 2px 4px rgb(34 32 29 / 0.03), 0 8px 20px rgb(34 32 29 / 0.05);
+  --shadow-lift:
+    0 1px 2px rgb(34 32 29 / 0.04), 0 4px 10px rgb(34 32 29 / 0.05),
+    0 18px 44px rgb(34 32 29 / 0.09);
+  --shadow-deep:
+    0 2px 4px rgb(34 32 29 / 0.05), 0 10px 24px rgb(34 32 29 / 0.08),
+    0 34px 70px rgb(34 32 29 / 0.13);
 
   /* --- Motion --------------------------------------------------------------
      Ceiling is 600ms. See TASKS.md → Animation Spec for the full budget.
@@ -140,6 +167,25 @@
    ========================================================================== */
 
 @layer base {
+  /*
+    Surface-aware text roles.
+
+    Components must use these rather than reaching for --color-clay or
+    --color-ink-muted directly, because those two are correct ONLY on the light
+    bands. On the dark band clay measures 2.4:1 and ink-muted 2.5:1 — both
+    badly failing — and that is exactly how the step titles shipped invisible
+    the first time the ink section existed.
+
+    A component that uses --text-heading works on every surface without
+    knowing which one it is on. `.section--ink` overrides these two, so the
+    inversion happens once instead of in every component that might land there.
+  */
+  :root {
+    --text-heading: var(--color-clay);
+    --text-muted: var(--color-ink-muted);
+    --rule-color: var(--color-line);
+  }
+
   html {
     scroll-behavior: smooth;
     /* Keeps anchored sections clear of the sticky header. */
@@ -165,6 +211,23 @@
     font-weight: 600;
     /* Stops orphaned words in short display headings. */
     text-wrap: balance;
+  }
+
+  /* Fraunces ships optical-size and softness axes even in the wght-only build's
+     default instance; enabling standard ligatures and contextual alternates is
+     what separates it from a generic serif at display sizes. */
+  h1,
+  h2 {
+    font-feature-settings:
+      'liga' 1,
+      'calt' 1,
+      'dlig' 1;
+  }
+
+  /* Numerals in running text should not jump around as values change. */
+  time,
+  [data-count-up] {
+    font-variant-numeric: tabular-nums;
   }
 
   p {
@@ -196,6 +259,43 @@
   video {
     max-width: 100%;
     height: auto;
+  }
+}
+
+/* ============================================================================
+   Paper grain
+
+   A single fixed noise layer over the whole page at very low opacity. Flat
+   colour is what makes a warm palette read as a template; a trace of grain
+   makes the same colour read as paper, and it costs one inline SVG with no
+   network request.
+
+   Generated with feTurbulence rather than shipped as a PNG so it is a few
+   hundred bytes, resolution-independent, and tintable. `pointer-events: none`
+   and `aria-hidden` by construction — it is a ::before on <body>, so it is
+   never in the accessibility tree.
+   ========================================================================== */
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* Sits above the page background but below all content, which is why every
+     section establishes its own stacking context. */
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Fixed rather than scrolling: real paper grain does not travel with the
+     text printed on it. */
+  background-repeat: repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The grain is static, so it stays — but on a very large viewport the tile
+     repetition can shimmer during scroll on some GPUs. Cheap insurance. */
+  body::before {
+    opacity: 0.024;
   }
 }
 

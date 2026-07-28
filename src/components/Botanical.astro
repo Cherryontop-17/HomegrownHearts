@@ -1,0 +1,133 @@
+---
+/**
+ * Botanical plates — the site's own illustration layer.
+ *
+ * Drawn here rather than licensed, so they are an ownable brand asset that no
+ * other site can have. They do the work photography cannot: fill margins, break
+ * up bands, sit behind text at low opacity, and animate.
+ *
+ * Every plate is `currentColor`, on a 200×280 field, with `pathLength="1"` on
+ * the drawable strokes so the Phase 2 draw-in works at any rendered size.
+ *
+ * These are decorative. `aria-hidden` throughout — a screen reader gains
+ * nothing from "leaf illustration", and the copy already carries the meaning.
+ */
+
+interface Props {
+  /** Which plate. Each is a different botanical study. */
+  plate?: 'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair';
+  /** Rendered width in px. Height follows the 200:280 field. */
+  size?: number;
+  /** Line weight. Lower reads more like an etching. */
+  weight?: number;
+  /** Fill the enclosed shapes as well as stroking them. */
+  filled?: boolean;
+  class?: string;
+}
+
+const {
+  plate = 'sprig',
+  size = 200,
+  weight = 1.25,
+  filled = false,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+/**
+ * Plates are described as path lists so they share one render path. Drawn on
+ * the same field and weight, they read as one set — which is the difference
+ * between an illustration system and a pile of clip art.
+ */
+const PLATES: Record<string, { stroke: string[]; fill?: string[] }> = {
+  // A single stem with alternating leaves. The workhorse for margins.
+  sprig: {
+    stroke: [
+      'M100 276 C100 220 98 170 100 120 C101 88 104 56 108 20',
+      'M100 232 C78 226 60 206 55 176 C82 176 98 200 100 232Z',
+      'M100 196 C122 190 140 170 145 140 C118 140 102 164 100 196Z',
+      'M101 158 C79 152 61 132 56 102 C83 102 99 126 101 158Z',
+      'M103 122 C125 116 143 96 148 66 C121 66 105 90 103 122Z',
+    ],
+  },
+  // Seed head — the "before" of the whole seed-to-heart idea.
+  seedhead: {
+    stroke: [
+      'M100 276 C100 220 100 170 100 128',
+      'M100 128 C74 128 56 106 56 78 C56 48 76 24 100 12 C124 24 144 48 144 78 C144 106 126 128 100 128Z',
+      'M100 24 C100 60 100 96 100 126',
+      'M100 60 C86 62 74 74 70 92',
+      'M100 60 C114 62 126 74 130 92',
+      'M100 92 C88 94 78 104 74 118',
+      'M100 92 C112 94 122 104 126 118',
+    ],
+  },
+  // Root vegetable study — beet or turnip with tops.
+  rootveg: {
+    stroke: [
+      'M100 152 C128 152 148 178 148 206 C148 240 126 268 100 276 C74 268 52 240 52 206 C52 178 72 152 100 152Z',
+      'M100 276 C100 276 100 276 100 276',
+      'M100 152 C98 124 92 100 78 78',
+      'M100 152 C102 126 108 102 122 80',
+      'M100 152 C100 126 100 104 100 82',
+      'M78 78 C60 70 48 52 46 28 C70 34 82 54 78 78Z',
+      'M122 80 C140 72 152 54 154 30 C130 36 118 56 122 80Z',
+      'M100 82 C88 62 88 40 96 16 C112 36 112 60 100 82Z',
+    ],
+  },
+  // The growing vine, as a plate rather than a page-height stroke.
+  vine: {
+    stroke: [
+      'M40 276 C40 232 76 212 96 184 C118 154 106 118 128 88 C146 64 168 52 176 20',
+      'M96 184 C74 180 56 162 50 134 C76 132 94 154 96 184Z',
+      'M128 88 C150 86 170 70 178 44 C152 40 132 60 128 88Z',
+      'M112 132 C132 132 150 118 156 96 C134 94 116 110 112 132Z',
+    ],
+  },
+  // Two leaves meeting — the logo's sprout, drawn as a study.
+  leafpair: {
+    stroke: [
+      'M100 276 C100 210 100 156 100 108',
+      'M100 152 C66 140 42 108 38 60 C82 66 106 106 100 152Z',
+      'M100 152 C134 140 158 108 162 60 C118 66 94 106 100 152Z',
+      'M100 152 C100 130 100 124 100 108',
+      'M70 96 C82 108 92 124 98 142',
+      'M130 96 C118 108 108 124 102 142',
+    ],
+  },
+};
+
+const paths = PLATES[plate] ?? PLATES.sprig;
+const height = Math.round((size * 280) / 200);
+---
+
+<svg
+  class:list={['botanical', filled && 'botanical--filled', className]}
+  viewBox="0 0 200 280"
+  width={size}
+  height={height}
+  aria-hidden="true"
+  focusable="false"
+  {...rest}
+>
+  {paths.stroke.map((d) => <path d={d} pathLength="1" style={`--w:${weight}`} />)}
+</svg>
+
+<style>
+  .botanical {
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: var(--w, 1.25);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* The strokes are hairlines by design; scaling the SVG must not thicken
+       them into something that reads as a cartoon. */
+    vector-effect: non-scaling-stroke;
+  }
+
+  .botanical--filled path {
+    fill: currentColor;
+    fill-opacity: 0.08;
+  }
+</style>

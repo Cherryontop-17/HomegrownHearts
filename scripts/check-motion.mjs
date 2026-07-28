@@ -325,7 +325,7 @@ for (const route of ROUTES) {
            // children) is one choreographed motion that the spec itself
            // describes as a single section animation. So walk up to the
            // component root that owns the animation and count that.
-           const owner = el.closest('[data-steps], [data-word-rise], [data-reveal]') || el;
+           const owner = el.closest('[data-steps], [data-word-rise], [data-reveal], [data-photo-group]') || el;
            const ownerCls = (owner.className && owner.className.baseVal !== undefined
              ? owner.className.baseVal : owner.className) || '';
            targets.set(owner, ownerCls || cls || owner.tagName);
