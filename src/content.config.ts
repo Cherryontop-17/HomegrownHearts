@@ -37,7 +37,7 @@ const item = z.object({
   body: z.string().optional(),
   /** Attribution for a cited number. Must map to an entry in docs/SOURCES.md. */
   source: z.string().optional(),
-  sourceHref: z.string().url().optional(),
+  sourceHref: z.url().optional(),
   /** For stat items. */
   value: z.string().optional(),
 });

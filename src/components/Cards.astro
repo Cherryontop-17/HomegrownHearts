@@ -1,0 +1,155 @@
+---
+/**
+ * Card grid for a content section's `items`.
+ *
+ * Used by the founders, bundle, and three-way CTA sections. One component
+ * rather than three near-identical grids, so the columns, gaps, and hover
+ * behaviour cannot drift apart between sections.
+ *
+ * Renders a `<ul>` when the items are a list of peers (founders, ways to help)
+ * — which they always are here. A grid of `<div>`s tells a screen reader
+ * nothing about how many there are or where it is in them.
+ */
+
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+import type { IconName } from '../icons';
+
+export interface CardItem {
+  icon?: string;
+  title: string;
+  body?: string;
+}
+
+interface Props {
+  items: CardItem[];
+  /** Column count at the widest breakpoint. Below that it steps down. */
+  columns?: 2 | 3 | 4;
+  /** `plain` for text-only lists; `raised` for cards on a surface. */
+  variant?: 'plain' | 'raised';
+  /** Stagger between cards, in ms. */
+  stagger?: number;
+  class?: string;
+}
+
+const {
+  items,
+  columns = 3,
+  variant = 'raised',
+  stagger = 80,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+---
+
+<Reveal
+  as="ul"
+  stagger={stagger}
+  class:list={['cards', `cards--${columns}`, `cards--${variant}`, className]}
+  {...rest}
+>
+  {
+    items.map((item) => (
+      <li class="cards__item">
+        {item.icon && (
+          <span class="cards__icon">
+            <Icon name={item.icon as IconName} size={24} />
+          </span>
+        )}
+        <h3 class="cards__title">{item.title}</h3>
+        {item.body && <p class="cards__body">{item.body}</p>}
+      </li>
+    ))
+  }
+</Reveal>
+
+<style>
+  .cards {
+    display: grid;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Mobile-first: one column, then step up. Two columns before three means a
+     tablet never gets three cramped cards. */
+  @media (min-width: 34rem) {
+    .cards--3,
+    .cards--4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .cards--2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .cards--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .cards--4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .cards__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cards--raised .cards__item {
+    padding: 1.75rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-card);
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform var(--duration-fast) var(--ease-out-soft),
+      box-shadow var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  /* The same 1px lift the buttons use. One hover gesture across the site. */
+  .cards--raised .cards__item:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lift);
+    border-color: var(--color-line-strong);
+  }
+
+  .cards__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-pill);
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 10%, transparent);
+    color: var(--accent, var(--color-clay));
+  }
+
+  .cards__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    letter-spacing: var(--text-h3--letter-spacing);
+    color: var(--color-clay);
+    margin-bottom: 0.5rem;
+    /* Long Spanish titles must not push the card wider than its column. */
+    text-wrap: balance;
+  }
+
+  .cards__body {
+    font-size: var(--text-small);
+    line-height: 1.65;
+    color: var(--color-ink-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cards--raised .cards__item:hover {
+      transform: none;
+    }
+  }
+</style>

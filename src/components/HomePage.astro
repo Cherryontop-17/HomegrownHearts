@@ -1,14 +1,15 @@
 ---
 /**
- * The homepage, rendered entirely from `src/content/pages/<locale>/home.yaml`.
+ * The homepage. Rendered entirely from `src/content/pages/<locale>/home.yaml`.
  *
- * Both `/` and `/es/` render this same component. That is the point: there is
- * one layout and two copy files, so a change to the page structure cannot land
- * in English and be forgotten in Spanish. It also retires the duplicated page
- * components Phase 1 shipped as a stopgap.
+ * Both `/` and `/es/` render this component, so a structural change cannot land
+ * in English and be forgotten in Spanish.
  *
- * Phase 4 fills in the remaining sections (bundle, founders, full impact strip)
- * against this same pattern.
+ * Section order follows the reader's questions, not ours: what is this (hero),
+ * why does it matter (why), how does it work (how), what do I actually get
+ * (bundle), who are you (founders), what have you done (impact), what can I do
+ * (cta). See docs/BRIEF.md §4 — a stranger should be able to state what we do
+ * and who we serve within ten seconds.
  */
 
 import Base from '../layouts/Base.astro';
@@ -20,10 +21,12 @@ import Reveal from './Reveal.astro';
 import Photo from './Photo.astro';
 import WordRise from './WordRise.astro';
 import Steps from './Steps.astro';
+import Cards from './Cards.astro';
 import type { Step } from './Steps.astro';
 
 import { getCopy, section, assertParity } from '../copy';
-import { localizePath } from '../i18n/utils';
+import { localizePath, useTranslations } from '../i18n/utils';
+import { IMPACT } from '../config';
 import type { Locale } from '../config';
 import type { IconName } from '../icons';
 
@@ -33,24 +36,40 @@ interface Props {
 
 const { locale }: Props = Astro.props;
 
-// Runs on every build. A page missing from either language, or a section that
-// exists in one and not the other, fails here with a filename.
+// Runs on every build. A page missing from either language, or a section
+// present in one and not the other, fails here with a filename.
 await assertParity();
 
 const copy = await getCopy('home', locale);
+const t = useTranslations(locale);
 
 const why = section(copy, 'why');
 const how = section(copy, 'how');
+const bundle = section(copy, 'bundle');
+const founders = section(copy, 'founders');
 const impact = section(copy, 'impact');
+const cta = section(copy, 'cta');
 
 const steps: Step[] = (how.items ?? []).map((item) => ({
   icon: (item.icon ?? 'leaf') as IconName,
   title: item.title,
   body: item.body ?? '',
 }));
+
+/**
+ * Impact numbers come from config.ts, never from the copy files — they change
+ * after every delivery and must only ever be typed in one place.
+ * COMPLIANCE.md Rule 5: zeros are fine, inflated numbers are not recoverable.
+ */
+const impactStats = [
+  { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
+  { value: IMPACT.mothersServed, label: t('impact.mothers') },
+  { value: IMPACT.volunteers, label: t('impact.volunteers') },
+];
 ---
 
 <Base title={copy.title} description={copy.description}>
+  {/* --- 4.1 Hero ------------------------------------------------------- */}
   <Section accent="grow" surface="cream">
     {copy.hero?.eyebrow && <Eyebrow>{copy.hero.eyebrow}</Eyebrow>}
     <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
@@ -59,14 +78,14 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
       {copy.hero?.lead && <p class="lead">{copy.hero.lead}</p>}
       <div class="actions">
         {
-          (copy.hero?.ctas ?? []).map((cta) => (
+          (copy.hero?.ctas ?? []).map((c) => (
             <Button
-              href={localizePath(cta.href, locale)}
-              variant={cta.primary ? 'primary' : 'secondary'}
+              href={localizePath(c.href, locale)}
+              variant={c.primary ? 'primary' : 'secondary'}
               size="lg"
-              external={cta.external}
+              external={c.external}
             >
-              {cta.label}
+              {c.label}
             </Button>
           ))
         }
@@ -74,11 +93,20 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
     </Reveal>
 
     <Reveal delay={120} class="hero-media">
-      <Photo photo="hero" eager kenBurns />
+      <Photo photo="hero" eager kenBurns scrim>
+        {
+          /*
+          Over the scrim. The scrim's opacity is set so cream text clears AA
+          even against a pure-white photograph, so this stays readable whatever
+          the founders eventually upload.
+        */
+        }
+        <p class="hero__caption">{t('legal.privacy')}</p>
+      </Photo>
     </Reveal>
   </Section>
 
-  {/* Why produce — the cited statistics. Access data only, per COMPLIANCE Rule 1. */}
+  {/* --- 4.2 Why fresh food matters — cited access data, never health ---- */}
   <Section accent="harvest" surface="sand" id={why.id}>
     <Reveal>
       {why.eyebrow && <Eyebrow>{why.eyebrow}</Eyebrow>}
@@ -94,7 +122,6 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
             label={item.title}
             source={item.source}
             sourceHref={item.sourceHref}
-            countUp
           />
         ))
       }
@@ -103,6 +130,7 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
     {why.note && <p class="note">{why.note}</p>}
   </Section>
 
+  {/* --- 4.3 How it works ----------------------------------------------- */}
   <Section accent="grow" surface="cream" id={how.id}>
     <Reveal>
       {how.eyebrow && <Eyebrow>{how.eyebrow}</Eyebrow>}
@@ -111,19 +139,83 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
     <Steps steps={steps} class="process" />
   </Section>
 
-  <Section accent="harvest" surface="sand" rhythm="tight">
-    <Reveal stagger={80} class="gallery">
-      <Photo photo="garden" alt={copy.hero?.title ?? ''} />
-      <Photo photo="harvest" alt={how.title ?? ''} />
-      <Photo photo="bundle" alt={section(copy, 'bundle').title ?? ''} />
-    </Reveal>
+  {/* --- 4.4 What is in a bundle ---------------------------------------- */}
+  <Section accent="harvest" surface="sand" id={bundle.id}>
+    <div class="split">
+      <Reveal class="split__text">
+        {bundle.eyebrow && <Eyebrow>{bundle.eyebrow}</Eyebrow>}
+        {bundle.title && <h2>{bundle.title}</h2>}
+        {(bundle.body ?? []).map((p) => <p class="lead">{p}</p>)}
+        {/* Rule 4: pending approval is stated on the page, not just in a doc. */}
+        {bundle.note && <p class="note">{bundle.note}</p>}
+      </Reveal>
+
+      <Reveal delay={100} class="split__media">
+        <Photo photo="bundle" alt={bundle.title ?? ''} />
+      </Reveal>
+    </div>
   </Section>
 
-  <Section accent="care" surface="cream" id={impact.id}>
+  {/* --- 4.5 Founders ---------------------------------------------------- */}
+  <Section accent="care" surface="cream" id={founders.id}>
+    <Reveal>
+      {founders.eyebrow && <Eyebrow>{founders.eyebrow}</Eyebrow>}
+      {founders.title && <h2>{founders.title}</h2>}
+    </Reveal>
+
+    <div class="founders">
+      <Reveal stagger={100} class="founders__portraits">
+        <Photo photo="founder-kreeshma" alt={founders.items?.[0]?.title ?? ''} />
+        <Photo photo="founder-charishya" alt={founders.items?.[1]?.title ?? ''} />
+      </Reveal>
+      <Cards
+        items={[...(founders.items ?? [])]}
+        columns={2}
+        variant="plain"
+        class="founders__bios"
+      />
+    </div>
+
+    {(founders.body ?? []).map((p) => <p class="note">{p}</p>)}
+  </Section>
+
+  {/* --- 4.6 Impact strip — numbers from config.ts, zeros included ------- */}
+  <Section accent="care" surface="parchment" id={impact.id}>
     <Reveal>
       {impact.eyebrow && <Eyebrow>{impact.eyebrow}</Eyebrow>}
       {impact.title && <h2>{impact.title}</h2>}
       {(impact.body ?? []).map((p) => <p class="lead">{p}</p>)}
+    </Reveal>
+
+    <Reveal stagger={80} class="stats">
+      {impactStats.map((s) => <StatCard value={String(s.value)} label={s.label} countUp />)}
+    </Reveal>
+
+    <p class="note">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
+  </Section>
+
+  {/* --- 4.7 Three-way CTA ----------------------------------------------- */}
+  <Section accent="grow" surface="cream" id={cta.id}>
+    <Reveal>
+      {cta.eyebrow && <Eyebrow>{cta.eyebrow}</Eyebrow>}
+      {cta.title && <h2>{cta.title}</h2>}
+    </Reveal>
+
+    <Cards items={[...(cta.items ?? [])]} columns={3} class="cta-cards" />
+
+    <Reveal class="actions actions--centred">
+      {
+        (cta.ctas ?? []).map((c) => (
+          <Button
+            href={localizePath(c.href, locale)}
+            variant={c.primary ? 'primary' : 'secondary'}
+            size="lg"
+            external={c.external}
+          >
+            {c.label}
+          </Button>
+        ))
+      }
     </Reveal>
   </Section>
 </Base>
@@ -143,6 +235,7 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
     letter-spacing: var(--text-h2--letter-spacing);
     color: var(--color-clay);
     max-width: 22ch;
+    text-wrap: balance;
   }
 
   .lead {
@@ -153,12 +246,13 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
     color: var(--color-ink-muted);
   }
 
-  /* Compliance notes and pending-approval flags. Quieter than body copy, but
-     never hidden — a caveat nobody can read is not a caveat. */
+  /* Compliance notes, pending-approval flags, and last-updated stamps. Quieter
+     than body copy but never hidden — a caveat nobody can read is not a caveat. */
   .note {
     margin-top: 2rem;
     max-width: 62ch;
     font-size: var(--text-small);
+    line-height: 1.6;
     color: var(--color-ink-muted);
     border-left: 2px solid var(--color-line-strong);
     padding-left: 1rem;
@@ -171,30 +265,77 @@ const steps: Step[] = (how.items ?? []).map((item) => ({
     margin-top: 2rem;
   }
 
+  .actions--centred {
+    margin-top: 2.5rem;
+  }
+
   .hero-media {
     margin-top: 3rem;
+  }
+
+  /* Sits over the scrim. Deliberately the privacy statement rather than a
+     slogan: it is the single most reassuring thing a clinic reader can see
+     early, and it costs nothing to say twice. */
+  .hero__caption {
+    max-width: 34ch;
+    margin-inline: clamp(1.25rem, 4vw, 3rem);
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: 1.35;
+    color: var(--color-ink-inverse);
+    text-wrap: balance;
   }
 
   .process {
     margin-top: 2.5rem;
   }
 
-  .stats,
-  .gallery {
+  .stats {
     display: grid;
     gap: 2rem;
     margin-top: 3rem;
   }
 
-  .gallery {
+  /* --- Bundle: text beside the photograph ------------------------------ */
+  .split {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  /* --- Founders -------------------------------------------------------- */
+  .founders {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2.5rem;
+  }
+
+  .founders__portraits {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
-    margin-top: 0;
+  }
+
+  .cta-cards {
+    margin-top: 2.5rem;
   }
 
   @media (min-width: 40rem) {
-    .stats,
-    .gallery {
+    .stats {
       grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .split {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .founders {
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
     }
   }
 </style>

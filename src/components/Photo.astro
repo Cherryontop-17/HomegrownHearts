@@ -31,6 +31,17 @@ interface Props {
    * nothing to pan across, and moving it would just be motion for its own sake.
    */
   kenBurns?: boolean;
+  /**
+   * Darkening overlay for text laid over the image.
+   *
+   * Not a taste setting. The opacity is chosen so that cream text clears WCAG
+   * AA **against a pure-white photograph** — the lightest background the
+   * composite can ever produce. That makes contrast a property of the scrim
+   * rather than a property of whichever photo the founders happen to upload,
+   * which is the only way to guarantee it for images that do not exist yet.
+   * Measured worst case: 5.8:1.
+   */
+  scrim?: boolean;
   class?: string;
 }
 
@@ -40,6 +51,7 @@ const {
   width = 1200,
   eager = false,
   kenBurns = false,
+  scrim = false,
   class: className,
   ...rest
 } = Astro.props;
@@ -88,7 +100,7 @@ const tone = TONES[slot.tone];
 ---
 
 <figure
-  class:list={['photo', className]}
+  class:list={['photo', scrim && 'photo--scrim', className]}
   style={`--photo-aspect:${slot.aspect};--tone-from:${tone.from};--tone-to:${tone.to}`}
   {...rest}
 >
@@ -123,11 +135,20 @@ const tone = TONES[slot.tone];
       </div>
     )
   }
+  {scrim && <span class="photo__scrim" aria-hidden="true" />}
+  <div class="photo__overlay"><slot /></div>
 </figure>
 
 <style>
   .photo {
+    position: relative;
     margin: 0;
+    /* Explicit, and load-bearing. With `aspect-ratio` set and width left at
+       `auto`, a `min-height` (see .photo--scrim) makes the box resolve its
+       WIDTH from its height — which pushed the hero 10px past a 768px viewport.
+       Pinning the width means height derives from width, and min-height can
+       only stretch it. Caught by `npm run check:overflow`. */
+    width: 100%;
     /* Reserved before anything loads. This is what keeps CLS at zero when a
        real photo replaces a stand-in. */
     aspect-ratio: var(--photo-aspect);
@@ -141,6 +162,38 @@ const tone = TONES[slot.tone];
     height: 100%;
     object-fit: cover;
     display: block;
+  }
+
+  /* Strongest where the text sits, clearing toward the far edge so the
+     photograph is still visible. 0.7 at the text end is the measured floor. */
+  .photo__scrim {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      100deg,
+      rgb(34 32 29 / 0.7) 0%,
+      rgb(34 32 29 / 0.58) 42%,
+      rgb(34 32 29 / 0.25) 100%
+    );
+    pointer-events: none;
+  }
+
+  .photo__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    /* Only participates in layout when something is slotted in. */
+    pointer-events: none;
+  }
+
+  .photo__overlay > :global(*) {
+    pointer-events: auto;
+  }
+
+  .photo--scrim {
+    /* Text needs room to breathe on a short viewport. */
+    min-height: 26rem;
   }
 
   /* 20s, 1.06 ceiling. Slow and shallow enough to read as the image breathing
