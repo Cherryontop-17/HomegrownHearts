@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Ungraded photo sources. The graded output in src/assets/photos/ is what the
+# site uses and what is committed; these are inputs to `npm run photos`.
+photos-src/

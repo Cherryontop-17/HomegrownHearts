@@ -55,3 +55,24 @@ the founders photograph themselves.
 
 Everything else on this page is a stand-in for something real. Those two would
 be stand-ins for someone who does not exist.
+
+---
+
+## Grading
+
+These files are **generated**, not the originals. Ungraded sources live in
+`photos-src/`; `npm run photos` crops and grades them into this folder.
+
+Stock images look like stock mainly because they do not match each other, so
+all five run through one pipeline: a gentle S-curve, a per-channel warm shift
+toward the cream page, restrained saturation, and output sharpening. The hero
+additionally gets a vignette and a bottom-left shade so cream type always holds
+over it.
+
+One trap worth recording: sharp's `.tint()` is a **colourise** operation, not a
+white-balance one. It desaturates before tinting, which turned every photograph
+sepia on the first pass. Warming is done with per-channel `.linear()` instead.
+
+To swap a photograph, replace the file in `photos-src/` and re-run
+`npm run photos`. To change the look for all of them, edit the recipe in
+`scripts/grade-photos.mjs`.

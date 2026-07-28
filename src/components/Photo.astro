@@ -135,13 +135,20 @@ const tone = TONES[slot.tone];
         real image lands.
       */
       <div class="photo__placeholder" aria-hidden="true" data-photo-slot={slot.id}>
-        <svg class="photo__motif" viewBox="0 0 200 120" preserveAspectRatio="xMidYMid slice">
-          <path
-            class="photo__vine"
-            d="M-10 110 C 40 110 30 60 70 58 C 110 56 100 12 150 14 C 180 15 195 8 210 4"
-          />
-          <path class="photo__leaf" d="M70 58C58 52 52 40 54 28C66 32 72 45 70 58Z" />
-          <path class="photo__leaf" d="M150 14C140 6 138 -6 143 -16C153 -9 155 4 150 14Z" />
+        {/*
+          A botanical study rather than a gradient swoosh. A placeholder still
+          occupies a designed page, so it should look composed — and this one
+          reuses the same plate language as the rest of the site instead of
+          inventing a shape that appears nowhere else.
+        */}
+        <svg class="photo__motif" viewBox="0 0 200 280" preserveAspectRatio="xMidYMid meet">
+          <g class="photo__plate">
+            <path d="M100 276C100 220 98 170 100 120C101 88 104 56 108 20" />
+            <path d="M100 232C78 226 60 206 55 176C82 176 98 200 100 232Z" />
+            <path d="M100 196C122 190 140 170 145 140C118 140 102 164 100 196Z" />
+            <path d="M101 158C79 152 61 132 56 102C83 102 99 126 101 158Z" />
+            <path d="M103 122C125 116 143 96 148 66C121 66 105 90 103 122Z" />
+          </g>
         </svg>
       </div>
     )
@@ -313,27 +320,28 @@ const tone = TONES[slot.tone];
     width: 100%;
     height: 100%;
     position: relative;
-    background-image: linear-gradient(145deg, var(--tone-from), var(--tone-to));
-    /* Muted so a stand-in never competes with real content for attention.
-       It should read as "an image belongs here", not as a design element. */
-    opacity: 0.5;
+    display: grid;
+    place-items: center;
+    /* Layered: a soft radial highlight over the tone ramp, so the surface has
+       some depth instead of reading as one flat sweep. */
+    background-image:
+      radial-gradient(120% 90% at 30% 15%, rgb(253 251 246 / 0.4), transparent 60%),
+      linear-gradient(150deg, var(--tone-from), var(--tone-to));
   }
 
   .photo__motif {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    fill: none;
-    stroke: var(--color-cream);
-    stroke-width: 1.5;
-    stroke-linecap: round;
+    width: 46%;
+    max-width: 12rem;
+    height: auto;
     opacity: 0.5;
   }
 
-  .photo__leaf {
-    fill: var(--color-cream);
-    stroke: none;
-    opacity: 0.7;
+  .photo__plate {
+    fill: none;
+    stroke: var(--color-cream);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
   }
 </style>

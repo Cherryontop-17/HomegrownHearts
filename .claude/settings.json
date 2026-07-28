@@ -25,7 +25,8 @@
       "Bash(python -c ' *)",
       "Bash(rm -rf dist)",
       "Bash(npx astro *)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(node harvest-candidates.mjs)"
     ]
   }
 }

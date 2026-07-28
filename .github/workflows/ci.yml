@@ -92,3 +92,4 @@ jobs:
           done
           npm run check:overflow -- http://localhost:4399
           npm run check:motion -- http://localhost:4399
+          npm run check:hero -- http://localhost:4399
