@@ -2,14 +2,22 @@
 /**
  * Site footer.
  *
- * Carries the two things this site is legally and ethically obliged to say:
- * the non-501(c)(3) status line and the recipient-privacy statement. Both come
- * from the UI dictionary so they are translated, and both are marked in
- * docs/COMPLIANCE.md as not-to-be-reworded.
+ * Dark, matching the founders' other sites and giving the page a proper base
+ * to sit on — a light footer on a light page just trails off.
  *
- * Everything else — contact, socials, advisor — reads from `src/config.ts` and
- * renders only when the founders have filled it in. Nothing here invents a
- * placeholder that could read as real.
+ * Carries the two statements this site is obliged to make: the non-501(c)(3)
+ * status line and the recipient-privacy statement. Both come from the UI
+ * dictionary so they are translated, and both are marked in docs/COMPLIANCE.md
+ * as not-to-be-reworded.
+ *
+ * Layout note: the two legal statements sit SIDE BY SIDE in the lower band.
+ * Stacked in a single narrow column they read as orphaned fine print with two
+ * thirds of the footer empty beside them, which is both ugly and the wrong
+ * signal — the status line is a compliance statement, not a disclaimer nobody
+ * is meant to read.
+ *
+ * Everything else reads from `src/config.ts` and renders only when the founders
+ * have filled it in. Nothing here invents a placeholder that could read as real.
  */
 
 import { getLocale, localizePath, useTranslations } from '../i18n/utils';
@@ -34,12 +42,17 @@ const year = new Date().getFullYear();
   <div class="footer__inner">
     <div class="footer__brand">
       <a class="footer__home" href={localizePath('/', locale)} aria-label={t('a11y.homeLink')}>
-        <Logo variant="lockup" size={36} />
+        <Logo variant="lockup" size={38} />
       </a>
       <p class="footer__place">
         <Icon name="map-pin" size={16} />
-        {ORG.location.town}, {ORG.location.county}, {ORG.location.stateCode}
+        {
+          /* Localised, not raw config — "Union County, NC" in a Spanish page is
+            a small tell that the translation stops at the copy files. */
+        }
+        {t('org.place')}
       </p>
+      <p class="footer__blurb">{t('footer.blurb')}</p>
     </div>
 
     <nav class="footer__col" aria-label={t('a11y.mainNav')}>
@@ -84,8 +97,8 @@ const year = new Date().getFullYear();
       </ul>
 
       {
-        /* Named advisor is the strongest credibility signal here, so it renders
-          as soon as one exists — and states the neutral fact until then. */
+        /* The advisor is the strongest credibility signal here, so it renders as
+          soon as one exists — and states the neutral fact until then. */
       }
       <p class="footer__advisor">
         {
@@ -113,46 +126,49 @@ const year = new Date().getFullYear();
   <div class="footer__legal">
     <p class="footer__status">{t('legal.status')}</p>
     <p class="footer__privacy">{t('legal.privacy')}</p>
-    {
-      /* One expression, not two. Adjacent JSX expressions separated by a
-        newline collapse the whitespace between them, which silently produced
-        "Homegrown Hearts.All rights reserved." */
-    }
+  </div>
+
+  <div class="footer__base">
     <p class="footer__copy">{`© ${year} ${ORG.name}. ${t('footer.rights')}`}</p>
   </div>
 </footer>
 
 <style>
   .footer {
-    background-color: var(--color-parchment);
-    border-top: 1px solid var(--color-line);
-    padding-block: var(--spacing-section-tight) 2.5rem;
+    background-color: var(--color-ink-deep);
+    color: var(--color-ink-inverse);
+    padding-block: clamp(3.5rem, 8vh, 5.5rem) 2rem;
     padding-inline: var(--spacing-gutter);
   }
 
-  .footer__inner {
-    display: grid;
-    gap: 2.5rem;
+  .footer__inner,
+  .footer__legal,
+  .footer__base {
     max-width: var(--container-page);
     margin-inline: auto;
   }
 
+  .footer__inner {
+    display: grid;
+    gap: 2.75rem;
+  }
+
   @media (min-width: 40rem) {
     .footer__inner {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (min-width: 64rem) {
     .footer__inner {
-      grid-template-columns: 1.4fr repeat(3, 1fr);
-      gap: 2rem;
+      grid-template-columns: 1.6fr repeat(3, 1fr);
+      gap: 2.5rem;
     }
   }
 
   .footer__home {
     display: inline-block;
-    color: var(--color-clay);
+    color: var(--color-ink-inverse);
     text-decoration: none;
   }
 
@@ -160,9 +176,18 @@ const year = new Date().getFullYear();
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    margin-top: 0.75rem;
+    margin-top: 1rem;
     font-size: var(--text-small);
-    color: var(--color-ink-muted);
+    color: var(--color-line);
+  }
+
+  .footer__blurb {
+    margin-top: 0.85rem;
+    max-width: 34ch;
+    font-size: var(--text-small);
+    line-height: 1.65;
+    color: var(--color-line);
+    opacity: 0.85;
   }
 
   .footer__heading {
@@ -171,8 +196,8 @@ const year = new Date().getFullYear();
     font-weight: 700;
     letter-spacing: var(--text-eyebrow--letter-spacing);
     text-transform: uppercase;
-    color: var(--color-ink-muted);
-    margin-bottom: 0.875rem;
+    color: var(--color-clay-soft);
+    margin-bottom: 1rem;
   }
 
   .footer__list {
@@ -187,65 +212,77 @@ const year = new Date().getFullYear();
   .footer__link {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    /* 44px targets in the footer too — this is where thumbs land on mobile. */
+    gap: 0.45rem;
+    /* 44px targets — this is where thumbs land on mobile. */
     min-height: 44px;
     font-size: var(--text-small);
-    color: var(--color-ink);
+    color: var(--color-ink-inverse);
     text-decoration: none;
-    /* Underline drawn with a border so it can animate without reflow. */
+    opacity: 0.86;
     border-bottom: 1px solid transparent;
     transition:
-      color var(--duration-fast) var(--ease-out-soft),
+      opacity var(--duration-fast) var(--ease-out-soft),
       border-color var(--duration-fast) var(--ease-out-soft);
   }
 
   .footer__link:hover {
-    color: var(--color-clay);
+    opacity: 1;
     border-bottom-color: currentColor;
   }
 
   .footer__advisor {
     margin-top: 1.25rem;
     font-size: var(--text-small);
-    color: var(--color-ink-muted);
+    line-height: 1.6;
+    color: var(--color-line);
     display: flex;
     flex-direction: column;
   }
 
   .footer__advisor-role {
     font-weight: 600;
-    color: var(--color-ink);
+    color: var(--color-ink-inverse);
   }
 
+  /* --- Legal band ---------------------------------------------------------
+     Two columns, so the statements use the footer's width instead of hugging
+     the left edge with the rest of it empty. */
   .footer__legal {
-    max-width: var(--container-page);
-    margin-inline: auto;
-    margin-top: 2.5rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--color-line);
-    display: flex;
-    flex-direction: column;
-    gap: 0.625rem;
+    display: grid;
+    gap: 1.25rem 3rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-line) 22%, transparent);
+  }
+
+  @media (min-width: 52rem) {
+    .footer__legal {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   .footer__status,
   .footer__privacy {
-    max-width: 60ch;
     font-size: var(--text-small);
-    color: var(--color-ink-muted);
+    line-height: 1.65;
+    color: var(--color-line);
   }
 
-  /* The status line is a compliance statement, not fine print. It gets the
-     same weight as body copy so it cannot be mistaken for a disclaimer
-     nobody is meant to read. */
+  /* The status line is a compliance statement, not fine print. Full-strength
+     text so it cannot be mistaken for a disclaimer nobody is meant to read. */
   .footer__status {
-    color: var(--color-ink);
+    color: var(--color-ink-inverse);
+  }
+
+  .footer__base {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid color-mix(in oklab, var(--color-line) 14%, transparent);
   }
 
   .footer__copy {
-    margin-top: 0.5rem;
     font-size: var(--text-small);
-    color: var(--color-ink-muted);
+    color: var(--color-line);
+    opacity: 0.8;
   }
 </style>

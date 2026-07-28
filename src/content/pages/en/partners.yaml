@@ -37,7 +37,7 @@ sections:
         title: Seasonal produce bundles
         body: >-
           Whole, raw vegetables picked the morning they reach you. Contents
-          change with the season — spring greens, summer tomatoes and squash,
+          change with the season: spring greens, summer tomatoes and squash,
           fall collards and sweet potatoes.
       - icon: calendar
         title: A fixed day and time
@@ -95,7 +95,7 @@ sections:
       - icon: shield-check
         title: Washed in plain running water only
         body: >-
-          Never soap, detergent, or produce wash — FDA guidance is explicit that
+          Never soap, detergent, or produce wash. FDA guidance is explicit that
           these can be absorbed into produce.
       - icon: shield-check
         title: Whole and raw, never cut or cooked

@@ -111,6 +111,28 @@ const {
       border-color var(--duration-fast) var(--ease-out-soft);
   }
 
+  /*
+    On the dark band the card surface must invert too. The text roles already
+    flip to cream there, and cream on a white card is invisible — which is
+    exactly how the CTA cards first shipped as blank white boxes.
+    ink-deep-soft is the checked partner: 14.5:1 with ink-inverse.
+  */
+  :global(.section--ink) .cards--raised .cards__item {
+    background-color: var(--color-ink-deep-soft);
+    border-color: color-mix(in oklab, var(--color-line) 22%, transparent);
+    box-shadow: none;
+  }
+
+  :global(.section--ink) .cards--raised .cards__item:hover {
+    border-color: color-mix(in oklab, var(--color-line) 40%, transparent);
+    box-shadow: none;
+  }
+
+  /* The tinted icon chip needs more presence against a dark card. */
+  :global(.section--ink) .cards__icon {
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 22%, transparent);
+  }
+
   /* The same 1px lift the buttons use. One hover gesture across the site. */
   .cards--raised .cards__item:hover {
     transform: translateY(-1px);

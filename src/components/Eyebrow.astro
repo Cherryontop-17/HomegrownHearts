@@ -1,23 +1,48 @@
 ---
 /**
- * Small tracked label above a heading.
+ * Section label above a heading.
  *
- * Renders a plain <p> by default. It is a label, not a heading — putting it in
- * an <h*> would inject a level into the outline that means nothing to a screen
- * reader working through the page structure.
+ * Two shapes:
+ *   - `pill` (default) — a tinted rounded badge. The idiom used across the
+ *     founders' other sites, and what reads as a current product page.
+ *   - `rule` — the hairline-and-caps treatment, kept for places where a badge
+ *     would be too loud (inside cards, in the footer).
+ *
+ * Renders a plain <p>. It is a label, not a heading — putting it in an <h*>
+ * would inject a level into the outline that means nothing to a screen reader
+ * working through the page structure.
  */
 
 interface Props {
   /** Defaults to the section's seasonal `--accent`. */
   color?: 'accent' | 'clay' | 'muted';
+  /** Badge or hairline. */
+  variant?: 'pill' | 'rule';
+  /** Centre it, for centred section headers. */
+  align?: 'start' | 'center';
   class?: string;
 }
 
-const { color = 'accent', class: className, ...rest } = Astro.props;
+const {
+  color = 'accent',
+  variant = 'pill',
+  align = 'start',
+  class: className,
+  ...rest
+}: Props = Astro.props;
 ---
 
-<p class:list={['eyebrow', `eyebrow--${color}`, className]} {...rest}>
-  <span class="eyebrow__mark" aria-hidden="true"></span>
+<p
+  class:list={[
+    'eyebrow',
+    `eyebrow--${color}`,
+    `eyebrow--${variant}`,
+    align === 'center' && 'eyebrow--center',
+    className,
+  ]}
+  {...rest}
+>
+  {variant === 'rule' && <span class="eyebrow__mark" aria-hidden="true" />}
   <slot />
 </p>
 
@@ -26,7 +51,7 @@ const { color = 'accent', class: className, ...rest } = Astro.props;
     display: flex;
     align-items: center;
     gap: 0.625rem;
-    margin-bottom: 0.875rem;
+    margin-bottom: 1rem;
     font-family: var(--font-body);
     font-size: var(--text-eyebrow);
     font-weight: 600;
@@ -35,8 +60,31 @@ const { color = 'accent', class: className, ...rest } = Astro.props;
     text-transform: uppercase;
   }
 
-  /* Falls back to clay on the rare component used outside a Section, which is
-     the only place --accent is defined. */
+  /* --- Pill --------------------------------------------------------------
+     `inline-flex` and `align-self: flex-start` so the badge hugs its text
+     rather than stretching the width of the column. */
+  .eyebrow--pill {
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-pill);
+    /* Tinted from the section's own accent, so the badge shifts with the
+       seasonal drift rather than being a fixed colour. */
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 12%, transparent);
+    border: 1px solid color-mix(in oklab, var(--accent, var(--color-clay)) 22%, transparent);
+  }
+
+  /* A 12% tint of the accent is nearly invisible on the dark band. */
+  :global(.section--ink) .eyebrow--pill {
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 20%, transparent);
+    border-color: color-mix(in oklab, var(--accent, var(--color-clay)) 38%, transparent);
+  }
+
+  .eyebrow--center {
+    align-self: center;
+    margin-inline: auto;
+  }
+
   .eyebrow--accent {
     color: var(--accent, var(--color-clay));
   }
@@ -47,7 +95,8 @@ const { color = 'accent', class: className, ...rest } = Astro.props;
     color: var(--text-muted);
   }
 
-  /* Short rule instead of a bullet — quieter, and it echoes the vine. */
+  /* --- Rule --------------------------------------------------------------
+     Short hairline instead of a bullet — quieter, and it echoes the vine. */
   .eyebrow__mark {
     width: 1.5rem;
     height: 1px;

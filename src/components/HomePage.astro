@@ -2,18 +2,14 @@
 /**
  * The homepage. Rendered entirely from `src/content/pages/<locale>/home.yaml`.
  *
- * Editorial layout. What makes it read as a publication rather than a template:
+ * Design idiom follows the founders' other sites (roomrow.com,
+ * pushkarcamp.roomrow.com): centred section headers with pill badges, content
+ * carried in rounded cards with imagery, a floating fact strip, a gallery grid,
+ * and a solid brand-colour CTA band before the footer.
  *
- *   - SCALE CONTRAST. The hero runs at --text-mega (up to 8.5rem) against
- *     section headings at --text-display. When everything is the same size,
- *     nothing is emphasised and the page reads flat.
- *   - ASYMMETRY. Sections offset against a 12-column grid instead of stacking
- *     centred blocks, so the eye has somewhere to travel.
- *   - PACE. A full-bleed photograph and one deliberately dark band interrupt
- *     the run of cream sections, giving the page chapters rather than a
- *     uniform rhythm.
- *   - FOLIOS. 01 / 02 / 03 in the margin. Cheap, and it helps a reader keep
- *     their place on a long page.
+ * An earlier editorial/print treatment — left-aligned, hairline rules, sparse —
+ * was rejected as reading dated. This keeps the warm earth palette and the
+ * typography and changes the layout language to a card-based one.
  *
  * Both `/` and `/es/` render this, so a structural change cannot land in
  * English and be forgotten in Spanish.
@@ -23,18 +19,15 @@ import Base from '../layouts/Base.astro';
 import Section from './Section.astro';
 import Eyebrow from './Eyebrow.astro';
 import Button from './Button.astro';
-import StatCard from './StatCard.astro';
 import Reveal from './Reveal.astro';
 import Photo from './Photo.astro';
 import WordRise from './WordRise.astro';
-import Steps from './Steps.astro';
 import Cards from './Cards.astro';
-import Botanical from './Botanical.astro';
-import type { Step } from './Steps.astro';
+import Icon from './Icon.astro';
 
 import { getCopy, section, assertParity } from '../copy';
 import { localizePath, useTranslations } from '../i18n/utils';
-import { IMPACT } from '../config';
+import { IMPACT, ORG } from '../config';
 import type { Locale } from '../config';
 import type { IconName } from '../icons';
 
@@ -56,28 +49,34 @@ const founders = section(copy, 'founders');
 const impact = section(copy, 'impact');
 const cta = section(copy, 'cta');
 
-const steps: Step[] = (how.items ?? []).map((item) => ({
-  icon: (item.icon ?? 'leaf') as IconName,
-  title: item.title,
-  body: item.body ?? '',
-}));
-
 const impactStats = [
   { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
   { value: IMPACT.mothersServed, label: t('impact.mothers') },
   { value: IMPACT.volunteers, label: t('impact.volunteers') },
 ];
+
+/**
+ * The strip under the hero. Every entry is a plain fact about the service, not
+ * a metric — there are no metrics yet, and inventing one would breach
+ * COMPLIANCE.md Rule 5.
+ */
+const facts = [
+  { icon: 'map-pin' as IconName, value: ORG.location.town, label: ORG.location.state },
+  { icon: 'basket' as IconName, value: t('facts.cost'), label: t('facts.costNote') },
+  { icon: 'sprout' as IconName, value: t('facts.season'), label: t('facts.seasonNote') },
+  { icon: 'shield-check' as IconName, value: t('facts.route'), label: t('facts.routeNote') },
+];
 ---
 
-<Base title={copy.title} description={copy.description} transparentHeader>
-  {/* ============ HERO — full bleed, type over photograph ============== */}
+<Base title={copy.title} description={copy.description} transparentHeader vine={false}>
+  {/* ================= HERO ============================================= */}
   <section class="hero">
     <div class="hero__media">
       <Photo photo="hero" eager kenBurns scrim aspect="16 / 10" class="hero__photo" />
     </div>
 
     <div class="hero__content">
-      {copy.hero?.eyebrow && <p class="hero__eyebrow">{copy.hero.eyebrow}</p>}
+      {copy.hero?.eyebrow && <span class="hero__badge">{copy.hero.eyebrow}</span>}
       <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
       <Reveal delay={420}>
         {copy.hero?.lead && <p class="hero__lead">{copy.hero.lead}</p>}
@@ -99,158 +98,201 @@ const impactStats = [
     </div>
   </section>
 
-  {/* ============ 01 — WHY. Asymmetric: heading left, prose offset ===== */}
-  <Section accent="grow" surface="cream" id={why.id} numeral="01" rhythm="loose">
-    <Reveal stagger={130} class="offset">
-      <div class="offset__lead">
-        {why.eyebrow && <Eyebrow>{why.eyebrow}</Eyebrow>}
-        {why.title && <h2 class="h-display">{why.title}</h2>}
-      </div>
-      <div class="offset__body">
-        {(why.body ?? []).map((p) => <p class="lead">{p}</p>)}
-      </div>
+  {/* ================= FACT STRIP — floats over the hero edge =========== */}
+  <div class="strip-wrap">
+    <Reveal stagger={90} class="strip">
+      {
+        facts.map((f) => (
+          <div class="strip__item">
+            <span class="strip__icon">
+              <Icon name={f.icon} size={20} />
+            </span>
+            <span class="strip__value">{f.value}</span>
+            <span class="strip__label">{f.label}</span>
+          </div>
+        ))
+      }
+    </Reveal>
+  </div>
+
+  {/* ================= WHY — centred header + stat cards ================ */}
+  <Section accent="grow" surface="cream" id={why.id}>
+    <Reveal class="head">
+      {why.eyebrow && <Eyebrow align="center">{why.eyebrow}</Eyebrow>}
+      {why.title && <h2 class="head__title">{why.title}</h2>}
+      {(why.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
     </Reveal>
 
-    <Reveal stagger={110} class="figures">
+    <Reveal stagger={110} class="statgrid">
       {
         (why.items ?? []).map((item) => (
-          <StatCard
-            value={item.value ?? ''}
-            label={item.title}
-            source={item.source}
-            sourceHref={item.sourceHref}
-            class="figures__item"
-          />
+          <article class="statcard">
+            <p class="statcard__value">{item.value}</p>
+            <p class="statcard__label">{item.title}</p>
+            {item.body && <p class="statcard__body">{item.body}</p>}
+            {item.source &&
+              (item.sourceHref ? (
+                <a
+                  class="statcard__src"
+                  href={item.sourceHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {item.source}
+                </a>
+              ) : (
+                <span class="statcard__src">{item.source}</span>
+              ))}
+          </article>
         ))
       }
     </Reveal>
 
-    {why.note && <p class="note">{why.note}</p>}
-
-    <Botanical plate="sprig" size={132} class="deco deco--why" />
+    {why.note && <p class="note note--center">{why.note}</p>}
   </Section>
 
-  {/* ============ Full-bleed break ===================================== */}
-  <Section surface="cream" bleed accent="harvest">
-    <Photo
-      photo="break-produce"
-      alt={bundle.title ?? ''}
-      aspect="21 / 9"
-      wipe="up"
-      class="fullbleed"
-    />
-  </Section>
-
-  {/* ============ 02 — HOW. The dark chapter ========================== */}
-  <Section accent="harvest" surface="ink" id={how.id} numeral="02" rhythm="loose">
-    <Reveal stagger={130} class="offset">
-      <div class="offset__lead">
-        {how.eyebrow && <Eyebrow>{how.eyebrow}</Eyebrow>}
-        {how.title && <h2 class="h-display h-display--inverse">{how.title}</h2>}
-      </div>
+  {/* ================= HOW — centred header + numbered icon cards ======= */}
+  <Section accent="harvest" surface="sand" id={how.id}>
+    <Reveal class="head">
+      {how.eyebrow && <Eyebrow align="center">{how.eyebrow}</Eyebrow>}
+      {how.title && <h2 class="head__title">{how.title}</h2>}
     </Reveal>
-    <Steps steps={steps} class="process" />
-    <Botanical plate="vine" size={150} class="deco deco--how" />
+
+    <Reveal stagger={110} class="howgrid">
+      {
+        (how.items ?? []).map((item, i) => (
+          <article class="howcard">
+            <span class="howcard__step">{String(i + 1).padStart(2, '0')}</span>
+            <span class="howcard__icon">
+              <Icon name={(item.icon ?? 'leaf') as IconName} size={26} />
+            </span>
+            <h3 class="howcard__title">{item.title}</h3>
+            {item.body && <p class="howcard__body">{item.body}</p>}
+          </article>
+        ))
+      }
+    </Reveal>
   </Section>
 
-  {/* ============ 03 — BUNDLE. Narrow text, tall image ================ */}
-  <Section accent="harvest" surface="sand" id={bundle.id} numeral="03">
-    <div class="split">
-      <Reveal stagger={140} class="split__text">
+  {/* ================= BUNDLE — image card + copy ======================= */}
+  <Section accent="harvest" surface="cream" id={bundle.id}>
+    <div class="feature">
+      <div class="feature__media">
+        <Photo
+          photo="bundle"
+          alt={bundle.title ?? ''}
+          aspect="4 / 3"
+          wipe="up"
+          class="feature__photo"
+        />
+      </div>
+      <Reveal stagger={130} class="feature__text">
         <div>
           {bundle.eyebrow && <Eyebrow>{bundle.eyebrow}</Eyebrow>}
-          {bundle.title && <h2 class="h-display">{bundle.title}</h2>}
+          {bundle.title && <h2 class="feature__title">{bundle.title}</h2>}
         </div>
         <div>
-          {(bundle.body ?? []).map((p) => <p class="lead">{p}</p>)}
+          {(bundle.body ?? []).map((p) => <p class="feature__body">{p}</p>)}
           {bundle.note && <p class="note note--tight">{bundle.note}</p>}
         </div>
       </Reveal>
-
-      <div class="split__media">
-        <Photo photo="bundle" alt={bundle.title ?? ''} aspect="4 / 5" wipe="up" />
-      </div>
     </div>
   </Section>
 
-  {/* ============ 04 — FOUNDERS ======================================= */}
-  <Section accent="care" surface="cream" id={founders.id} numeral="04">
-    <Reveal stagger={130} class="offset">
-      <div class="offset__lead">
-        {founders.eyebrow && <Eyebrow>{founders.eyebrow}</Eyebrow>}
-        {founders.title && <h2 class="h-display">{founders.title}</h2>}
-      </div>
+  {/* ================= GALLERY ========================================== */}
+  <Section accent="harvest" surface="sand" rhythm="tight">
+    <Reveal class="head">
+      <Eyebrow align="center">{t('gallery.eyebrow')}</Eyebrow>
+      <h2 class="head__title">{t('gallery.title')}</h2>
     </Reveal>
-
-    <div class="founders">
-      {
-        /* One choreographed pair. `data-photo-group` tells the motion gate to
-          count them as a single gesture, which is what they are. */
-      }
-      <div class="founders__portraits" data-photo-group>
-        <Photo photo="founder-kreeshma" alt={founders.items?.[0]?.title ?? ''} wipe="up" />
-        <Photo photo="founder-charishya" alt={founders.items?.[1]?.title ?? ''} wipe="up" />
-      </div>
-      <Cards
-        items={[...(founders.items ?? [])]}
-        columns={2}
-        variant="plain"
-        class="founders__bios"
+    <div class="gallery" data-photo-group>
+      <Photo photo="garden" alt={t('gallery.garden')} aspect="4 / 3" wipe="up" />
+      <Photo photo="harvest" alt={t('gallery.harvest')} aspect="4 / 3" wipe="up" />
+      <Photo
+        photo="break-produce"
+        alt={t('gallery.produce')}
+        aspect="16 / 9"
+        wipe="up"
+        class="gallery__wide"
       />
     </div>
-
-    {(founders.body ?? []).map((p) => <p class="note">{p}</p>)}
   </Section>
 
-  {/* ============ 05 — IMPACT ========================================= */}
-  <Section accent="care" surface="parchment" id={impact.id} numeral="05">
-    <Reveal stagger={130} class="offset">
-      <div class="offset__lead">
-        {impact.eyebrow && <Eyebrow>{impact.eyebrow}</Eyebrow>}
-        {impact.title && <h2 class="h-display">{impact.title}</h2>}
-      </div>
-      <div class="offset__body">
-        {(impact.body ?? []).map((p) => <p class="lead">{p}</p>)}
-      </div>
+  {/* ================= FOUNDERS ======================================== */}
+  <Section accent="care" surface="cream" id={founders.id}>
+    <Reveal class="head">
+      {founders.eyebrow && <Eyebrow align="center">{founders.eyebrow}</Eyebrow>}
+      {founders.title && <h2 class="head__title">{founders.title}</h2>}
     </Reveal>
 
-    <Reveal stagger={110} class="figures">
+    <div class="people" data-photo-group>
+      {
+        (founders.items ?? []).map((person, i) => (
+          <article class="person">
+            <Photo
+              photo={i === 0 ? 'founder-kreeshma' : 'founder-charishya'}
+              alt={person.title}
+              wipe="up"
+              class="person__photo"
+            />
+            <div class="person__text">
+              <h3 class="person__name">{person.title}</h3>
+              {person.body && <p class="person__role">{person.body}</p>}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    {(founders.body ?? []).map((p) => <p class="note note--center">{p}</p>)}
+  </Section>
+
+  {/* ================= IMPACT — tiles ================================== */}
+  <Section accent="care" surface="sand" id={impact.id}>
+    <Reveal class="head">
+      {impact.eyebrow && <Eyebrow align="center">{impact.eyebrow}</Eyebrow>}
+      {impact.title && <h2 class="head__title">{impact.title}</h2>}
+      {(impact.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+
+    <Reveal stagger={100} class="tiles">
       {
         impactStats.map((s) => (
-          <StatCard value={String(s.value)} label={s.label} countUp class="figures__item" />
+          <div class="tile">
+            <span class="tile__value" data-count-up={String(s.value)}>
+              {s.value}
+            </span>
+            <span class="tile__label">{s.label}</span>
+          </div>
         ))
       }
     </Reveal>
-
-    <p class="note">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
+    <p class="note note--center">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
   </Section>
 
-  {/* ============ 06 — CTA ============================================ */}
-  <Section accent="grow" surface="cream" id={cta.id} numeral="06" rhythm="loose">
-    <Reveal stagger={130} class="offset">
-      <div class="offset__lead">
-        {cta.eyebrow && <Eyebrow>{cta.eyebrow}</Eyebrow>}
-        {cta.title && <h2 class="h-display">{cta.title}</h2>}
-      </div>
+  {/* ================= CTA BAND ======================================== */}
+  <Section accent="grow" surface="ink" id={cta.id}>
+    <Reveal class="head">
+      {cta.eyebrow && <Eyebrow align="center">{cta.eyebrow}</Eyebrow>}
+      {cta.title && <h2 class="head__title head__title--inverse">{cta.title}</h2>}
     </Reveal>
 
     <Cards items={[...(cta.items ?? [])]} columns={3} class="cta-cards" />
 
-    <Reveal class="actions">
+    <Reveal class="actions actions--center">
       {
         (cta.ctas ?? []).map((c) => (
           <Button
             href={localizePath(c.href, locale)}
             variant={c.primary ? 'primary' : 'secondary'}
             size="lg"
+            class={c.primary ? undefined : 'btn-on-dark'}
           >
             {c.label}
           </Button>
         ))
       }
     </Reveal>
-
-    <Botanical plate="leafpair" size={120} class="deco deco--cta" />
   </Section>
 </Base>
 
@@ -260,20 +302,14 @@ const impactStats = [
     position: relative;
     isolation: isolate;
     display: grid;
-    /* Media and content share one cell, so the type sits over the photograph
-       without either being positioned absolutely. */
     grid-template-areas: 'stack';
     /* `minmax(0, 1fr)`, not `auto`. The hero photo has an aspect-ratio and is
        stretched to the hero's height, and an aspect-ratio box with a definite
-       height resolves its WIDTH from that height — 1354px here. An auto-sized
-       grid column then grows to fit it and the whole page scrolls sideways.
-       Pinning the column makes the width authoritative instead. This is the
-       second time this exact interaction has bitten; see Photo.astro's
-       `width: 100%`. */
+       height resolves its WIDTH from that height. An auto column then grows to
+       fit it and the whole page scrolls sideways. */
     grid-template-columns: minmax(0, 1fr);
-    min-height: min(94svh, 54rem);
+    min-height: min(92svh, 52rem);
     align-items: end;
-    /* Belt and braces: the photograph is decorative and may be cropped. */
     overflow: hidden;
   }
 
@@ -299,21 +335,27 @@ const impactStats = [
     max-width: var(--container-page);
     margin-inline: auto;
     padding-inline: var(--spacing-gutter);
-    padding-block: clamp(3rem, 9vh, 7rem);
+    /* Extra bottom padding so the fact strip can overlap without covering the
+       buttons. */
+    padding-block: clamp(3rem, 8vh, 6rem) clamp(5.5rem, 13vh, 9rem);
     color: var(--color-ink-inverse);
   }
 
-  .hero__eyebrow {
+  .hero__badge {
+    display: inline-flex;
+    padding: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-pill);
+    background-color: rgb(253 251 246 / 0.16);
+    border: 1px solid rgb(253 251 246 / 0.28);
+    backdrop-filter: blur(6px);
     font-size: var(--text-eyebrow);
     font-weight: 600;
     letter-spacing: var(--text-eyebrow--letter-spacing);
     text-transform: uppercase;
     color: var(--color-ink-inverse);
-    opacity: 0.85;
-    margin-bottom: 1.25rem;
   }
 
-  /* The scale-contrast moment the whole page is built around. */
   .hero__title {
     font-size: var(--text-mega);
     line-height: var(--text-mega--line-height);
@@ -324,7 +366,7 @@ const impactStats = [
   }
 
   .hero__lead {
-    margin-top: 1.75rem;
+    margin-top: 1.5rem;
     max-width: 46ch;
     font-size: var(--text-lead);
     line-height: var(--text-lead--line-height);
@@ -336,88 +378,420 @@ const impactStats = [
     display: flex;
     flex-wrap: wrap;
     gap: 0.875rem;
-    margin-top: 2.25rem;
+    margin-top: 2rem;
   }
 
-  /* A secondary button on a photograph needs its own border and label colour;
-     the clay-on-cream pairing used on light bands disappears here. */
   .hero__actions :global(.btn-on-dark) {
-    border-color: rgb(253 251 246 / 0.5);
+    border-color: rgb(253 251 246 / 0.45);
     color: var(--color-ink-inverse);
+    background-color: rgb(253 251 246 / 0.08);
+    backdrop-filter: blur(6px);
   }
 
   .hero__actions :global(.btn-on-dark:hover) {
     border-color: var(--color-ink-inverse);
-    background-color: rgb(253 251 246 / 0.12);
+    background-color: rgb(253 251 246 / 0.18);
   }
 
-  /* ================= EDITORIAL GRID ==================================== */
-  /* Heading in the left six columns, supporting prose offset into the right
-     five. Stacked below the breakpoint. */
-  .offset {
+  /* ================= FACT STRIP ======================================== */
+  .strip-wrap {
+    position: relative;
+    z-index: 3;
+    max-width: var(--container-page);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+    /* Lifts the panel over the hero's lower edge. The overlap is what makes it
+       read as a floating card rather than as another band. */
+    margin-top: clamp(-4.5rem, -7vh, -2.5rem);
+  }
+
+  .strip {
     display: grid;
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* 1px gaps over a line-coloured background give hairline dividers between
+       cells without a border on each one. */
+    gap: 1px;
+    background-color: var(--color-line);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lift);
   }
 
-  @media (min-width: 60rem) {
-    .offset {
-      grid-template-columns: repeat(12, 1fr);
-      gap: 2rem 3rem;
-      align-items: start;
-    }
-    .offset__lead {
-      grid-column: 1 / span 6;
-    }
-    .offset__body {
-      grid-column: 8 / span 5;
-      /* Optical alignment: sits the prose against the heading's baseline
-         rather than its cap height. */
-      padding-top: 0.6rem;
+  @media (min-width: 56rem) {
+    .strip {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
-  .h-display {
+  .strip__item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    padding: 1.5rem 1.25rem;
+    background-color: var(--color-card);
+  }
+
+  .strip__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 0.4rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-garden-tint);
+    color: var(--color-garden);
+  }
+
+  .strip__value {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-clay);
+  }
+
+  .strip__label {
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  /* ================= CENTRED SECTION HEADER =========================== */
+  .head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  .head__title {
     font-size: var(--text-display);
     line-height: var(--text-display--line-height);
     letter-spacing: var(--text-display--letter-spacing);
     color: var(--text-heading);
-    max-width: 16ch;
     text-wrap: balance;
   }
 
-  .h-display--inverse {
+  .head__title--inverse {
     color: var(--color-ink-inverse);
   }
 
-  .lead {
-    max-width: 54ch;
+  .head__lead {
+    margin-top: 1.25rem;
     font-size: var(--text-lead);
     line-height: var(--text-lead--line-height);
     color: var(--text-muted);
   }
 
-  .lead + .lead {
-    margin-top: 1rem;
+  /* ================= CARD GRIDS ======================================= */
+  .statgrid,
+  .howgrid,
+  .tiles {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 6vh, 4rem);
   }
 
-  /* Muted ink disappears on the dark band; --color-line is the checked
-     equivalent there at 12.5:1. */
-  :global(.section--ink) .lead {
-    color: var(--color-line);
+  @media (min-width: 48rem) {
+    .statgrid,
+    .tiles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .howgrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
+  @media (min-width: 68rem) {
+    .howgrid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .statcard,
+  .howcard {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2rem 1.75rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform var(--duration-fast) var(--ease-out-soft),
+      box-shadow var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .statcard {
+    gap: 0.4rem;
+  }
+
+  .statcard:hover,
+  .howcard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .statcard__value {
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: 1;
+    font-weight: 600;
+    color: var(--accent, var(--color-clay));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .statcard__label {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .statcard__body {
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .statcard__src {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  a.statcard__src:hover {
+    color: var(--color-clay);
+    border-bottom-color: currentColor;
+  }
+
+  /* --- How cards --- */
+  .howcard {
+    position: relative;
+  }
+
+  .howcard__step {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.5rem;
+    font-size: var(--text-numeral);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--text-numeral--letter-spacing);
+    color: var(--accent, var(--color-clay));
+    opacity: 0.45;
+  }
+
+  .howcard__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1.1rem;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 12%, transparent);
+    color: var(--accent, var(--color-clay));
+  }
+
+  .howcard__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    color: var(--text-heading);
+    margin-bottom: 0.4rem;
+  }
+
+  .howcard__body {
+    font-size: var(--text-small);
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+
+  /* ================= FEATURE (bundle) ================================= */
+  .feature {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .feature__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .feature__photo {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .feature__title {
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    letter-spacing: var(--text-display--letter-spacing);
+    color: var(--text-heading);
+    text-wrap: balance;
+  }
+
+  .feature__body {
+    max-width: 52ch;
+    font-size: var(--text-lead);
+    line-height: var(--text-lead--line-height);
+    color: var(--text-muted);
+  }
+
+  .feature__body + .feature__body {
+    margin-top: 0.9rem;
+  }
+
+  @media (min-width: 60rem) {
+    .feature {
+      grid-template-columns: 6fr 5fr;
+      gap: 4rem;
+    }
+  }
+
+  /* ================= GALLERY ========================================== */
+  .gallery {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: clamp(2.5rem, 6vh, 4rem);
+  }
+
+  .gallery :global(.photo) {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft);
+  }
+
+  @media (min-width: 56rem) {
+    .gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    /* The wide one spans both columns, so the grid is not a flat row. */
+    .gallery__wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ================= PEOPLE =========================================== */
+  .people {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: clamp(2.5rem, 6vh, 4rem);
+  }
+
+  @media (min-width: 44rem) {
+    .people {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .person {
+    overflow: hidden;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform var(--duration-fast) var(--ease-out-soft),
+      box-shadow var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .person:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .person__photo {
+    border-radius: 0;
+  }
+
+  .person__text {
+    padding: 1.5rem 1.5rem 1.75rem;
+  }
+
+  .person__name {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    color: var(--text-heading);
+    margin-bottom: 0.3rem;
+  }
+
+  .person__role {
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* ================= IMPACT TILES ===================================== */
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .tile__value {
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: 1;
+    font-weight: 600;
+    color: var(--accent, var(--color-clay));
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tile__label {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* Any card surface on the dark band must invert with the text roles.
+     Cream text on a white card is invisible. */
+  :global(.section--ink) .statcard,
+  :global(.section--ink) .howcard,
+  :global(.section--ink) .tile,
+  :global(.section--ink) .person {
+    background-color: var(--color-ink-deep-soft);
+    border-color: color-mix(in oklab, var(--color-line) 22%, transparent);
+    box-shadow: none;
+  }
+
+  :global(.section--ink) .statcard__label,
+  :global(.section--ink) .tile__label {
+    color: var(--color-ink-inverse);
+  }
+
+  /* ================= SHARED =========================================== */
   .note {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     max-width: 62ch;
     font-size: var(--text-small);
     line-height: 1.6;
     color: var(--text-muted);
-    border-left: 2px solid var(--rule-color);
-    padding-left: 1rem;
+  }
+
+  .note--center {
+    margin-inline: auto;
+    text-align: center;
   }
 
   .note--tight {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
 
   .actions {
@@ -427,117 +801,11 @@ const impactStats = [
     margin-top: 2.5rem;
   }
 
-  /* ================= FIGURES — the cited statistics ==================== */
-  .figures {
-    display: grid;
-    gap: 2.5rem;
-    margin-top: clamp(3rem, 7vh, 5rem);
-    padding-top: 2.5rem;
-    border-top: 1px solid var(--rule-color);
+  .actions--center {
+    justify-content: center;
   }
 
-  @media (min-width: 48rem) {
-    .figures {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3rem;
-    }
-    /* Hairlines BETWEEN the figures rather than boxes around them. */
-    .figures__item + .figures__item {
-      padding-left: 3rem;
-      border-left: 1px solid var(--rule-color);
-    }
-  }
-
-  /* ================= FULL-BLEED BREAK ================================== */
-  .fullbleed {
-    border-radius: 0;
-    width: 100%;
-  }
-
-  /* ================= SPLIT — bundle ==================================== */
-  .split {
-    display: grid;
-    gap: 2.5rem;
-  }
-
-  .split__text {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  @media (min-width: 60rem) {
-    .split {
-      grid-template-columns: repeat(12, 1fr);
-      gap: 4rem;
-      align-items: center;
-    }
-    .split__text {
-      grid-column: 1 / span 5;
-    }
-    .split__media {
-      grid-column: 7 / span 6;
-    }
-  }
-
-  /* ================= FOUNDERS ========================================== */
-  .founders {
-    display: grid;
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-
-  .founders__portraits {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.25rem;
-  }
-
-  @media (min-width: 60rem) {
-    .founders {
-      grid-template-columns: 5fr 6fr;
-      gap: 3.5rem;
-      align-items: center;
-    }
-  }
-
-  .process,
   .cta-cards {
-    margin-top: clamp(2.5rem, 6vh, 4rem);
-  }
-
-  /* ================= BOTANICAL DECORATION ============================== */
-  /* Margin ornament, shown only where there is a margin to put it in.
-     Squeezed against the text column it would be clutter, not detail. */
-  .deco {
-    display: none;
-    position: absolute;
-    color: var(--color-leaf);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  :global(.section--ink) .deco {
-    color: var(--color-clay-soft);
-    opacity: 0.4;
-  }
-
-  @media (min-width: 82rem) {
-    .deco {
-      display: block;
-    }
-    .deco--why {
-      top: -1rem;
-      right: -1rem;
-    }
-    .deco--how {
-      bottom: -2rem;
-      right: -1rem;
-      transform: scaleX(-1);
-    }
-    .deco--cta {
-      top: 0;
-      right: -1rem;
-    }
+    margin-top: clamp(2.5rem, 6vh, 3.5rem);
   }
 </style>

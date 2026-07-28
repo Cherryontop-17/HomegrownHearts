@@ -33,7 +33,7 @@ sections:
     body:
       - >-
         They are expensive, they spoil, and they take time to cook. When money
-        is short they are what gets cut first — which is why a free bag of them,
+        is short they are the first thing to go. That is why a free bag of them,
         already washed, is worth more than it looks.
     items:
       - value: '1 in 10'
@@ -52,7 +52,7 @@ sections:
         sourceHref: https://map.feedingamerica.org/
     note: >-
       These are figures about what people can buy and eat. We make no claims
-      about health — for guidance on eating during pregnancy, ask your clinician.
+      about health. For guidance on eating during pregnancy, ask your clinician.
 
   - id: how
     eyebrow: How it works
@@ -83,7 +83,7 @@ sections:
     body:
       - >-
         A bundle is not a fixed box. It holds what the garden actually produced
-        that week — spring greens and radishes, summer tomatoes and squash, fall
+        that week: spring greens and radishes, summer tomatoes and squash, fall
         collards and sweet potatoes, all grown in the North Carolina Piedmont.
       - >-
         Everything is whole and raw. We do not cut, cook, or preserve anything.
@@ -122,7 +122,7 @@ sections:
       - icon: basket
         title: Donate supplies
         body: >-
-          Seeds, seedlings, tools, soil, and clean bags. Supplies only — never
+          Seeds, seedlings, tools, soil, and clean bags. Supplies only, never
           money.
       - icon: heart
         title: Partner with us

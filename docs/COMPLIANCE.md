@@ -78,8 +78,8 @@ status, no EIN, and no bank account.
 
 **Required, verbatim, in the footer of every page:**
 
-> Homegrown Hearts is a student-led initiative. We accept donated supplies only —
-> donations are not tax-deductible.
+> Homegrown Hearts is a student-led initiative. We accept donated supplies only.
+> Donations are not tax-deductible.
 
 **We never accept money.** Not cash, not Venmo, not a GoFundMe, not "just to
 cover seeds". Accepting money without an entity or an adult treasurer creates a

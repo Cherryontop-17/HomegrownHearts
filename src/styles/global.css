@@ -61,8 +61,14 @@
   --color-ink: #22201d; /* 15.7:1 on cream · 12.9:1 on parchment */
   --color-ink-muted: #5f574d; /* 6.9:1 on cream · 5.7:1 on parchment */
   --color-ink-inverse: #fdfbf6;
-  --color-line: #e3d7c6;
+  --color-line: #e8ded0;
   --color-line-strong: #d2c2ab;
+
+  /* Very light tints of the brand colors. Badges, soft card fills, and icon
+     chips — the "pill" layer the founders' other sites lean on. */
+  --color-garden-tint: #eaf1ed;
+  --color-clay-tint: #f7ece6;
+  --color-harvest-tint: #f6efe1;
 
   /* --- Type ----------------------------------------------------------------
      Fraunces for display (organic, editorial, expensive-feeling).
@@ -124,9 +130,13 @@
 
   /* --- Radius --------------------------------------------------------------
      Slightly varied, never uniform — organic rather than geometric. */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.5rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  /* Cards and media. Generous corners are the single clearest signal of the
+     modern card idiom the founders' other sites use. */
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
   --radius-pill: 100vmax;
 
   /* --- Elevation -----------------------------------------------------------
