@@ -21,7 +21,9 @@ export const ORG = {
   legalStatus: 'unincorporated-student-initiative',
   foundedYear: 2026,
   location: {
-    town: 'Waxhaw',
+    /* No town. The project is described at county level so a single garden's
+       location is never published — the founders are minors, and "a garden in
+       <small town>" is more identifying than it looks. */
     county: 'Union County',
     state: 'North Carolina',
     stateCode: 'NC',

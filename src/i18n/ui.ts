@@ -42,7 +42,7 @@ const en = {
   // Footer
   // Localised place name. Rendering ORG.location straight from config put
   // "Union County, NC" on the Spanish page.
-  'org.place': 'Waxhaw, Union County, North Carolina',
+  'org.place': 'Union County, North Carolina',
   'footer.blurb':
     'A student-led initiative growing free produce bundles for pregnant and postpartum mothers.',
 
@@ -122,7 +122,7 @@ const es: Record<UIKey, string> = {
   'lang.es': 'Español',
 
   // Pie de página
-  'org.place': 'Waxhaw, condado de Union, Carolina del Norte',
+  'org.place': 'Condado de Union, Carolina del Norte',
   'footer.blurb':
     'Iniciativa estudiantil que cultiva paquetes gratuitos de verduras para madres embarazadas y recién dadas a luz.',
 

@@ -10,13 +10,13 @@
 #     «ayudar a las familias» sí; «ayudar a su embarazo» jamás.
 
 title: Alimentos frescos para nuevas madres
-description: Cultivamos verduras en Waxhaw, Carolina del Norte, y entregamos paquetes gratuitos de temporada a madres embarazadas y recién dadas a luz vía una clínica asociada.
+description: Cultivamos verduras en el condado de Union, Carolina del Norte, y entregamos paquetes gratuitos de temporada a madres embarazadas y recién dadas a luz.
 
 hero:
-  eyebrow: Waxhaw · Condado de Union, Carolina del Norte
+  eyebrow: Condado de Union, Carolina del Norte
   title: Alimentos frescos, cultivados aquí cerca.
   lead: >-
-    Cultivamos verduras en un huerto pequeño en Waxhaw, Carolina del Norte, y
+    Cultivamos verduras en un huerto pequeño en el condado de Union, Carolina del Norte, y
     armamos paquetes gratuitos para madres embarazadas y recién dadas a luz. Una
     clínica asociada los entrega a las familias que atiende.
   ctas:
@@ -69,7 +69,7 @@ sections:
       - icon: seed
         title: Sembrar
         body: >-
-          Cuidamos un huerto pequeño en Waxhaw durante toda la temporada de
+          Cuidamos un huerto pequeño durante toda la temporada de
           cultivo de Carolina del Norte.
       - icon: sprout
         title: Cosechar
@@ -103,7 +103,7 @@ sections:
 
   - id: founders
     eyebrow: Quiénes somos
-    title: Dos estudiantes en Waxhaw, Carolina del Norte.
+    title: Dos estudiantes en el condado de Union, Carolina del Norte.
     items:
       - title: Kreeshma Vasikarla
         body: >-

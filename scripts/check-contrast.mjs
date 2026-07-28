@@ -75,6 +75,9 @@ const CHECKS = [
   { fg: 'line', on: ['ink-deep'], min: 4.5, role: 'muted text on dark band' },
   { fg: 'clay-soft', on: ['ink-deep'], min: 4.5, role: 'accent text on dark band' },
   { fg: 'leaf', on: ['ink-deep'], min: 3.0, role: 'rules on dark band (non-text)' },
+  // Green CTA band, which sits between the last light section and the footer.
+  { fg: 'ink-inverse', on: ['garden-deep'], min: 4.5, role: 'text on green band' },
+  { fg: 'garden-deep', on: ['ink-inverse'], min: 4.5, role: 'inverted button on green band' },
 ];
 
 /**

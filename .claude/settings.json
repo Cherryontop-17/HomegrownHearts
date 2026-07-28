@@ -26,7 +26,10 @@
       "Bash(rm -rf dist)",
       "Bash(npx astro *)",
       "Bash(grep -v \"^$\")",
-      "Bash(node harvest-candidates.mjs)"
+      "Bash(node harvest-candidates.mjs)",
+      "Bash(node scripts/check-overflow.mjs http://localhost:4365)",
+      "Bash(node scripts/check-hero-contrast.mjs http://localhost:4365)",
+      "Bash(node scripts/check-motion.mjs http://localhost:4365)"
     ]
   }
 }

@@ -133,6 +133,26 @@ const {
     background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 22%, transparent);
   }
 
+  /* Same reasoning as the ink band: the text roles invert on green, so a white
+     card surface would leave cream text on white. A translucent lift of the
+     band itself keeps it in the same colour family. */
+  :global(.section--garden) .cards--raised .cards__item {
+    background-color: rgb(253 251 246 / 0.08);
+    border-color: rgb(253 251 246 / 0.2);
+    box-shadow: none;
+  }
+
+  :global(.section--garden) .cards--raised .cards__item:hover {
+    background-color: rgb(253 251 246 / 0.13);
+    border-color: rgb(253 251 246 / 0.34);
+    box-shadow: none;
+  }
+
+  :global(.section--garden) .cards__icon {
+    background-color: rgb(253 251 246 / 0.16);
+    color: var(--color-ink-inverse);
+  }
+
   /* The same 1px lift the buttons use. One hover gesture across the site. */
   .cards--raised .cards__item:hover {
     transform: translateY(-1px);

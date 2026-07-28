@@ -44,7 +44,7 @@ hero: # the big bit at the top
   eyebrow: About # small label above the headline
   title: A garden, two students, and a clinic.
   lead: >- # the paragraph under the headline
-    Homegrown Hearts started in Waxhaw...
+    Homegrown Hearts started in Union County...
 
 sections: # everything below the hero, in order
   - id: mission # never change an id — see below

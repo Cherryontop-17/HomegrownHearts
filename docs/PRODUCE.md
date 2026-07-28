@@ -4,7 +4,7 @@
 described on the site as "clinic-approved" until the partner clinic has reviewed
 and agreed to it in writing. See [`COMPLIANCE.md`](COMPLIANCE.md) Rule 4.
 
-**Region:** Waxhaw, Union County, NC — Piedmont, USDA hardiness zone 7b/8a
+**Region:** Union County, North Carolina. Piedmont, USDA hardiness zone 7b/8a
 **Basis:** NC State Extension planting calendar (S5) and FDA produce handling
 guidance (S6) in [`SOURCES.md`](SOURCES.md)
 

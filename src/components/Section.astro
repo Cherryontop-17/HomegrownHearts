@@ -18,7 +18,7 @@
 interface Props {
   id?: string;
   /** Surface band. Alternate these down a page so sections separate without rules. */
-  surface?: 'cream' | 'sand' | 'parchment' | 'ink';
+  surface?: 'cream' | 'sand' | 'parchment' | 'ink' | 'garden';
   /** Seasonal accent. Sets `--accent` for everything inside. */
   accent?: 'grow' | 'harvest' | 'care';
   /** `tight` for sections that read as a continuation of the one above. */
@@ -116,6 +116,22 @@ const {
     background-color: var(--color-parchment);
   }
 
+  /*
+    Brand-green band, for the call to action immediately above the footer.
+    It exists because the CTA and the footer were BOTH ink-deep and merged into
+    one undifferentiated dark block with no seam between them. Two adjacent
+    surfaces need to differ, and green is the brand's own answer rather than an
+    arbitrary third grey.
+  */
+  .section--garden {
+    background-color: var(--color-garden-deep);
+    color: var(--color-ink-inverse);
+    --text-heading: var(--color-ink-inverse);
+    --text-muted: color-mix(in oklab, var(--color-ink-inverse) 82%, transparent);
+    --rule-color: color-mix(in oklab, var(--color-ink-inverse) 24%, transparent);
+    --accent: var(--color-ink-inverse);
+  }
+
   .section--ink {
     background-color: var(--color-ink-deep);
     color: var(--color-ink-inverse);
@@ -149,6 +165,13 @@ const {
   .section--ink.section--accent-harvest,
   .section--ink.section--accent-care {
     --accent: var(--color-clay-soft);
+  }
+
+  /* On green, the seasonal accents all go muddy; cream is the only safe one. */
+  .section--garden.section--accent-grow,
+  .section--garden.section--accent-harvest,
+  .section--garden.section--accent-care {
+    --accent: var(--color-ink-inverse);
   }
 
   .section__inner {

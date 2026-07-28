@@ -29,7 +29,7 @@ delivery paired with a health outcome is dietary advice.
 | ------------------------------------------------ | -------------------------------------------------- |
 | "Leafy greens support a healthy pregnancy"       | "Each bundle includes leafy greens"                |
 | "Fresh food helps your baby develop"             | "Picked the morning it goes out"                   |
-| "Nutrients your baby needs"                      | "Seasonal vegetables grown in Waxhaw"              |
+| "Nutrients your baby needs"                      | "Seasonal vegetables grown in Union County"        |
 | "Good nutrition prevents complications"          | _(cut entirely — replace with nothing)_            |
 | "Boosts energy during pregnancy"                 | _(cut entirely)_                                   |
 | "Eating well is essential for expecting mothers" | "Our partner clinic decides who receives a bundle" |
@@ -93,7 +93,7 @@ instead. That answer belongs on `/get-involved`.
 ## Rule 3 — No mother is ever named, photographed, or described
 
 Not by name, not by initials, not anonymised with identifying detail ("a mother
-of three in Waxhaw"), not from behind, not a hand, not a quote.
+of three in Union County"), not from behind, not a hand, not a quote.
 
 Recipients are reached through the partner clinic and are never our contacts. We
 do not know who they are, and the site must make clear that this is by design.

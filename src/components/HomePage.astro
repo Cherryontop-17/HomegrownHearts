@@ -61,7 +61,7 @@ const impactStats = [
  * COMPLIANCE.md Rule 5.
  */
 const facts = [
-  { icon: 'map-pin' as IconName, value: ORG.location.town, label: ORG.location.state },
+  { icon: 'map-pin' as IconName, value: ORG.location.county, label: ORG.location.state },
   { icon: 'basket' as IconName, value: t('facts.cost'), label: t('facts.costNote') },
   { icon: 'sprout' as IconName, value: t('facts.season'), label: t('facts.seasonNote') },
   { icon: 'shield-check' as IconName, value: t('facts.route'), label: t('facts.routeNote') },
@@ -271,7 +271,7 @@ const facts = [
   </Section>
 
   {/* ================= CTA BAND ======================================== */}
-  <Section accent="grow" surface="ink" id={cta.id}>
+  <Section accent="grow" surface="garden" id={cta.id}>
     <Reveal class="head">
       {cta.eyebrow && <Eyebrow align="center">{cta.eyebrow}</Eyebrow>}
       {cta.title && <h2 class="head__title head__title--inverse">{cta.title}</h2>}
@@ -286,7 +286,7 @@ const facts = [
             href={localizePath(c.href, locale)}
             variant={c.primary ? 'primary' : 'secondary'}
             size="lg"
-            class={c.primary ? undefined : 'btn-on-dark'}
+            class="btn-on-green"
           >
             {c.label}
           </Button>
@@ -803,6 +803,27 @@ const facts = [
 
   .actions--center {
     justify-content: center;
+  }
+
+  /* Garden is the site's action colour, so a garden-filled button on a garden
+     band would vanish. On this one surface the primary inverts to cream. */
+  .actions :global(.btn-on-green.btn--primary) {
+    background-color: var(--color-ink-inverse);
+    color: var(--color-garden-deep);
+  }
+
+  .actions :global(.btn-on-green.btn--primary:hover) {
+    background-color: #fff;
+  }
+
+  .actions :global(.btn-on-green.btn--secondary) {
+    border-color: rgb(253 251 246 / 0.5);
+    color: var(--color-ink-inverse);
+  }
+
+  .actions :global(.btn-on-green.btn--secondary:hover) {
+    border-color: var(--color-ink-inverse);
+    background-color: rgb(253 251 246 / 0.14);
   }
 
   .cta-cards {

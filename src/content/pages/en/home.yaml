@@ -10,13 +10,13 @@
 # Never a health outcome. See docs/COMPLIANCE.md Rule 1.
 
 title: Fresh food for new mothers
-description: Homegrown Hearts grows vegetables in Waxhaw, North Carolina and delivers free seasonal bundles to pregnant and postpartum mothers through a partner clinic.
+description: Homegrown Hearts grows vegetables in Union County, North Carolina and delivers free seasonal bundles to pregnant and postpartum mothers through a partner clinic.
 
 hero:
-  eyebrow: Waxhaw · Union County, North Carolina
+  eyebrow: Union County, North Carolina
   title: Fresh food, grown close to home.
   lead: >-
-    We grow vegetables in a small garden in Waxhaw, North Carolina and pack them
+    We grow vegetables in a small garden in Union County, North Carolina and pack them
     into free bundles for pregnant and postpartum mothers. A partner clinic hands
     them to the families it serves.
   ctas:
@@ -61,7 +61,7 @@ sections:
       - icon: seed
         title: Grow
         body: >-
-          We plant and tend a small garden in Waxhaw through the North Carolina
+          We plant and tend a small garden through the North Carolina
           growing season.
       - icon: sprout
         title: Harvest
@@ -93,7 +93,7 @@ sections:
 
   - id: founders
     eyebrow: Who we are
-    title: Two students in Waxhaw, North Carolina.
+    title: Two students in Union County, North Carolina.
     items:
       - title: Kreeshma Vasikarla
         body: Mission and medical lead. Runs clinic outreach and the produce list.

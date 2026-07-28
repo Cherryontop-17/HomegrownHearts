@@ -47,10 +47,10 @@ form, and every stored answer is data you are then responsible for.
 **Form description**
 
 ```
-We grow vegetables in Waxhaw and deliver them free to a partner clinic. Tell us
+We grow vegetables in Union County and deliver them free to a partner clinic. Tell us
 a bit about you and we will be in touch within 2-3 days.
 
-Cultivamos verduras en Waxhaw y las entregamos gratuitamente a una clínica
+Cultivamos verduras en el condado de Union y las entregamos gratuitamente a una clínica
 asociada. Cuéntenos un poco sobre usted y le escribiremos en 2 o 3 días.
 ```
 
@@ -192,7 +192,7 @@ How should we collect it?
 ¿Cómo lo recogemos?
 ```
 
-- `I can drop it off in Waxhaw / Puedo llevarlo a Waxhaw`
+- `I can drop it off / Puedo llevarlo yo`
 - `Please collect it from me / Prefiero que lo recojan`
 - `Either works / Cualquiera funciona`
 
