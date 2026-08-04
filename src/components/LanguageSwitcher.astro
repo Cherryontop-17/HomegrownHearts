@@ -16,10 +16,16 @@ import type { Locale } from '../config';
 interface Props {
   /** `inline` for the header, `stacked` for the footer column. */
   layout?: 'inline' | 'stacked';
+  /**
+   * Accessible name for the <nav> landmark. Two landmarks of the same role
+   * sharing a name is a real navigation problem for a screen-reader user, and
+   * this component renders twice on every page.
+   */
+  label?: string;
   class?: string;
 }
 
-const { layout = 'inline', class: className, ...rest } = Astro.props;
+const { layout = 'inline', label, class: className, ...rest }: Props = Astro.props;
 
 const current = getLocale(Astro.url);
 const t = useTranslations(current);
@@ -47,7 +53,7 @@ const options = LOCALES.map((locale) => ({
 
 <nav
   class:list={['lang', `lang--${layout}`, className]}
-  aria-label={t('a11y.langSwitch')}
+  aria-label={label ?? t('a11y.langSwitch')}
   {...rest}
 >
   <ul class="lang__list">
@@ -108,7 +114,9 @@ const options = LOCALES.map((locale) => ({
     border-radius: var(--radius-sm);
     font-size: var(--text-small);
     font-weight: 600;
-    color: var(--color-ink-muted);
+    /* Surface-aware: raw ink-muted measures 2.5:1 on the dark footer, where
+       this component also renders. */
+    color: var(--text-muted);
     text-decoration: none;
     transition:
       color var(--duration-fast) var(--ease-out-soft),
@@ -116,12 +124,13 @@ const options = LOCALES.map((locale) => ({
   }
 
   .lang__link:hover {
-    color: var(--color-ink);
-    background-color: color-mix(in oklab, var(--color-ink) 6%, transparent);
+    color: var(--text-heading);
+    background-color: color-mix(in oklab, currentColor 10%, transparent);
   }
 
   .lang__link[aria-current='true'] {
-    color: var(--color-clay);
+    color: var(--text-heading);
+    font-weight: 700;
   }
 
   /* Header shows EN / ES; footer has room for the full native name. */
@@ -182,6 +191,7 @@ const options = LOCALES.map((locale) => ({
     if (stored === 'es') window.location.replace('/es/');
   }
 
+  // Bound on document once; `astro:page-load` only re-runs the redirect check.
   document.addEventListener('click', rememberChoice);
   applyStoredChoice();
   document.addEventListener('astro:page-load', applyStoredChoice);

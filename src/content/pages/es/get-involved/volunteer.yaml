@@ -1,0 +1,95 @@
+# Voluntariado — español.
+#
+# El enlace de inscripción viene de FORMS.volunteer en src/config.ts. Mientras
+# sea null, ContentPage muestra el aviso de «pronto» en vez de un botón muerto.
+#
+# ⚠️ Regla 3: quien es voluntario nunca conoce a una receptora. Cualquier texto
+# que sugiera que un voluntario entrega un paquete a una madre está mal, y es un
+# desliz fácil al escribir sobre por qué importa el trabajo.
+
+title: Sea voluntario
+description: Ayude a cultivar, cosechar y empacar paquetes gratuitos de verduras para una clínica aliada en el condado de Union, Carolina del Norte.
+
+hero:
+  eyebrow: Participe
+  title: Sin experiencia, sin problema, sin mínimo.
+  lead: >-
+    No hace falta experiencia, no hay compromiso mínimo y no tiene que traer
+    nada. Si puede arrodillarse en un cantero una hora, puede hacer cualquiera
+    de nuestras tareas.
+
+sections:
+  - id: shifts
+    eyebrow: Qué haría
+    title: Elija su tipo de mañana.
+    items:
+      - icon: shovel
+        title: Días de siembra
+        body: >-
+          Preparar los canteros y meter semillas y plántulas a la tierra. El
+          trabajo más pesado y el menos frecuente.
+      - icon: droplets
+        title: Cuidado del huerto
+        body: >-
+          Regar, deshierbar y revisar plagas. Una hora, casi cada semana, cuando
+          a usted le acomode.
+      - icon: basket
+        title: Mañanas de cosecha y empaque
+        body: >-
+          Cortar, lavar y empacar los días de entrega. Se empieza temprano,
+          porque todo se corta la misma mañana en que sale. Es el turno con más
+          movimiento y el más útil.
+      - icon: truck
+        title: Llevar las entregas
+        body: >-
+          Llevar los paquetes del huerto a la clínica. Necesita licencia, carro
+          y como una hora.
+
+  - id: expect
+    eyebrow: Qué esperar
+    title: Claros con los detalles.
+    items:
+      - icon: users
+        title: No va a estar solo
+        body: >-
+          Al menos una de nosotras está en cada turno, junto con la persona
+          adulta responsable. Nadie va al huerto por su cuenta.
+      - icon: clock
+        title: Los turnos son cortos
+        body: >-
+          Casi todos duran una hora. Las mañanas de cosecha llegan a dos.
+          Preferimos que vuelva la próxima semana a que se agote una vez.
+      - icon: shield-check
+        title: No va a conocer a quien recibe
+        body: >-
+          Los paquetes van a nuestra clínica aliada, y la clínica decide quién
+          los recibe. Nunca guardamos el nombre de una familia, y usted tampoco.
+      - icon: user-check
+        title: Menores de 18 son bienvenidos
+        body: >-
+          Casi todas lo somos. Necesitará que un padre o tutor firme antes de su
+          primer turno.
+
+  - id: signup
+    eyebrow: Inscríbase
+    title: Díganos cuándo puede.
+    body:
+      - >-
+        El formulario toma unos dos minutos. Le respondemos en unos días con el
+        siguiente turno que coincida con lo que eligió.
+
+  - id: groups
+    eyebrow: Grupos
+    title: Clubes, clases y grupos juveniles.
+    body:
+      - >-
+        Podemos recibir un grupo de hasta ocho personas en un día de siembra o
+        de cosecha, y sirve muchísimo: un cantero que a nosotras dos nos toma
+        quince días, un grupo lo saca en una mañana.
+      - >-
+        Escríbanos con un número aproximado y un rango de fechas en vez de usar
+        el formulario, y buscamos un día que funcione.
+    ctas:
+      - label: Escríbanos sobre un grupo
+        href: /contact
+        primary: true

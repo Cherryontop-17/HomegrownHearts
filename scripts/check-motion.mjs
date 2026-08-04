@@ -33,15 +33,25 @@ const BASE = process.argv[2] ?? 'http://localhost:4321';
 const ROUTES = [
   '/',
   '/partners/',
-  '/about/',
+  '/our-partners/',
+  '/our-partners/help-pregnancy-center/',
+  '/our-partners/union-county-library/',
+  '/garden/',
+  '/recipe-ai/',
   '/get-involved/',
-  '/impact/',
+  '/get-involved/volunteer/',
+  '/get-involved/donate/',
+  '/get-involved/drop-off/',
   '/contact/',
   '/es/',
   '/es/partners/',
-  '/es/about/',
+  '/es/our-partners/',
+  '/es/garden/',
+  '/es/recipe-ai/',
   '/es/get-involved/',
-  '/es/impact/',
+  '/es/get-involved/volunteer/',
+  '/es/get-involved/donate/',
+  '/es/get-involved/drop-off/',
   '/es/contact/',
 ];
 
@@ -154,16 +164,28 @@ for (const route of ROUTES) {
   await goto(send, url, { settle: 900 });
 
   // Down in steps, so every observer fires as it would for a real reader.
+  //
+  // The page height is re-read on every step rather than captured once. Lazy
+  // images below the fold and the webfont swap both grow the document while
+  // this loop is running, so a height sampled at the start is already stale by
+  // the end — on the homepage it stopped 1,016px short and reported the whole
+  // final call-to-action as never revealed, which was a bug in this check
+  // rather than on the page.
   await evaluate(
     send,
     `(async () => {
        const step = window.innerHeight * 0.75;
-       const max = document.documentElement.scrollHeight;
-       for (let y = 0; y < max; y += step) {
-         window.scrollTo(0, y);
+       let y = 0;
+       // Guard rather than while(true): a page that somehow grows faster than
+       // we scroll must fail the check, not hang it.
+       for (let i = 0; i < 500; i++) {
+         const max = document.documentElement.scrollHeight - window.innerHeight;
+         if (y >= max) break;
+         y = Math.min(y + step, max);
+         window.scrollTo({ top: y, behavior: 'instant' });
          await new Promise(r => setTimeout(r, 130));
        }
-       window.scrollTo(0, max);
+       window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' });
        await new Promise(r => setTimeout(r, 700));
      })()`,
   );
@@ -215,7 +237,7 @@ for (const route of ROUTES) {
   await evaluate(
     send,
     `(async () => {
-       window.scrollTo(0, 0);
+       window.scrollTo({ top: 0, behavior: 'instant' });
        await new Promise(r => setTimeout(r, 800));
      })()`,
   );
@@ -259,7 +281,7 @@ for (const route of ROUTES) {
        const step = window.innerHeight * 0.75;
        const max = document.documentElement.scrollHeight;
        for (let y = 0; y < max; y += step) {
-         window.scrollTo(0, y);
+         window.scrollTo({ top: y, behavior: 'instant' });
          await new Promise(r => setTimeout(r, 120));
        }
        await new Promise(r => setTimeout(r, 600));
@@ -290,13 +312,13 @@ for (const route of ROUTES) {
   const peak = await evaluate(
     send,
     `(async () => {
-       window.scrollTo(0, 0);
+       window.scrollTo({ top: 0, behavior: 'instant' });
        await new Promise(r => setTimeout(r, 400));
        let peak = 0, worst = [];
        const step = window.innerHeight * 0.5;
        const max = document.documentElement.scrollHeight;
        for (let y = 0; y < max; y += step) {
-         window.scrollTo(0, y);
+         window.scrollTo({ top: y, behavior: 'instant' });
        // Several samples across the life of a 380ms transition. A single
        // sample can land before the IntersectionObserver has fired or after
        // the transition has finished, which reports 0 for a page that is in

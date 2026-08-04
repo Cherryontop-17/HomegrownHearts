@@ -49,12 +49,27 @@ const CHECKS = [
     rule: 'Rule 1',
     // Verb within ~40 chars of a body/pregnancy word, in either order.
     pattern: new RegExp(`\\b${CLAIM_VERBS}\\b[^.!?]{0,40}\\b${SUBJECTS}\\b`, 'gi'),
+    /*
+      The partner clinic's own name is not a health claim.
+
+      "HELP Pregnancy Center" trips this rule on every single mention — "help"
+      is a claim verb, "pregnancy" is a subject, and in that name they are
+      adjacent by definition — as does its URL slug. A proper noun is not a
+      claim about a body, and a rule that stops the site naming its own partner
+      is doing more harm than the thing it guards against.
+
+      Scoped to the exact registered name and slug. It does NOT permit
+      "helps pregnancy" or anything else of that shape.
+    */
+    allow: /HELP Pregnancy Center|help-pregnancy-center/i,
     why: 'Reads as a health claim. Describe the food, never its effects.',
   },
   {
     id: 'claim-verb-near-subject-reversed',
     rule: 'Rule 1',
     pattern: new RegExp(`\\b${SUBJECTS}\\b[^.!?]{0,40}\\b${CLAIM_VERBS}\\b`, 'gi'),
+    // Same proper-noun exemption as above. See the note there.
+    allow: /HELP Pregnancy Center|help-pregnancy-center/i,
     why: 'Reads as a health claim. Describe the food, never its effects.',
   },
   {

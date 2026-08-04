@@ -1,0 +1,169 @@
+---
+/**
+ * Printed flyers, shown as a gallery.
+ *
+ * Follows the same "declare the slot, drop the file later" idiom as
+ * <Photo>: `import.meta.glob` resolves at build time, so an empty folder is not
+ * an error — it is an absent key. The difference is that flyers have no fixed
+ * manifest. There can be one, or five, or none, so this globs whatever is in
+ * `src/assets/flyers/` and derives the caption from the filename.
+ *
+ * ── Renders nothing when empty ────────────────────────────────────────────
+ * No placeholder frame here, unlike <Photo>. A missing photograph leaves a hole
+ * in a layout that was designed around it; a missing flyer just means there are
+ * no flyers yet, and an empty "your flyer here" box on a live site reads as
+ * unfinished. The caller checks `hasFlyers` from `src/flyers.ts` and skips the
+ * whole section — heading and band included.
+ *
+ * ── Accessibility ─────────────────────────────────────────────────────────
+ * A flyer is an image of text, and none of that text is available to a screen
+ * reader or to search. The filename-derived caption is rendered as VISIBLE text
+ * under each flyer rather than hidden in alt, so it helps everyone, and
+ * README.md in the flyers folder tells the founders that anything a flyer says
+ * must also live as real text on a page.
+ *
+ * Clicking a flyer opens the full-size image in a new tab rather than a
+ * lightbox: it is the behaviour people expect from a poster, it needs no JS,
+ * and it lets the reader zoom with their own tools instead of ours.
+ */
+
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+import { FLYERS as flyers } from '../flyers';
+
+interface Props {
+  /** Label for the download link, e.g. "Download PDF". */
+  downloadLabel: string;
+  /** Suffix announced on the "opens full size" link, for screen readers. */
+  viewLabel: string;
+  class?: string;
+}
+
+const { downloadLabel, viewLabel, class: className, ...rest }: Props = Astro.props;
+---
+
+{
+  flyers.length > 0 && (
+    <Reveal stagger={100} class:list={['flyers', className]} {...rest}>
+      {flyers.map((f) => (
+        <figure class="flyer">
+          <a
+            class="flyer__link"
+            href={f.src.src}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              src={f.src}
+              alt=""
+              widths={[400, 800]}
+              sizes="(min-width: 60rem) 30vw, 90vw"
+              class="flyer__img"
+            />
+            <span class="sr-only">
+              {f.caption} — {viewLabel}
+            </span>
+          </a>
+
+          <figcaption class="flyer__cap">
+            <span class="flyer__title">{f.caption}</span>
+            {f.pdf && (
+              <a class="flyer__pdf" href={f.pdf} download>
+                <Icon name="download" size={15} />
+                {downloadLabel}
+              </a>
+            )}
+          </figcaption>
+        </figure>
+      ))}
+    </Reveal>
+  )
+}
+
+<style>
+  .flyers {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: var(--spacing-block);
+  }
+
+  @media (min-width: 44rem) {
+    .flyers {
+      /* auto-fit rather than a fixed count: one flyer should not sit alone in a
+         three-column grid, and five should not need a media query. */
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    }
+  }
+
+  .flyer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flyer__link {
+    display: block;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+    transition:
+      transform var(--duration-fast) var(--ease-out-soft),
+      box-shadow var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .flyer__link:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .flyer__link:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 3px;
+  }
+
+  .flyer__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .flyer__cap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+  }
+
+  .flyer__title {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .flyer__pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: var(--text-small);
+    color: var(--color-clay);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .flyer__pdf:hover {
+    border-bottom-color: currentColor;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flyer__link {
+      transition: none;
+    }
+    .flyer__link:hover {
+      transform: none;
+    }
+  }
+</style>

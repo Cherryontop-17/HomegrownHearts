@@ -47,11 +47,15 @@ const RECIPES = {
     height: 1625, // 16:10
     position: sharp.strategy.attention,
     warmth: 1.06,
-    sat: 1.02,
-    dim: 0.9,
-    vignette: 0.45,
-    // Type sits bottom-left, so that corner gets extra shade.
-    typeGuard: true,
+    sat: 1.06,
+    // Was dim 0.9 + vignette 0.45 + typeGuard, all of which existed to carry
+    // cream type laid across this photograph. The hero is now an editorial
+    // split — the type sits on cream beside the picture, not on top of it — so
+    // every one of those is pure loss: they were making the single largest
+    // image on the site look muddy for no remaining reason.
+    dim: 1.0,
+    vignette: 0.12,
+    typeGuard: false,
   },
   garden: {
     width: 1800,
@@ -105,14 +109,14 @@ const typeGuardSvg = (w, h) => `
 <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
   <defs>
     <linearGradient id="v" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0%" stop-color="#100e0c" stop-opacity="0.80"/>
-      <stop offset="38%" stop-color="#100e0c" stop-opacity="0.58"/>
-      <stop offset="70%" stop-color="#100e0c" stop-opacity="0.20"/>
-      <stop offset="100%" stop-color="#100e0c" stop-opacity="0.04"/>
+      <stop offset="0%" stop-color="#100e0c" stop-opacity="0.86"/>
+      <stop offset="38%" stop-color="#100e0c" stop-opacity="0.68"/>
+      <stop offset="70%" stop-color="#100e0c" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#100e0c" stop-opacity="0.06"/>
     </linearGradient>
     <linearGradient id="d" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#100e0c" stop-opacity="0.42"/>
-      <stop offset="55%" stop-color="#100e0c" stop-opacity="0.12"/>
+      <stop offset="0%" stop-color="#100e0c" stop-opacity="0.52"/>
+      <stop offset="55%" stop-color="#100e0c" stop-opacity="0.22"/>
       <stop offset="100%" stop-color="#100e0c" stop-opacity="0"/>
     </linearGradient>
   </defs>
@@ -155,9 +159,15 @@ for (const file of sources) {
   // The slope above 1 with a negative offset is a gentle S-curve: more
   // contrast without crushing the blacks, which is what keeps shadows warm
   // rather than muddy.
+  //
+  // The multipliers below were raised from 1.07 / 1.06. The first pass was so
+  // restrained that the grade did almost nothing: the photographs landed on the
+  // page looking washed out and generic, which was the single biggest reason
+  // the site read as flat. This is still a long way from over-processed — the
+  // point is produce that looks worth eating, not a filter.
   img = img
-    .linear([1.07 * warmth, 1.04, 0.985], [-7, -7, -5])
-    .modulate({ saturation: sat * 1.06, brightness: dim * 1.02 });
+    .linear([1.13 * warmth, 1.09, 0.995], [-11, -10, -6])
+    .modulate({ saturation: sat * 1.22, brightness: dim * 1.02 });
 
   const overlays = [];
   if (vignette > 0) {

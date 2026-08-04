@@ -28,7 +28,14 @@ const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const here = Astro.url.pathname;
 
-const items = PRIMARY_NAV.map((item) => {
+/**
+ * An anchor link (`/#roadmap`) points at a section of a page, not at a page.
+ * Running the prefix test on one would mark it current on every route, because
+ * its pathname is `/`.
+ */
+const isAnchor = (path: string) => path.includes('#');
+
+const resolve = (item: { path: string; labelKey: Parameters<typeof t>[0] }) => {
   const href = localizePath(item.path, locale);
   return {
     href,
@@ -36,9 +43,17 @@ const items = PRIMARY_NAV.map((item) => {
     // Marks the section, not just the exact page, so /impact/2026/ still
     // highlights Impact. `href` already ends in a slash, so a prefix match is
     // safe — /impacts/ cannot match /impact/.
-    isCurrent: here === href || here.startsWith(href),
+    isCurrent: isAnchor(item.path) ? false : here === href || here.startsWith(href),
   };
-});
+};
+
+const items = PRIMARY_NAV.map((item) => ({
+  ...resolve(item),
+  children: (item.children ?? []).map((child) => ({
+    ...resolve(child),
+    description: child.descriptionKey ? t(child.descriptionKey) : null,
+  })),
+}));
 
 const homeHref = localizePath('/', locale);
 ---
@@ -53,14 +68,36 @@ const homeHref = localizePath('/', locale);
       <ul class="header__list">
         {
           items.map((item) => (
-            <li>
+            <li class:list={['header__item', item.children.length > 0 && 'has-submenu']}>
               <a
                 class="header__link"
                 href={item.href}
                 aria-current={item.isCurrent ? 'page' : undefined}
               >
                 {item.label}
+                {item.children.length > 0 && (
+                  <Icon name="chevron-down" size={15} class="header__caret" />
+                )}
               </a>
+
+              {item.children.length > 0 && (
+                <ul class="submenu">
+                  {item.children.map((child) => (
+                    <li>
+                      <a
+                        class="submenu__link"
+                        href={child.href}
+                        aria-current={child.isCurrent ? 'page' : undefined}
+                      >
+                        <span class="submenu__label">{child.label}</span>
+                        {child.description && (
+                          <span class="submenu__desc">{child.description}</span>
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))
         }
@@ -108,6 +145,26 @@ const homeHref = localizePath('/', locale);
               >
                 {item.label}
               </a>
+
+              {/* Children are listed inline rather than behind a second
+                  tap. The drawer is a full-height panel with room to spare,
+                  and a collapsed accordion inside a modal is one more thing
+                  to operate before you can reach the calendar. */}
+              {item.children.length > 0 && (
+                <ul class="drawer__sublist">
+                  {item.children.map((child) => (
+                    <li>
+                      <a
+                        class="drawer__sublink"
+                        href={child.href}
+                        aria-current={child.isCurrent ? 'page' : undefined}
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))
         }
@@ -216,7 +273,7 @@ const homeHref = localizePath('/', locale);
     color: var(--color-clay);
   }
 
-  /* Underline draws from the centre out. Transform-only, so it cannot reflow. */
+  /* Underline draws from the center out. Transform-only, so it cannot reflow. */
   .header__link::after {
     content: '';
     position: absolute;
@@ -239,6 +296,128 @@ const homeHref = localizePath('/', locale);
   .header__link[aria-current='page'] {
     color: var(--color-clay);
     font-weight: 600;
+  }
+
+  /* ================= DROPDOWN ==========================================
+     Opens on hover AND on `:focus-within`, which is what makes it work from
+     the keyboard with no JavaScript: tabbing to the parent link puts focus
+     inside the <li>, the panel becomes visible, and the next Tab lands on the
+     first child link. The order matters — a panel at `visibility: hidden`
+     cannot receive focus, so the parent link (not the panel) has to be what
+     triggers it.
+
+     `visibility`, not `display`. It keeps the panel out of the accessibility
+     tree while closed, and unlike `display: none` it can be transitioned. */
+  .header__item {
+    position: relative;
+  }
+
+  .header__caret {
+    margin-left: 0.3rem;
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .has-submenu:hover .header__caret,
+  .has-submenu:focus-within .header__caret {
+    transform: rotate(180deg);
+  }
+
+  .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    /* See the right-edge rule below before changing this. */
+    z-index: 20;
+    min-width: 17rem;
+    padding: 0.5rem;
+    margin: 0;
+    list-style: none;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-lift);
+
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity var(--duration-fast) var(--ease-out-soft),
+      transform var(--duration-fast) var(--ease-out-soft),
+      visibility var(--duration-fast);
+  }
+
+  /*
+    The last nav item's panel opens leftward.
+
+    Contact sits hard against the right edge of the header, so a 17rem panel
+    anchored to its left ran 18px past the viewport and gave every page a
+    horizontal scrollbar at 1024px — caught by `npm run check:overflow`, which
+    fails on a single stray pixel. Anchoring the final panel to its right edge
+    keeps it inside the page at every width.
+  */
+  .header__item:last-child .submenu {
+    left: auto;
+    right: 0;
+  }
+
+  .has-submenu:hover .submenu,
+  .has-submenu:focus-within .submenu {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The header is transparent over the hero and the panel is not, so without
+     this the gap between link and panel lets the pointer fall through and the
+     menu closes while you are moving toward it. */
+  .submenu::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -0.5rem;
+    height: 0.5rem;
+  }
+
+  .submenu__link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-height: 44px;
+    justify-content: center;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .submenu__link:hover,
+  .submenu__link:focus-visible {
+    background-color: var(--color-garden-tint);
+  }
+
+  .submenu__label {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .submenu__link:hover .submenu__label,
+  .submenu__link[aria-current='page'] .submenu__label {
+    color: var(--color-garden-deep);
+  }
+
+  .submenu__desc {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-ink-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .submenu,
+    .header__caret {
+      transition: none;
+    }
   }
 
   .header__end {
@@ -389,6 +568,39 @@ const homeHref = localizePath('/', locale);
     color: var(--color-clay);
   }
 
+  /* Sub-items sit under their parent, smaller and indented, with the parent's
+     bottom rule moved to the last child so the group reads as one block. */
+  .drawer__sublist {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0 0 0 1rem;
+    margin: 0;
+  }
+
+  .drawer__link:has(+ .drawer__sublist) {
+    border-bottom: 0;
+  }
+
+  .drawer__sublink {
+    display: block;
+    padding-block: 0.6rem;
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+
+  .drawer__sublist li:last-child .drawer__sublink {
+    padding-bottom: 0.875rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .drawer__sublink[aria-current='page'] {
+    color: var(--color-clay);
+    font-weight: 600;
+  }
+
   .drawer__foot {
     margin-top: auto;
     padding-top: 1rem;
@@ -418,6 +630,19 @@ const homeHref = localizePath('/', locale);
     const drawerEl = document.querySelector<HTMLElement>('[data-drawer]');
     const toggleEl = document.querySelector<HTMLElement>('[data-drawer-toggle]');
     if (!headerEl || !drawerEl || !toggleEl) return;
+
+    /*
+      Bind once, ever.
+
+      `initHeader()` is called directly AND on `astro:page-load`, which fires on
+      the first load too — so without this guard two click listeners attach. The
+      first opened the drawer and set aria-expanded="true"; the second then read
+      that same attribute, concluded the drawer was open, and closed it again.
+      Net effect: the mobile menu did not open at all, on the devices most of
+      this audience uses. Caught by the keyboard leg of `npm run check:a11y`.
+    */
+    if (toggleEl.dataset.headerBound === '1') return;
+    toggleEl.dataset.headerBound = '1';
 
     // Re-bound to consts so the nested open/close closures keep the non-null
     // narrowing from the guard above.
@@ -472,9 +697,19 @@ const homeHref = localizePath('/', locale);
       document.body.style.overflow = '';
       document.removeEventListener('keydown', onKeydown);
 
-      // Focus must return to the control that opened it, or the reader is
-      // dropped back at the top of the document.
-      lastFocused?.focus();
+      /*
+        Focus returns to the TOGGLE, not to whatever happened to be focused
+        when the drawer opened.
+
+        `lastFocused` is right in the common case and wrong in a real one: open
+        the drawer by pointer and the previously focused element may be the
+        document body, which drops a keyboard user back at the top of the page
+        with no idea where they are. The invoking control is the correct
+        destination for a dialog either way, so it is used unconditionally and
+        `lastFocused` only serves as a fallback if the toggle has since gone.
+      */
+      const returnTo = document.contains(toggle) ? toggle : lastFocused;
+      returnTo?.focus();
 
       const done = () => {
         drawer.hidden = true;

@@ -1,0 +1,252 @@
+---
+/**
+ * A Google Maps embed that does not load until the reader asks for it.
+ *
+ * ── Why a click-to-load facade rather than a plain <iframe> ───────────────
+ * A Google Maps iframe contacts Google and sets cookies the moment the page
+ * renders, whether or not anyone looks at the map. This site deliberately makes
+ * ZERO third-party requests — see the header of src/styles/fonts.css, where the
+ * webfonts were self-hosted rather than CDN'd for exactly this reason: "no
+ * third-party cookie/GDPR surface on a site for a health-adjacent audience".
+ *
+ * Silently embedding four maps would undo that on the one page a pregnant
+ * mother is most likely to open. So the map is a real Google Maps embed, and it
+ * is still one click away — it just does not phone home until someone wants it.
+ *
+ * Everything that matters is in the HTML regardless: the address is real text,
+ * and "Open in Maps" is a plain link that works with no JS, no iframe, and no
+ * consent. The embed is an enhancement on top of a working address.
+ *
+ * ── CSP ───────────────────────────────────────────────────────────────────
+ * Loading this needs `frame-src https://www.google.com` in the policy in
+ * public/_headers. Without it the iframe is blocked silently and the panel just
+ * stays empty. `npm run check:headers` loads every route in a real browser and
+ * fails on a CSP violation, so a policy that forgets this is caught.
+ */
+
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Street address, used both as the visible text and the map query. */
+  address: string;
+  /** Accessible name for the iframe, e.g. "Map of 316 E Windsor St". */
+  title: string;
+  /** Button text, e.g. "Show map". */
+  loadLabel: string;
+  /** Link text, e.g. "Open in Google Maps". */
+  openLabel: string;
+  /** One line on why the map is not already loaded. */
+  privacyNote: string;
+  class?: string;
+}
+
+const {
+  address,
+  title,
+  loadLabel,
+  openLabel,
+  privacyNote,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const query = encodeURIComponent(address);
+
+/*
+  The keyless embed endpoint. `output=embed` is the form that works without a
+  Maps JavaScript API key, which matters on a $0 budget — a key would have to be
+  billed to somebody and restricted by referrer.
+*/
+const embedSrc = `https://www.google.com/maps?q=${query}&output=embed`;
+/** Plain link target. Opens whatever map app the reader actually has. */
+const openSrc = `https://www.google.com/maps/search/?api=1&query=${query}`;
+---
+
+<div class:list={['map', className]} data-map data-embed-src={embedSrc} {...rest}>
+  <div class="map__frame">
+    {/* Replaced by the iframe on click. */}
+    <div class="map__placeholder" data-map-placeholder>
+      <span class="map__pin" aria-hidden="true">
+        <Icon name="map-pin" size={28} />
+      </span>
+      <p class="map__address">{address}</p>
+
+      <button type="button" class="map__load" data-map-load>
+        <Icon name="map-pin" size={16} />
+        {loadLabel}
+      </button>
+
+      <p class="map__privacy">{privacyNote}</p>
+    </div>
+  </div>
+
+  <a class="map__open" href={openSrc} target="_blank" rel="noopener noreferrer">
+    {openLabel}
+    <Icon name="external-link" size={14} />
+  </a>
+
+  {/* The iframe's accessible name, read from the script. */}
+  <span class="sr-only" data-map-title>{title}</span>
+</div>
+
+<style>
+  .map {
+    margin-top: 1rem;
+  }
+
+  .map__frame {
+    position: relative;
+    /* Box is reserved before anything loads, so swapping the placeholder for
+       the iframe cannot shift the page. CLS is a launch gate. */
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-sand);
+    border: 1px solid var(--color-line);
+  }
+
+  .map__frame :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .map__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 100%;
+    padding: 1.5rem;
+    text-align: center;
+    /* A faint grid, so the empty state reads as "a map goes here" rather than
+       as a broken image. Two repeating gradients, no request. */
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 2.5rem,
+        color-mix(in oklab, var(--color-line-strong) 45%, transparent) 2.5rem calc(2.5rem + 1px)
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 2.5rem,
+        color-mix(in oklab, var(--color-line-strong) 45%, transparent) 2.5rem calc(2.5rem + 1px)
+      );
+  }
+
+  .map__pin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-card);
+    color: var(--color-clay);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .map__address {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .map__load {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-garden);
+    color: var(--color-ink-inverse);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .map__load:hover {
+    background-color: var(--color-garden-deep);
+  }
+
+  .map__load:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+
+  .map__privacy {
+    max-width: 34ch;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--color-ink-muted);
+  }
+
+  .map__open {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    margin-top: 0.35rem;
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-clay);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+
+  .map__open:hover {
+    border-bottom-color: currentColor;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map__load {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Swap the placeholder for the real embed on click.
+   *
+   * Nothing is requested from Google until this runs, and it only runs on a
+   * deliberate press. If the script never loads, the address and the "open in
+   * Maps" link are both still there in the HTML.
+   */
+  function initMaps() {
+    document.querySelectorAll<HTMLElement>('[data-map]').forEach((root) => {
+      if (root.dataset.mapBound === 'true') return;
+      root.dataset.mapBound = 'true';
+
+      const button = root.querySelector<HTMLButtonElement>('[data-map-load]');
+      const placeholder = root.querySelector<HTMLElement>('[data-map-placeholder]');
+      const src = root.dataset.embedSrc;
+      const title = root.querySelector<HTMLElement>('[data-map-title]')?.textContent ?? 'Map';
+
+      if (!button || !placeholder || !src) return;
+
+      button.addEventListener('click', () => {
+        const frame = document.createElement('iframe');
+        frame.src = src;
+        frame.title = title;
+        frame.loading = 'lazy';
+        // No scripts, no popups, no downloads from the framed document.
+        frame.referrerPolicy = 'no-referrer-when-downgrade';
+        frame.setAttribute('allowfullscreen', '');
+
+        placeholder.replaceWith(frame);
+        // Focus would otherwise be left on a button that no longer exists.
+        frame.focus();
+      });
+    });
+  }
+
+  initMaps();
+  document.addEventListener('astro:page-load', initMaps);
+</script>

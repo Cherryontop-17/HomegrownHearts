@@ -1,0 +1,559 @@
+---
+/**
+ * The planting schedule, told twice.
+ *
+ * ── Why twice ─────────────────────────────────────────────────────────────
+ * The calendar above answers "what happens on which day". It cannot answer
+ * "how long does this take", because a month grid has no room to show that a
+ * carrot sown on August 13 is not food until late October. This does: one
+ * horizontal bar per crop, running from sowing to maturity, on a shared time
+ * axis. Same schedule, different question.
+ *
+ * ── The bars are computed, not drawn ──────────────────────────────────────
+ * Every bar's position comes from `SCHEDULE` in src/crops.ts, which derives
+ * harvest dates from real days-to-maturity. Nobody positions a bar by hand.
+ * That matters more than it sounds: if the planting plan does not actually
+ * reach a delivery date, this chart shows the gap instead of hiding it behind
+ * a tidy graphic. A schedule you can check is the entire point.
+ *
+ * ── Crop detail ───────────────────────────────────────────────────────────
+ * Clicking a crop opens its panel. The panels carry growing and kitchen
+ * information ONLY — days to harvest, what it looks like when it is ready, how
+ * to keep it, how to cook it.
+ *
+ * ⚠️ They do NOT carry nutrient content or anything about what a vegetable is
+ * good for. That is COMPLIANCE.md Rule 1, it is not negotiable, and a citation
+ * does not make it allowed. docs/CROPS.md explains why at length and describes
+ * the one legitimate route to publishing nutrition content (the clinic writes
+ * and owns it). Do not add such a field here.
+ *
+ * ── Disclosure pattern ────────────────────────────────────────────────────
+ * <details>/<summary>, not a JS accordion. Keyboard and screen-reader support
+ * are free and correct, it works with no JS at all, and the browser's find-in-
+ * page can open a closed panel to reveal a match. The only script is the one
+ * that closes the other panels, which is an enhancement rather than the
+ * mechanism.
+ */
+
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+import { SCHEDULE, SCHEDULE_RANGE } from '../crops';
+import type { Locale } from '../config';
+import type { IconName } from '../icons';
+
+interface CropCopy {
+  key?: string;
+  title: string;
+  body?: string;
+  details?: { label: string; value: string }[];
+}
+
+interface Props {
+  /** Translated prose per crop, joined to src/crops.ts by `key`. */
+  items: CropCopy[];
+  locale: Locale;
+  /** Label for the pre-harvest half of each bar. */
+  growingLabel: string;
+  /** Column heading for the harvest window in the detail panel. */
+  harvestLabel: string;
+  /** One per harvest tint. The bars are coloured by how fast the crop runs. */
+  fastLabel: string;
+  mediumLabel: string;
+  slowLabel: string;
+  /** e.g. "Days to harvest". */
+  daysLabel: string;
+  /** e.g. "Planted". */
+  sownLabel: string;
+  /** Note under the chart pointing at docs/CROPS.md sourcing. */
+  sourceNote?: string;
+  class?: string;
+}
+
+const {
+  items,
+  locale,
+  growingLabel,
+  harvestLabel,
+  fastLabel,
+  mediumLabel,
+  slowLabel,
+  daysLabel,
+  sownLabel,
+  sourceNote,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const byKey = new Map(items.map((i) => [i.key, i]));
+
+const intl = locale === 'es' ? 'es-ES' : 'en-US';
+const shortDate = new Intl.DateTimeFormat(intl, { month: 'short', day: 'numeric' });
+const longDate = new Intl.DateTimeFormat(intl, { dateStyle: 'long' });
+
+/* ── Time axis ───────────────────────────────────────────────────────────── */
+
+const axisStart = SCHEDULE_RANGE.start;
+const axisEnd = SCHEDULE_RANGE.end;
+const totalMs = axisEnd.getTime() - axisStart.getTime();
+
+/** Position along the axis as a percentage. */
+const pct = (d: Date) => ((d.getTime() - axisStart.getTime()) / totalMs) * 100;
+
+/*
+  Month boundaries inside the axis span, for the gridlines. Derived from the
+  range rather than hardcoded to Aug-Nov, so extending the schedule extends
+  the axis without touching this component.
+*/
+const monthTicks: { label: string; left: number }[] = [];
+{
+  const cursor = new Date(axisStart.getFullYear(), axisStart.getMonth(), 1);
+  const monthFmt = new Intl.DateTimeFormat(intl, { month: 'short' });
+  while (cursor <= axisEnd) {
+    if (cursor >= axisStart) {
+      monthTicks.push({ label: monthFmt.format(cursor), left: pct(cursor) });
+    }
+    cursor.setMonth(cursor.getMonth() + 1);
+  }
+}
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+/** Only drawn when today actually falls inside the charted span. */
+const todayLeft = today >= axisStart && today <= axisEnd ? pct(today) : null;
+
+const rows = SCHEDULE.map((s) => {
+  const copy = byKey.get(s.crop.id);
+  if (!copy) {
+    throw new Error(
+      `No copy for crop "${s.crop.id}". Add an item with key: ${s.crop.id} to the ` +
+        `"crops" section of home.yaml in every locale. ` +
+        `Keys present: ${items.map((i) => i.key).join(', ')}`,
+    );
+  }
+  return {
+    ...s,
+    copy,
+    growLeft: pct(s.sown),
+    growWidth: pct(s.harvestStart) - pct(s.sown),
+    harvestLeft: pct(s.harvestStart),
+    harvestWidth: pct(s.harvestEnd) - pct(s.harvestStart),
+  };
+});
+---
+
+<div class:list={['chart', className]} {...rest}>
+  {/* ── Legend ───────────────────────────────────────────────────────────── */}
+  <div class="chart__legend">
+    <span class="key"><span class="key__swatch key__swatch--grow"></span>{growingLabel}</span>
+    <span class="key"><span class="key__swatch key__swatch--fast"></span>{fastLabel}</span>
+    <span class="key"><span class="key__swatch key__swatch--medium"></span>{mediumLabel}</span>
+    <span class="key"><span class="key__swatch key__swatch--slow"></span>{slowLabel}</span>
+  </div>
+
+  {/* ── Axis ─────────────────────────────────────────────────────────────── */}
+  <div class="chart__axis" aria-hidden="true">
+    {
+      monthTicks.map((t) => (
+        <span class="tick" style={`--left:${t.left}%`}>
+          {t.label}
+        </span>
+      ))
+    }
+  </div>
+
+  <Reveal stagger={70} class="chart__rows">
+    {
+      rows.map((r) => (
+        <details class="crop" data-crop={r.crop.id}>
+          <summary class="crop__summary">
+            <span class="crop__icon">
+              <Icon name={r.crop.icon as IconName} size={18} />
+            </span>
+
+            <span class="crop__name">{r.copy.title}</span>
+
+            {/* The bar. Percentages come straight from the schedule. */}
+            <span class="crop__track">
+              {todayLeft !== null && (
+                <span class="crop__today" style={`--left:${todayLeft}%`} />
+              )}
+              <span
+                class="crop__bar crop__bar--grow"
+                style={`--left:${r.growLeft}%; --width:${r.growWidth}%`}
+              />
+              <span
+                class:list={['crop__bar', 'crop__bar--harvest', `is-${r.crop.pace}`]}
+                style={`--left:${r.harvestLeft}%; --width:${r.harvestWidth}%`}
+              />
+            </span>
+
+            <span class="crop__days">
+              {r.crop.daysToHarvest[0]}-{r.crop.daysToHarvest[1]}d
+            </span>
+
+            <span class="crop__chev" aria-hidden="true">
+              <Icon name="chevron-down" size={16} />
+            </span>
+          </summary>
+
+          <div class="crop__panel">
+            {r.copy.body && <p class="crop__body">{r.copy.body}</p>}
+
+            <dl class="crop__facts">
+              <div class="fact">
+                <dt>{sownLabel}</dt>
+                <dd>{longDate.format(r.sown)}</dd>
+              </div>
+              <div class="fact">
+                <dt>{daysLabel}</dt>
+                <dd>
+                  {r.crop.daysToHarvest[0]}-{r.crop.daysToHarvest[1]}
+                </dd>
+              </div>
+              <div class="fact">
+                <dt>{harvestLabel}</dt>
+                <dd>
+                  {shortDate.format(r.harvestStart)} - {shortDate.format(r.harvestEnd)}
+                </dd>
+              </div>
+              {(r.copy.details ?? []).map((d) => (
+                <div class="fact">
+                  <dt>{d.label}</dt>
+                  <dd>{d.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </details>
+      ))
+    }
+  </Reveal>
+
+  {sourceNote && <p class="chart__source">{sourceNote}</p>}
+</div>
+
+<style>
+  .chart {
+    margin-top: var(--spacing-block);
+  }
+
+  /* ================= LEGEND ============================================ */
+  .chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  .key__swatch {
+    width: 1.5rem;
+    height: 0.5rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .key__swatch--grow {
+    background-color: color-mix(in oklab, var(--color-leaf) 45%, transparent);
+  }
+
+  /* One swatch per harvest tint actually drawn on the chart. The legend used to
+     name only "harvest" in a single green while the bars used three different
+     colours by pace, so the amber and maroon bars were unexplained. */
+  .key__swatch--fast {
+    background-color: var(--color-season-grow);
+  }
+
+  .key__swatch--medium {
+    background-color: var(--color-garden);
+  }
+
+  .key__swatch--slow {
+    background-color: var(--color-season-harvest);
+  }
+
+  /* ================= AXIS ============================================== */
+  /*
+    The axis and every bar share one horizontal coordinate space. The label
+    column is a fixed width so the track starts at the same x on every row and
+    the month ticks line up with the bars beneath them.
+  */
+  .chart {
+    --label-col: 8.5rem;
+    --days-col: 3.5rem;
+  }
+
+  @media (max-width: 44rem) {
+    .chart {
+      --label-col: 5.5rem;
+      --days-col: 3rem;
+    }
+  }
+
+  .chart__axis {
+    position: relative;
+    height: 1.25rem;
+    /* Matches the summary grid: icon + name, then track, then days + chevron. */
+    margin-left: var(--label-col);
+    margin-right: calc(var(--days-col) + 1.5rem);
+  }
+
+  .tick {
+    position: absolute;
+    left: var(--left);
+    top: 0;
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  /* ================= ROWS ============================================== */
+  .chart__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .crop {
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    transition:
+      background-color var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .crop[open],
+  .crop:hover {
+    background-color: var(--color-card);
+    border-color: var(--color-line);
+  }
+
+  .crop__summary {
+    display: grid;
+    grid-template-columns: 1.5rem minmax(0, calc(var(--label-col) - 1.5rem)) minmax(0, 1fr) var(
+        --days-col
+      ) 1.5rem;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.55rem 0;
+    cursor: pointer;
+    /* The default triangle would sit in the middle of a grid row. */
+    list-style: none;
+  }
+
+  .crop__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .crop__summary:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .crop__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-garden);
+  }
+
+  .crop__name {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+    /* A long crop name truncates rather than pushing the whole axis out of
+       alignment with the ticks above it. */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* --- The bar --- */
+  .crop__track {
+    position: relative;
+    height: 1.5rem;
+    border-radius: var(--radius-pill);
+    background-color: color-mix(in oklab, var(--color-line) 45%, transparent);
+  }
+
+  .crop__bar {
+    position: absolute;
+    top: 0.375rem;
+    left: var(--left);
+    width: var(--width);
+    height: 0.75rem;
+    border-radius: var(--radius-pill);
+    /* A very short segment would otherwise vanish entirely. */
+    min-width: 0.75rem;
+  }
+
+  .crop__bar--grow {
+    background-color: color-mix(in oklab, var(--color-leaf) 45%, transparent);
+  }
+
+  .crop__bar--harvest {
+    background-color: var(--color-garden);
+  }
+
+  /* Pace tints the harvest segment, so the succession strategy is legible at a
+     glance: the fast crops land well before the slow ones. */
+  .crop__bar--harvest.is-fast {
+    background-color: var(--color-season-grow);
+  }
+  .crop__bar--harvest.is-medium {
+    background-color: var(--color-garden);
+  }
+  .crop__bar--harvest.is-slow {
+    background-color: var(--color-season-harvest);
+  }
+
+  .crop__today {
+    position: absolute;
+    left: var(--left);
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--color-clay);
+    opacity: 0.75;
+    z-index: 1;
+  }
+
+  .crop__days {
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .crop__chev {
+    display: inline-flex;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: transform var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .crop[open] .crop__chev {
+    transform: rotate(180deg);
+  }
+
+  /* ================= PANEL =============================================
+     The facts were a bare definition list on the page background, with labels
+     and values on adjacent lines at similar weight. Eight of them in a row read
+     as one undifferentiated block of text with no way in.
+
+     Now: an inset card, the intro on its own above a rule, and each fact in its
+     own bordered cell so the label/value pairs are visually discrete. */
+  .crop__panel {
+    margin: 0 0.5rem 0.75rem calc(var(--label-col) * 0.3);
+    padding: 1.35rem 1.5rem 1.5rem;
+    border-radius: var(--radius-lg);
+    background-color: color-mix(in oklab, var(--color-sand) 55%, transparent);
+    border: 1px solid var(--color-line);
+  }
+
+  .crop__body {
+    max-width: 68ch;
+    font-size: var(--text-small);
+    line-height: 1.7;
+    color: var(--color-ink);
+  }
+
+  .crop__facts {
+    display: grid;
+    gap: 1px;
+    margin-top: 1.25rem;
+    /* 1px gaps over a line-coloured background give hairline dividers between
+       cells without a border on each one. */
+    background-color: var(--color-line);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  @media (min-width: 34rem) {
+    .crop__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 62rem) {
+    .crop__facts {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .fact {
+    padding: 0.85rem 1rem;
+    background-color: var(--color-card);
+  }
+
+  .fact dt {
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-garden);
+  }
+
+  .fact dd {
+    margin-top: 0.35rem;
+    font-size: var(--text-small);
+    line-height: 1.55;
+    color: var(--color-ink);
+  }
+
+  .chart__source {
+    margin-top: 1.5rem;
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crop,
+    .crop__chev {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Accordion behaviour: opening one crop closes the others.
+   *
+   * Enhancement only. <details> already opens and closes on its own with no
+   * JS, keyboard support included — this just stops seven open panels from
+   * pushing the page around.
+   */
+  function initGrowChart() {
+    document.querySelectorAll<HTMLElement>('.chart').forEach((root) => {
+      if (root.dataset.chartBound === 'true') return;
+      root.dataset.chartBound = 'true';
+
+      const panels = root.querySelectorAll<HTMLDetailsElement>('details.crop');
+
+      panels.forEach((panel) => {
+        panel.addEventListener('toggle', () => {
+          if (!panel.open) return;
+          panels.forEach((other) => {
+            if (other !== panel) other.open = false;
+          });
+        });
+      });
+    });
+  }
+
+  initGrowChart();
+  document.addEventListener('astro:page-load', initGrowChart);
+</script>

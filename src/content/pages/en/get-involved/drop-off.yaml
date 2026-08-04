@@ -1,0 +1,97 @@
+# Drop-off locations.
+#
+# ⚠️ Addresses on this page come from DROP_OFF in src/config.ts, NOT from this
+# file. The `locations` section renders them with a map each; the prose here is
+# only the wrapper around that list. Adding an address means editing config.ts,
+# where the safety rule about founders' home addresses is written down.
+#
+# A location with `confirmed: false` in config renders as pending, with "email
+# first" rather than an invitation to turn up. A donor driving to an address
+# that is not actually a drop-off point is a real failure, not a cosmetic one.
+
+title: Drop-off locations
+description: Where to bring donated seeds, tools, and packing supplies for Homegrown Hearts in Monroe and Union County, North Carolina.
+
+hero:
+  eyebrow: Donate supplies
+  title: Where to bring the good stuff.
+  lead: >-
+    We accept donated supplies only, never money. Here is where to bring them.
+
+sections:
+  - id: locations
+    eyebrow: Drop-off points
+    title: Our locations.
+    body:
+      - >-
+        Email us before you come. We are two students on a school schedule, so a
+        message first is the difference between handing something over and
+        leaving it on a step.
+
+  - id: pending
+    eyebrow: Coming soon
+    title: More points, once they are confirmed.
+    body:
+      - >-
+        We are talking to a public library and to two community gardens in Union
+        County about becoming drop-off points. None of them has confirmed yet,
+        so we are not listing them as though you can turn up — we will add each
+        one here the day it is agreed.
+    note: >-
+      If you run a business, church, or community space in or near Monroe and
+      would be willing to hold a box for us, we would like to hear from you.
+
+  - id: what
+    eyebrow: Before you pack the car
+    title: What we can and cannot take.
+    items:
+      - icon: check
+        tone: 'yes'
+        title: Seeds, seedlings, and plants
+        body: >-
+          Unopened seed packets and healthy nursery plants. Our full list is on
+          the homepage.
+      - icon: check
+        tone: 'yes'
+        title: Tools, gloves, and a trellis
+        body: >-
+          Hand tools and gloves in working condition. Lightly used is fine.
+      - icon: check
+        tone: 'yes'
+        title: Clean packing materials
+        body: >-
+          Unused paper bags and clean cardboard boxes for moving bundles to the
+          clinic.
+      - icon: x
+        tone: 'no'
+        title: Money, in any form
+        body: >-
+          We cannot accept cash, cheques, or transfers. Homegrown Hearts is a
+          student-led initiative with no bank account, and donations are not
+          tax-deductible.
+      - icon: x
+        tone: 'no'
+        title: Food, or anything opened
+        body: >-
+          No produce, no pantry items, and nothing whose packaging has been
+          opened. Everything in a bundle is grown by us.
+      - icon: x
+        tone: 'no'
+        title: Used gardening soil
+        body: >-
+          Bagged soil must be sealed and unopened. Used soil can carry disease
+          into the beds.
+
+  - id: contact
+    eyebrow: Questions
+    title: Ask before you drive.
+    body:
+      - >-
+        If you are not sure whether we can use something, send a photo. That is
+        faster for both of us than a wasted trip.
+    ctas:
+      - label: Email us
+        href: /contact
+        primary: true
+      - label: See the full supply list
+        href: /#wishlist

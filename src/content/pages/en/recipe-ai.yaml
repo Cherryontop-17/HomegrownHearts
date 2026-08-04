@@ -1,0 +1,83 @@
+# Recipe AI — the tool behind the QR code on every bundle.
+#
+# ⚠️ This page describes something that DOES NOT EXIST YET, and it says so in
+# the first line. COMPLIANCE Rule 5 is about numbers, but its principle covers
+# capabilities too: a page describing a live feature that has not been built is
+# the same failure as an inflated impact number.
+#
+# ⚠️ COMPLIANCE Rule 1 governs every word about what the tool returns. It is
+# keyed to the vegetables in the bag and to nothing about the person holding
+# it. No nutrients, no "good for", no tailoring to pregnancy — read the header
+# of src/components/SmartRecipe.astro and docs/CROPS.md before editing.
+
+title: Recipe AI
+description: The tool behind the QR code on every Homegrown Hearts bundle. It suggests ways to cook the vegetables in the bag. Still in development.
+
+hero:
+  eyebrow: In development
+  title: Not built yet. Here is what it will do.
+  lead: >-
+    Every bundle will carry a tag you can scan. This page explains what happens
+    when you do, and it will stay marked as unfinished until the tool actually
+    works.
+
+sections:
+  - id: status
+    eyebrow: Where it stands
+    title: Come back later.
+    body:
+      - >-
+        We are building this after the garden, not before it. The first
+        deliveries matter more than the software attached to them, so the tag
+        system ships once there is produce going out to attach it to.
+      - >-
+        Nothing on this page is live. There is no code to scan yet, and the
+        preview on the homepage is an illustration rather than a working tag.
+    ctas:
+      - label: See how it will work
+        href: /#smart
+        primary: true
+      - label: Tell us what would help
+        href: /contact
+
+  - id: plan
+    eyebrow: The idea
+    title: A tag that knows what is in the bag.
+    items:
+      - icon: basket
+        title: The bag is packed
+        body: >-
+          Whatever came out of the garden that morning is written to the tag
+          when the bundle is packed.
+      - icon: scan-line
+        title: The tag is scanned
+        body: >-
+          A phone camera opens it in a browser. Nothing to install, no account,
+          and nothing to sign up for.
+      - icon: sparkles
+        title: The list is read
+        body: >-
+          The vegetables on the tag are the only input. The tool is told what is
+          in the bag and nothing whatsoever about who is holding it.
+      - icon: leafy-green
+        title: Ways to cook it come back
+        body: >-
+          Plain methods for those specific vegetables, using what a home kitchen
+          already has.
+    note: >-
+      Cooking ideas for the vegetables in the bundle. This is not dietary or
+      medical advice. For guidance on eating during pregnancy, ask your
+      clinician.
+
+  - id: why
+    eyebrow: Why bother
+    title: An unfamiliar vegetable is a wasted one.
+    body:
+      - >-
+        The most common reason a free bag of produce goes uneaten is not that
+        somebody did not want it. It is that a vegetable turned up that nobody
+        in the house had cooked before, and it sat in the drawer until it was
+        past using.
+      - >-
+        A tag on the bag is the cheapest possible answer to that, and it is the
+        one part of this project where a piece of software genuinely helps.

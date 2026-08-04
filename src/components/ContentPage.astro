@@ -8,7 +8,7 @@
  * a YAML file appears on the page with no code change, which is the whole point
  * of the content collections.
  *
- * A handful of sections need real behaviour rather than text (the forms, the
+ * A handful of sections need real behavior rather than text (the forms, the
  * impact numbers, the contact address). Those are keyed by section `id` in the
  * switch below. Everything else falls through to the generic path.
  */
@@ -22,10 +22,17 @@ import Reveal from './Reveal.astro';
 import Cards from './Cards.astro';
 import Icon from './Icon.astro';
 import UpdatesLog from './UpdatesLog.astro';
+import MapEmbed from './MapEmbed.astro';
+import Roadmap from './Roadmap.astro';
+import GrowChart from './GrowChart.astro';
+import GoalMeter from './GoalMeter.astro';
+import MemoryGame from './MemoryGame.astro';
+import ShuffleCards from './ShuffleCards.astro';
 
 import { getCopy, type PageId } from '../copy';
 import { localizePath, useTranslations } from '../i18n/utils';
-import { CONTACT, IMPACT, FORMS, has } from '../config';
+import { CONTACT, IMPACT, FORMS, DROP_OFF, has } from '../config';
+import { seasonGoals } from '../goals';
 import type { Locale } from '../config';
 
 interface Props {
@@ -44,14 +51,59 @@ const t = useTranslations(locale);
  * than hard-coded per page, so reordering a YAML file cannot produce two
  * identical bands in a row.
  */
-const SURFACES = ['cream', 'sand'] as const;
+/*
+  ⚠️ The alternation starts on SAND, not cream.
+
+  The page hero is a cream band. Starting the content alternation on cream too
+  meant the first content section was the same colour as the hero directly above
+  it, so the two bands merged into one and their padding stacked — a dead gap of
+  roughly 220px between the hero lead and the first heading, with no rule, no
+  colour change, and nothing in it. It read as a rendering fault, and it was on
+  every single content page.
+
+  Starting on sand gives the first section a real edge against the hero, which
+  is what the alternation is for.
+*/
+const SURFACES = ['sand', 'cream'] as const;
 const ACCENTS = ['grow', 'harvest', 'care'] as const;
+
+/**
+ * Section ids whose `items` are rendered by a dedicated component in the switch
+ * below, and which must therefore be skipped by the generic card fallback.
+ *
+ * Forgetting one is a visible bug rather than a subtle one: the roadmap's
+ * fourteen phases rendered a second time as a wall of cards directly beneath
+ * the calendar that already showed them.
+ */
+const SECTIONS_WITH_OWN_RENDERER = new Set(['numbers', 'roadmap', 'crops', 'goals']);
 
 const impactStats = [
   { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
   { value: IMPACT.mothersServed, label: t('impact.mothers') },
   { value: IMPACT.volunteers, label: t('impact.volunteers') },
 ];
+
+/**
+ * The calendar needs translated crop names to label its sowing days, and they
+ * live in the `crops` section rather than in `roadmap`. Looked up here rather
+ * than with `section()`, which throws — a page with a roadmap but no crops list
+ * should render with unlabelled sowing days, not fail to build.
+ */
+const cropsSection = copy.sections.find((s) => s.id === 'crops');
+
+/*
+  Crop names for the matching game on /get-involved/donate/. They live in
+  garden.yaml, not on this page, so they are fetched rather than looked up
+  locally. Only the donate page needs them, so the fetch is conditional.
+*/
+const needsCropNames = page === 'get-involved/donate' || page === 'recipe-ai';
+const gameCrops =
+  needsCropNames
+    ? ((await getCopy('garden', locale)).sections.find((s) => s.id === 'crops')?.items ?? [])
+    : [];
+
+/** Season targets paired with actuals. See the warning in src/goals.ts. */
+const goalMeters = seasonGoals(t);
 
 /** Volunteer and supply forms. Config-driven — real URLs are a one-line change. */
 const formLinks = [
@@ -112,6 +164,44 @@ const formLinks = [
 
         {s.id === 'updates' && <UpdatesLog locale={locale} />}
 
+        {/* Targets beside the actuals. On /impact this is what stops a page of
+            zeros from reading as a page that failed to load — the zeros are
+            real, but on their own they carry no information about whether
+            anything is supposed to have happened yet. */}
+        {s.id === 'goals' && <GoalMeter goals={goalMeters} caption={t('goals.caption')} />}
+
+        {/* The planting calendar, and the same schedule as a grow chart. Both
+            live on /garden/ rather than the homepage — see the header of
+            garden.yaml for why. */}
+        {s.id === 'roadmap' && (
+          <Roadmap
+            items={[...(s.items ?? [])]}
+            crops={[...(cropsSection?.items ?? [])]}
+            locale={locale}
+            sowingLabel={t('crops.sowing')}
+            prevLabel={t('crops.prevMonth')}
+            nextLabel={t('crops.nextMonth')}
+            phaseDayLabel={t('crops.phaseDay')}
+            sowingDayLabel={t('crops.sowingDay')}
+            todayLabel={t('crops.today')}
+          />
+        )}
+
+        {s.id === 'crops' && (
+          <GrowChart
+            items={[...(s.items ?? [])]}
+            locale={locale}
+            growingLabel={t('crops.growing')}
+            harvestLabel={t('crops.harvest')}
+            fastLabel={t('crops.fast')}
+            mediumLabel={t('crops.medium')}
+            slowLabel={t('crops.slow')}
+            daysLabel={t('crops.days')}
+            sownLabel={t('crops.sown')}
+            sourceNote={t('crops.sourceNote')}
+          />
+        )}
+
         {s.id === 'reach' && (
           <Reveal class="contact">
             <a class="contact__email" href={`mailto:${CONTACT.email}`}>
@@ -122,6 +212,88 @@ const formLinks = [
               {t('contact.responseTime')}: {CONTACT.responseTime}
             </p>
           </Reveal>
+        )}
+
+        {/*
+          Drop-off points, each with a click-to-load map.
+
+          Addresses come from DROP_OFF in config.ts rather than from the YAML,
+          because config is where the rule about never publishing a founder's
+          home address is written down. An unconfirmed entry renders as pending
+          and tells the reader to email first — sending a donor to an address
+          that is not actually a drop-off point is a real failure.
+        */}
+        {s.id === 'locations' && (
+          <Reveal stagger={110} class="locations">
+            {DROP_OFF.map((loc) => (
+              <article class="location">
+                <div class="location__head">
+                  <h3 class="location__name">{loc.name}</h3>
+                  {!loc.confirmed && (
+                    <span class="location__pending">{t('dropoff.pending')}</span>
+                  )}
+                </div>
+
+                <address class="location__address">{loc.full}</address>
+
+                <MapEmbed
+                  address={loc.full}
+                  title={`${t('dropoff.mapOf')} ${loc.full}`}
+                  loadLabel={t('dropoff.showMap')}
+                  openLabel={t('dropoff.openInMaps')}
+                  privacyNote={t('dropoff.mapPrivacy')}
+                />
+              </article>
+            ))}
+          </Reveal>
+        )}
+
+        {/* The volunteer form on its own page. Falls back to "coming soon"
+            rather than a dead button while FORMS.volunteer is null. */}
+        {s.id === 'signup' && (
+          <Reveal class="actions">
+            {has.volunteerForm() && FORMS.volunteer ? (
+              <Button href={FORMS.volunteer} variant="primary" size="lg" external>
+                {t('cta.volunteer')}
+              </Button>
+            ) : (
+              <p class="note note--inline">{t('form.comingSoon')}</p>
+            )}
+          </Reveal>
+        )}
+
+        {/* The shuffling deck. Lives on the recipes page because that is what
+            it is about, and its escape hatch points at the top of this same
+            page where the "in development" status is stated. */}
+        {page === 'recipe-ai' && s.id === 'plan' && (
+          <ShuffleCards
+            crops={[...gameCrops]}
+            title={t('shuffle.title')}
+            intro={t('shuffle.intro')}
+            spinLabel={t('shuffle.spin')}
+            stopLabel={t('shuffle.stop')}
+            againLabel={t('shuffle.again')}
+            resultEyebrow={t('shuffle.resultEyebrow')}
+            pendingLabel={t('shuffle.pending')}
+            pendingBody={t('shuffle.pendingBody')}
+            closeLabel={t('shuffle.close')}
+            altLabel={t('shuffle.alt')}
+            altHref={`${localizePath('/recipe-ai', locale)}#status`}
+          />
+        )}
+
+        {/* The easter egg. Collapsed by default — see MemoryGame.astro. */}
+        {page === 'get-involved/donate' && s.id === 'how' && (
+          <MemoryGame
+            crops={[...gameCrops]}
+            openLabel={t('game.open')}
+            title={t('game.title')}
+            intro={t('game.intro')}
+            resetLabel={t('game.reset')}
+            movesLabel={t('game.moves')}
+            wonLabel={t('game.won')}
+            matchLabel={t('game.match')}
+          />
         )}
 
         {s.id === 'forms' && (
@@ -140,8 +312,11 @@ const formLinks = [
           </Reveal>
         )}
 
-        {/* --- Generic: items become cards ------------------------------- */}
-        {(s.items ?? []).length > 0 && s.id !== 'numbers' && (
+        {/* --- Generic: items become cards -------------------------------
+            Sections whose items are consumed by a component above must opt
+            out, or every roadmap phase and every crop renders a second time
+            as a card underneath its own calendar. */}
+        {(s.items ?? []).length > 0 && !SECTIONS_WITH_OWN_RENDERER.has(s.id) && (
           <Cards
             items={[...(s.items ?? [])]}
             columns={(s.items ?? []).length === 4 ? 4 : (s.items ?? []).length === 2 ? 2 : 3}
@@ -174,6 +349,17 @@ const formLinks = [
 </Base>
 
 <style>
+  /*
+    A page header, not a section. It carries an eyebrow, a heading and one line
+    of lead, and giving it a full section's padding at BOTH ends left an
+    enormous dead band between the lead and the first real heading. The top
+    padding stays generous (it sits under a fixed header); the bottom is cut to
+    roughly a third, because the band below supplies its own top padding.
+  */
+  .page-hero {
+    padding-bottom: clamp(1.5rem, 3vh, 2.5rem);
+  }
+
   h1 {
     font-size: var(--text-h1);
     line-height: var(--text-h1--line-height);
@@ -200,6 +386,62 @@ const formLinks = [
     color: var(--color-ink-muted);
   }
 
+  /* ================= DROP-OFF LOCATIONS ================================ */
+  .locations {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: var(--spacing-block);
+  }
+
+  @media (min-width: 52rem) {
+    .locations {
+      /* auto-fit, so a single confirmed location does not sit in a lonely
+         third of a three-column grid while the others are empty. */
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    }
+  }
+
+  .location {
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .location__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .location__name {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    color: var(--text-heading);
+  }
+
+  .location__pending {
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-harvest-tint);
+    color: var(--color-season-harvest);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .location__address {
+    margin-top: 0.4rem;
+    font-style: normal;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+
   .note {
     margin-top: 2rem;
     max-width: 62ch;
@@ -223,13 +465,35 @@ const formLinks = [
   }
 
   .page-cards {
-    margin-top: 2.5rem;
+    margin-top: var(--spacing-block);
   }
 
+  /*
+    Raised cards rather than three bare numerals on the band.
+
+    On /impact every figure is currently 0, and as naked type on a wide cream
+    section that read as a page that had failed to load rather than as an
+    honest zero. Giving each number a card gives the section a floor, fills the
+    measure, and makes the zeros look deliberate — which they are.
+  */
   .stats {
     display: grid;
-    gap: 2rem;
-    margin-top: 2.5rem;
+    gap: 1.25rem;
+    margin-top: var(--spacing-block);
+  }
+
+  @media (min-width: 48rem) {
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .stats :global(.stat) {
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
   }
 
   .contact {

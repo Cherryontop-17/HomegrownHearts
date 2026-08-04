@@ -1,0 +1,264 @@
+# The Garden — the planting calendar and what grows in it.
+#
+# This page exists because the homepage was 17,000px long and the calendar sat
+# seven sections down it, where nobody found it. Detail belongs on its own
+# route; the homepage links here.
+#
+# WARNING: Section ids are load-bearing. ContentPage.astro renders `roadmap` as
+# the calendar and `crops` as the grow chart, both keyed by id, and src/copy.ts
+# fails the build if the Spanish file does not carry the same set.
+#
+# WARNING: Phase `key` values join to ROADMAP in src/config.ts, which holds the
+# real dates. Adding a phase here without adding its key there is a build error.
+# `value` is the display label and IS translated; the dates are not, so the two
+# languages cannot drift to different months.
+
+title: The garden calendar
+description: What Homegrown Hearts plants and harvests each month in Union County, North Carolina, from the August launch through the end of the season in November.
+
+hero:
+  eyebrow: The Garden
+  title: What is in the ground, and when.
+  lead: >-
+    Four months, seven crops, and one delivery schedule. Page through the
+    months to see what happens when.
+
+sections:
+  # ── Roadmap ────────────────────────────────────────────────────────────────
+  # `key` on each item joins it to ROADMAP in src/config.ts, which holds the
+  # real dates. `value` is the display label and is translated; the dates are
+  # not, so English and Spanish cannot drift to different Augusts.
+  - id: roadmap
+    eyebrow: The plan
+    title: Launch to first delivery, inside one month.
+    body:
+      - >-
+        Fast-cycle crops and long-season crops go into the ground the same week
+        on different clocks, so there is something to harvest in week three
+        while the tomatoes are still coming on. Growers call it succession
+        planting, and it is what keeps our delivery schedule from having a hole
+        in the middle of it.
+    items:
+      - key: digital
+        value: Aug 7-8
+        icon: qr-code
+        title: Digital launch
+        body: >-
+          This site, the volunteer intake, and the bag-tag system go live before
+          anything is planted, so the tracking exists from the first harvest
+          rather than being added later.
+      - key: garden
+        value: Aug 9
+        icon: shovel
+        title: Garden site opens
+        body: >-
+          Beds go in. We are in discussion with community gardens in Union
+          County and will name the site here once it is settled.
+      - key: planting
+        value: Aug 10-16
+        icon: sprout
+        title: Week 2, everything goes in
+        body: >-
+          Fast-cycle basil and kale, summer tomatoes, and root crops (carrots
+          and cucumbers) all planted in the same week.
+      - key: harvest
+        value: Aug 17-23
+        icon: leafy-green
+        title: Week 3, first micro-harvest
+        body: >-
+          The fast-cycle crops come in while the tomatoes and roots keep
+          growing. First produce, two weeks after the beds went in.
+      - key: delivery
+        value: Aug 24-30
+        icon: truck
+        title: Week 4, succession planting and first delivery
+        body: >-
+          The next round goes into the cleared beds, and the first pilot bundle
+          goes to our partner clinic.
+      - key: sep-cycle
+        value: Sep 1-13
+        icon: basket
+        title: First full harvest cycle
+        body: >-
+          Basil, lettuce and kale are all producing at once. Deliveries move
+          from a single pilot bag to a steady run, and we find out what a
+          packing morning actually takes.
+      - key: sep-fall-sow
+        value: Sep 14-20
+        icon: sprout
+        title: Fall round goes in
+        body: >-
+          Spinach, a second lettuce sowing and more kale go into the beds the
+          fast crops have just cleared. This is the succession that keeps
+          October from being empty.
+      - key: sep-weekly
+        value: Sep 21-30
+        icon: truck
+        title: Weekly deliveries
+        body: >-
+          A bundle a week, with the greens carrying it while the tomatoes and
+          root crops finish. First month where the schedule is routine rather
+          than an experiment.
+      - key: oct-summer
+        value: Oct 1-11
+        icon: sprout
+        title: Summer crops come in
+        body: >-
+          Cucumbers and the first cherry tomatoes are ready. Bundles get
+          heavier and more varied, which is the point of having planted three
+          different clocks in the same week.
+      - key: oct-roots
+        value: Oct 12-20
+        icon: carrot
+        title: Roots are ready
+        body: >-
+          Carrots come up sixty days after sowing. Roots keep far longer than
+          greens, so they make a bundle useful for more than three days.
+      - key: oct-greens
+        value: Oct 21-31
+        icon: leafy-green
+        title: Second greens harvest
+        body: >-
+          The September sowing is ready, and the kale planted in August is
+          still cutting. Peak month for both weight and variety.
+      - key: nov-last
+        value: Nov 1-14
+        icon: leafy-green
+        title: Last outdoor harvest
+        body: >-
+          Kale and spinach take a light frost and keep going; everything else
+          is finished. Final deliveries of the season.
+      - key: nov-beds
+        value: Nov 15-23
+        icon: shovel
+        title: Beds cleared and covered
+        body: >-
+          Spent plants come out, and the beds are covered for winter so the
+          soil is not bare until spring.
+      - key: nov-review
+        value: Nov 24-30
+        icon: clipboard-list
+        title: Season review with the clinic
+        body: >-
+          We sit down with our partner clinic, go through what worked, and
+          agree the produce list for next season before we order a seed.
+
+  # ── Crop detail ────────────────────────────────────────────────────────────
+  # Feeds the grow chart's expandable panels. `key` joins each entry to
+  # src/crops.ts, which holds the day counts.
+  #
+  # ⚠️ COMPLIANCE Rule 1, and this is the section most likely to breach it.
+  # Every line here describes HOW THE PLANT GROWS or WHAT A KITCHEN DOES WITH
+  # IT. Nothing describes what eating it does to a person. No nutrients, no
+  # "good for", no "helps with" — not even with a citation attached, because a
+  # citation does not launder a health claim. docs/CROPS.md explains why, and
+  # describes the one legitimate route to publishing nutrition content.
+  - id: crops
+    eyebrow: What is in the ground
+    title: Seven crops, three different clocks.
+    body:
+      - >-
+        Click any crop for how long it takes, when it is ready, and what to do
+        with it in a kitchen. The bars are drawn from real days-to-maturity, so
+        you can see for yourself where the harvests actually land.
+    items:
+      - key: basil
+        title: Genovese basil
+        body: >-
+          Goes in as a nursery plant rather than seed, which is what makes an
+          August planting reach the first delivery. Pinch the growing tips and
+          it bushes out instead of bolting.
+        details:
+          - label: Ready when
+            value: The plant has several sets of true leaves and stands about a hand tall.
+          - label: How to pick
+            value: Cut whole stems above a leaf pair, never strip single leaves.
+          - label: Keeping it
+            value: Stems in a glass of water on the counter. Never the fridge, which blackens it.
+          - label: In the kitchen
+            value: Torn over anything hot at the last second. Heat destroys the aroma.
+      - key: kale
+        title: Kale
+        body: >-
+          The workhorse. Cut it at baby-leaf size for the first harvest and the
+          same plant keeps producing for months afterwards.
+        details:
+          - label: Ready when
+            value: Leaves are the size of your palm for baby leaf, a hand span for full size.
+          - label: How to pick
+            value: Outer leaves first, always leaving the growing center intact.
+          - label: Keeping it
+            value: Loosely bagged in the fridge, about a week.
+          - label: In the kitchen
+            value: Stems removed, leaves shredded. Holds up to long cooking better than spinach.
+      - key: lettuce
+        title: Lettuce mix
+        body: >-
+          The fastest thing in the ground and the reason there is anything to
+          harvest in week three. Sown as a mix so one bed gives several colors
+          and textures.
+        details:
+          - label: Ready when
+            value: Leaves are about four inches. Earlier is better than later.
+          - label: How to pick
+            value: Cut the whole patch an inch above the soil. It regrows two or three times.
+          - label: Keeping it
+            value: Washed, spun dry, in a bag with a paper towel. Three to five days.
+          - label: In the kitchen
+            value: Raw. Dress it right before it goes on the table or it wilts.
+      - key: spinach
+        title: Spinach
+        body: >-
+          A cool-season crop, so an August sowing here is at the hot edge of its
+          range. The reliable planting is the fall succession round.
+        details:
+          - label: Ready when
+            value: Leaves are big enough to pick without tearing the crown.
+          - label: How to pick
+            value: Outer leaves, or cut the whole plant at the base.
+          - label: Keeping it
+            value: Dry, loosely bagged, in the fridge. Wilts faster than kale.
+          - label: In the kitchen
+            value: Raw when small, wilted in a hot pan when larger. Cooks down to almost nothing.
+      - key: tomato
+        title: Cherry tomatoes
+        body: >-
+          The long game. Goes in as a transplant and produces steadily once it
+          starts, which is what carries the later deliveries.
+        details:
+          - label: Ready when
+            value: Fully colored and it comes off the vine with a slight twist.
+          - label: How to pick
+            value: Whole trusses if most are ripe, otherwise one at a time.
+          - label: Keeping it
+            value: On the counter, stem up. The fridge ruins the texture.
+          - label: In the kitchen
+            value: Raw, halved, or roasted whole until they split.
+      - key: carrot
+        title: Carrots
+        body: >-
+          Slow and worth waiting for. Needs loose soil more than it needs
+          anything else, which is why the beds get worked over before sowing.
+        details:
+          - label: Ready when
+            value: The shoulder is about an inch across where it meets the leaves.
+          - label: How to pick
+            value: Water first, then pull with a twist. Dry soil snaps them.
+          - label: Keeping it
+            value: Tops cut off immediately, then in the fridge. Tops left on drain the root.
+          - label: In the kitchen
+            value: Scrubbed rather than peeled. Raw, roasted, or in anything slow.
+      - key: cucumber
+        title: Cucumbers
+        body: >-
+          Needs something to climb, which is why a trellis is on the supply
+          list. Vertical vines give straighter fruit and far less rot.
+        details:
+          - label: Ready when
+            value: Firm, even color, and the size you would buy. Check daily once they start.
+          - label: How to pick
+            value: Cut the stem. Pulling tears the vine.
+          - label: Keeping it
+            value: Fridge, about a week. Goes soft from the blossom end first.
+          - label: In the kitchen
+            value: Raw and cold. Salt sliced cucumber and drain it before dressing.

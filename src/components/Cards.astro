@@ -4,7 +4,7 @@
  *
  * Used by the founders, bundle, and three-way CTA sections. One component
  * rather than three near-identical grids, so the columns, gaps, and hover
- * behaviour cannot drift apart between sections.
+ * behavior cannot drift apart between sections.
  *
  * Renders a `<ul>` when the items are a list of peers (founders, ways to help)
  * — which they always are here. A grid of `<div>`s tells a screen reader
@@ -17,6 +17,8 @@ import type { IconName } from '../icons';
 
 export interface CardItem {
   icon?: string;
+  /** 'yes' | 'no' — tints the icon chip. See content.config.ts. */
+  tone?: string;
   title: string;
   body?: string;
 }
@@ -52,7 +54,7 @@ const {
     items.map((item) => (
       <li class="cards__item">
         {item.icon && (
-          <span class="cards__icon">
+          <span class:list={['cards__icon', item.tone && `cards__icon--${item.tone}`]}>
             <Icon name={item.icon as IconName} size={24} />
           </span>
         )}
@@ -69,7 +71,19 @@ const {
     gap: 1.5rem;
     list-style: none;
     padding: 0;
-    margin: 0;
+    /*
+      ⚠️ Longhand, never `margin: 0`.
+
+      The shorthand also set margin-top, which silently beat the caller's
+      `.page-cards { margin-top: 2.5rem }` — identical specificity, and this
+      stylesheet happened to come last. Headings ended up sitting almost
+      directly on their own cards across the whole site.
+
+      The top gap belongs to this component, not to whoever renders it.
+    */
+    margin-top: var(--spacing-block);
+    margin-inline: 0;
+    margin-bottom: 0;
   }
 
   /* Mobile-first: one column, then step up. Two columns before three means a
@@ -135,7 +149,7 @@ const {
 
   /* Same reasoning as the ink band: the text roles invert on green, so a white
      card surface would leave cream text on white. A translucent lift of the
-     band itself keeps it in the same colour family. */
+     band itself keeps it in the same color family. */
   :global(.section--garden) .cards--raised .cards__item {
     background-color: rgb(253 251 246 / 0.08);
     border-color: rgb(253 251 246 / 0.2);
@@ -158,6 +172,18 @@ const {
     transform: translateY(-1px);
     box-shadow: var(--shadow-lift);
     border-color: var(--color-line-strong);
+  }
+
+  /* A tick and a cross at the same tint are the same shape at a glance. These
+     make the yes/no list readable before a word of it is read. */
+  .cards__icon--yes {
+    background-color: var(--color-garden-tint);
+    color: var(--color-garden-deep);
+  }
+
+  .cards__icon--no {
+    background-color: var(--color-clay-tint);
+    color: var(--color-clay);
   }
 
   .cards__icon {

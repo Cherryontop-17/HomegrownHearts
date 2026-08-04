@@ -4,10 +4,15 @@
 # North Carolina is named in full in the hero, the meta description, and the
 # founders section: a reader arriving from a search or a shared link should not
 # have to decode "NC", and a clinic staffer should see immediately that we are
-# local to them rather than a national organisation.
+# local to them rather than a national organization.
 #
 # Statistics come from docs/SOURCES.md and are access/consumption facts only.
 # Never a health outcome. See docs/COMPLIANCE.md Rule 1.
+#
+# ⚠️ Section ids here are load-bearing. HomePage.astro looks each one up by id
+# and throws if it is missing, and src/copy.ts fails the build if the Spanish
+# file does not carry the same set. Renaming one means renaming it in three
+# places.
 
 title: Fresh food for new mothers
 description: Homegrown Hearts grows vegetables in Union County, North Carolina and delivers free seasonal bundles to pregnant and postpartum mothers through a partner clinic.
@@ -27,9 +32,46 @@ hero:
       href: /get-involved
 
 sections:
+  # ── Safety gate ────────────────────────────────────────────────────────────
+  # The credibility section. A clinic reading this site is looking for exactly
+  # one thing: evidence that two students are not making clinical decisions.
+  # Each item names who owns a decision, and none of them is us.
+  - id: safety
+    eyebrow: How this stays safe
+    title: The decisions that matter are not ours to make.
+    body:
+      - >-
+        We are two high school students. We grow vegetables and we drive them to
+        a clinic. Everything past that point belongs to people qualified to
+        decide it, and the program is built so it stays that way.
+    items:
+      - icon: file-check
+        title: A clinic-approved produce list
+        body: >-
+          Our partner clinic reviewed and approved every item we are allowed to
+          grow and pack. Nothing goes into a bundle that is not on that list.
+      - icon: user-check
+        title: An adult advisor
+        body: >-
+          An adult advisor supervises the program and signs off on what we
+          deliver. Nothing goes out without them.
+      - icon: shield-check
+        title: Whole, raw, washed in plain water
+        body: >-
+          We do not cut, cook, or preserve anything. Bundles are packed the
+          morning they leave and handed straight to the clinic.
+      - icon: truck
+        title: The clinic decides who receives
+        body: >-
+          We never meet a recipient and we never hold a name. Our partner hands
+          the bundles to the families it serves.
+    note: >-
+      We describe the food and nothing else. For guidance on eating during
+      pregnancy, ask your clinician.
+
   - id: why
-    eyebrow: Why produce
-    title: Fresh vegetables are the first thing a tight budget loses.
+    eyebrow: Why vegetables
+    title: Fresh vegetables are the first thing a tight budget gives up.
     body:
       - >-
         They are expensive, they spoil, and they take time to cook. When money
@@ -47,7 +89,7 @@ sections:
         sourceHref: https://ers.usda.gov/sites/default/files/_laserfiche/publications/113623/ERR-358.pdf
       - value: '11.1%'
         title: of people in Union County, North Carolina face food insecurity
-        body: Lower than most of the state. Still roughly 1 in 9 of our neighbours.
+        body: Lower than most of the state. Still roughly 1 in 9 of our neighbors.
         source: Feeding America, Map the Meal Gap 2025
         sourceHref: https://map.feedingamerica.org/
     note: >-
@@ -79,30 +121,207 @@ sections:
 
   - id: bundle
     eyebrow: What is in a bundle
-    title: Whatever is ready that week.
+    title: Whatever the garden feels like giving us.
     body:
       - >-
         A bundle is not a fixed box. It holds what the garden actually produced
         that week: spring greens and radishes, summer tomatoes and squash, fall
-        collards and sweet potatoes, all grown in the North Carolina Piedmont.
+        collards and sweet potatoes, all grown locally.
       - >-
         Everything is whole and raw. We do not cut, cook, or preserve anything.
     note: >-
-      Our produce list is pending review by our partner clinic. We will not
-      describe it as approved until it is.
+      Every item we grow comes from the produce list our partner clinic
+      reviewed and approved.
+
+  # ── The QR pipeline ────────────────────────────────────────────────────────
+  # ⚠️ COMPLIANCE Rule 1. Read the header of src/components/SmartRecipe.astro
+  # before editing a word of this. The tool responds to the vegetables on the
+  # tag and to nothing about the person holding the bag. Any rewrite that makes
+  # the recipes sound tailored to a reader turns this into dietary advice.
+  - id: smart
+    eyebrow: In every bundle
+    title: A tag that tells you what to do with it.
+    body:
+      - >-
+        A bag of unfamiliar vegetables is a bag that sits in the drawer. Every
+        bundle carries a tag listing what went in that morning, and scanning it
+        opens plain ways to cook those specific vegetables.
+      - >-
+        The tag knows what is in the bag. That is all it knows, and all it needs
+        to know.
+    items:
+      - icon: basket
+        title: We pack the bag
+        body: The tag lists what went in that morning.
+      - icon: scan-line
+        title: You scan the tag
+        body: Nothing to install. It opens in a browser.
+      - icon: sparkles
+        title: It reads that list
+        body: The vegetables on the tag are the only input.
+      - icon: leafy-green
+        title: You get ways to cook them
+        body: >-
+          Straightforward methods for what is in front of you, using what your
+          kitchen already has.
+
+  # ── Season targets ─────────────────────────────────────────────────────────
+  # ⚠️ COMPLIANCE Rule 5. The numbers live in GOALS in src/config.ts and are
+  # rendered only through <GoalMeter>, which prints the live actual from IMPACT
+  # beside each one. Do not restate a target as prose here.
+  - id: goals
+    eyebrow: What we are aiming for
+    title: Our targets for the first season.
+    body:
+      - >-
+        The beds go in on August 9, so today every one of these sits at zero.
+        We would rather show you the plan with the real number next to it than
+        a figure you have no way to check.
+
+
+
+  # ── Supply wishlist ────────────────────────────────────────────────────────
+  # `group` drives the filter chips and is translated. Order here is the order
+  # of the chips, so keep produce first — it is the list most donors want.
+  - id: wishlist
+    eyebrow: Donate supplies
+    title: Things we would genuinely be thrilled to receive.
+    body:
+      - >-
+        Supplies only, never money. If you are standing in a garden center or a
+        hardware store and want to help, this is the whole list.
+    items:
+      - group: Seeds and seedlings
+        icon: flower-2
+        title: Genovese basil
+        value: 6 plants
+        body: Fast-cycle. First thing ready to harvest.
+      - group: Seeds and seedlings
+        icon: sprout
+        title: Cherry tomatoes
+        value: 4 plants
+        body: Summer heat crop. Long season, heavy yield.
+      - group: Seeds and seedlings
+        icon: leafy-green
+        title: Kale
+        value: 1 packet
+        body: Fast-cycle and keeps producing after cutting.
+      - group: Seeds and seedlings
+        icon: leafy-green
+        title: Spinach
+        value: 1 packet
+        body: Cool-season. Goes in for the fall round.
+      - group: Seeds and seedlings
+        icon: salad
+        title: Lettuce mix
+        value: 1 packet
+        body: Cut-and-come-again, so one sowing runs for weeks.
+      - group: Seeds and seedlings
+        icon: carrot
+        title: Carrots
+        value: 1 packet
+        body: Root crop. Slow, and worth the wait.
+      - group: Seeds and seedlings
+        icon: sprout
+        title: Cucumbers
+        value: 2 plants
+        body: Needs a trellis, which we also need.
+      - group: Tools
+        icon: shovel
+        title: Hand trowels and pruners
+        value: 2 each
+        body: The two tools we run out of on a packing morning.
+      - group: Tools
+        icon: droplets
+        title: Watering can or hose
+        value: Any
+        body: Used every single day the sun is out.
+      - group: Tools
+        icon: shovel
+        title: Garden gloves
+        value: 4 pairs
+        body: Adult small and medium.
+      - group: Packing
+        icon: package
+        title: Cardboard boxes
+        value: Any
+        body: Clean and unused, for moving bundles to the clinic.
+      - group: Packing
+        icon: basket
+        title: Clean paper bags
+        value: Any
+        body: One bundle per bag. Unused only.
+    note: >-
+      We accept donated supplies only, never money. Homegrown Hearts is a
+      student-led initiative, and donations are not tax-deductible.
+
+  # ── Flyers ─────────────────────────────────────────────────────────────────
+  # This section only renders if there are image files in src/assets/flyers/.
+  # It stays declared in both languages regardless, because src/copy.ts checks
+  # that the two files carry the same set of section ids.
+  - id: flyers
+    eyebrow: Print and share
+    title: Our flyers.
+    body:
+      - >-
+        Print one for a break room, a church noticeboard, or a clinic waiting
+        room. Everything on them is also written on this site.
+
+  # ── About ──────────────────────────────────────────────────────────────────
+  # Folded in from the old /about page. The header's "About" item is an anchor
+  # to this section, so the id is load-bearing for navigation as well as for
+  # HomePage.astro's lookup.
+  # ── About ──────────────────────────────────────────────────────────────────
+  # Folded in from the old /about page. The header's "About" item is an anchor
+  # to this section, so the id is load-bearing for navigation as well as for
+  # HomePage.astro's lookup.
+  # ── About the organisation ─────────────────────────────────────────────────
+  # The header's "About" item anchors here. It answers "what IS this", not
+  # "who runs it" — the people have their own section directly below.
+  - id: about
+    eyebrow: About us
+    title: A student garden with a clinic at the end of it.
+    body:
+      - >-
+        Homegrown Hearts grows vegetables in Union County, North Carolina and
+        gives them away. Everything we harvest goes to one partner clinic, which
+        hands it to the families it already serves. We never charge anyone, and
+        we never decide who receives.
+      - >-
+        It is an unincorporated student-led initiative with no bank account, and
+        donations are not tax-deductible. An adult advisor supervises what we
+        grow, how we handle it, and what we deliver.
+    items:
+      - icon: sprout
+        title: Started in 2026
+        body: >-
+          Two high school students, one growing season, and a produce list our
+          partner clinic approved before we planted anything.
+      - icon: map-pin
+        title: Union County, North Carolina
+        body: >-
+          Everything is grown, packed, and delivered inside the county. Nothing
+          is shipped and nothing is bought in.
+      - icon: user-check
+        title: Supervised by an adult advisor
+        body: >-
+          Available to any partner who wants to speak with them directly, before
+          a first delivery or at any point after.
+    note: >-
+      We accept donated supplies only, and never money from anyone for anything.
 
   - id: founders
-    eyebrow: Who we are
-    title: Two students in Union County, North Carolina.
+    eyebrow: Who runs it
+    title: The two of us.
     items:
       - title: Kreeshma Vasikarla
-        body: Mission and medical lead. Runs clinic outreach and the produce list.
+        body: >-
+          Mission and medical lead. Runs clinic outreach, the produce list, and
+          the food-safety protocol.
       - title: Charishya Yarram
         body: >-
-          Operations and technology lead. Runs growing schedules, logistics, and
-          this site.
-    body:
-      - We work under an adult advisor, who supervises everything we deliver.
+          Operations and technology lead. Runs growing schedules, logistics, the
+          bag-tag system, and this site.
 
   - id: impact
     eyebrow: Our impact

@@ -1,0 +1,197 @@
+/* ============================================================================
+   Print (task 6.8)
+   ----------------------------------------------------------------------------
+   A clinic staffer will print /partners to put in front of a supervisor. That
+   sheet of paper is the actual conversion moment, so it gets designed rather
+   than left to the browser.
+
+   What a printed web page usually gets wrong, and what this fixes:
+     - Navigation, language switchers, and CTAs waste the first third of page 1
+     - Link destinations vanish, so a URL cannot be typed or checked
+     - Dark bands burn through a cartridge and make text unreadable on paper
+     - Cards break across pages mid-sentence
+     - The reader ends up with no idea who sent it or how to reply
+
+   Loaded globally but almost all of it is scoped to @media print, so it costs
+   nothing on screen.
+   ========================================================================== */
+
+@media print {
+  /* --- Page setup ------------------------------------------------------- */
+  @page {
+    margin: 16mm 14mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  /* Paper grain on paper is just toner. */
+  body::before {
+    display: none !important;
+  }
+
+  /* --- Remove the interface -------------------------------------------- */
+  /* None of this is usable on paper, and all of it costs vertical space
+     before the reader reaches a single fact. */
+  header.header,
+  .drawer,
+  .skip-link,
+  .lang,
+  .vine,
+  .deco,
+  .botanical,
+  .footer__list,
+  .footer__heading,
+  .hero__actions,
+  .actions,
+  .btn,
+  .strip-wrap {
+    display: none !important;
+  }
+
+  /* --- Flatten every surface ------------------------------------------- */
+  .section,
+  .section--ink,
+  .section--garden,
+  .section--sand,
+  .section--parchment,
+  .footer {
+    background: #fff !important;
+    color: #000 !important;
+    padding-block: 0.6rem !important;
+  }
+
+  /* Inverted text on a now-white band would print white on white. */
+  .section--ink *,
+  .section--garden *,
+  .footer * {
+    color: #000 !important;
+  }
+
+  /* Cards become ruled blocks. Borders print; shadows and fills do not. */
+  .statcard,
+  .howcard,
+  .tile,
+  .person,
+  .cards__item {
+    background: #fff !important;
+    border: 0.5pt solid #999 !important;
+    box-shadow: none !important;
+    padding: 6pt 8pt !important;
+    /* A deliverable split across a page break is the one that gets missed. */
+    break-inside: avoid;
+  }
+
+  /* --- Typography ------------------------------------------------------- */
+  h1,
+  .hero__title,
+  .head__title,
+  .feature__title {
+    font-size: 20pt !important;
+    line-height: 1.15 !important;
+    color: #000 !important;
+    break-after: avoid;
+  }
+
+  h2 {
+    font-size: 14pt !important;
+    color: #000 !important;
+    break-after: avoid;
+  }
+
+  h3,
+  .cards__title,
+  .howcard__title {
+    font-size: 11.5pt !important;
+    color: #000 !important;
+    break-after: avoid;
+  }
+
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* --- Images ----------------------------------------------------------- */
+  /* The hero photograph is decorative and would eat half of page one. The
+     content images stay, smaller, because a clinic reader asking "what does a
+     bundle look like" is answered by the picture. */
+  .hero,
+  .gallery,
+  .photo--scrim {
+    display: none !important;
+  }
+
+  .photo {
+    max-height: 55mm;
+    break-inside: avoid;
+    box-shadow: none !important;
+    border: 0.5pt solid #ccc;
+  }
+
+  /* --- Show link destinations ------------------------------------------ */
+  /* A printed citation nobody can check is not a citation. */
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 8.5pt;
+    color: #444;
+    word-break: break-all;
+  }
+
+  a[href^='mailto:']::after {
+    content: ' (' attr(href) ')';
+    font-size: 8.5pt;
+    color: #444;
+  }
+
+  /* Internal links are meaningless on paper — no URL, no underline. */
+  a[href^='/']::after,
+  a[href^='#']::after {
+    content: '';
+  }
+
+  a {
+    text-decoration: none !important;
+    color: #000 !important;
+  }
+
+  /* --- Keep the obligations legible ------------------------------------ */
+  /* These two statements are the reason the page is defensible. They print at
+     full weight with a rule, not as gray fine print. */
+  .footer__legal {
+    border-top: 1pt solid #000 !important;
+    margin-top: 8pt !important;
+    padding-top: 6pt !important;
+    break-inside: avoid;
+  }
+
+  .footer__status,
+  .footer__privacy {
+    font-size: 9pt !important;
+    color: #000 !important;
+  }
+
+  .note {
+    border-left: 1pt solid #666 !important;
+    font-size: 9pt !important;
+    color: #000 !important;
+    break-inside: avoid;
+  }
+
+  /* --- Tell the reader where it came from ------------------------------ */
+  /* Printed pages get separated from their email. The URL and the contact
+     address have to survive on the paper itself. */
+  .footer__brand::after {
+    content: 'homegrownhearts.org';
+    display: block;
+    margin-top: 4pt;
+    font-size: 9pt;
+    color: #000;
+  }
+}

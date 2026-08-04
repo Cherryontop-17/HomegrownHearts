@@ -1,0 +1,92 @@
+# HELP Pregnancy Center, Monroe — nuestra clínica aliada.
+#
+# ⚠️ Regla 4. Esta página los nombra, lo cual está permitido porque
+# PARTNER_CLINIC.approvedToDisplay es true por permiso escrito (src/config.ts).
+# Si ese permiso se retira, esta página se baja.
+#
+# ⚠️ Regla 3 manda en cada frase sobre las familias que atienden. No sabemos
+# quién recibe un paquete y nada aquí puede sugerir lo contrario.
+
+title: HELP Pregnancy Center
+description: Cómo trabaja Homegrown Hearts con HELP Pregnancy Center en Monroe, Carolina del Norte, quién decide qué familias reciben un paquete y qué aprobó la clínica.
+
+hero:
+  eyebrow: Nuestra clínica aliada
+  title: HELP Pregnancy Center, Monroe.
+  lead: >-
+    Cada paquete que armamos va a un solo lugar. Esto es lo que implica esa
+    alianza, escrito para que nadie tenga que adivinar.
+
+sections:
+  - id: role
+    eyebrow: Qué hacen
+    title: Toman todas las decisiones que tocan a una familia.
+    body:
+      - >-
+        Nosotras cultivamos verduras y las llevamos a la clínica. Desde que se
+        entrega un paquete, es suyo. Esa división es el diseño completo de este
+        proyecto, no un detalle.
+    items:
+      - icon: file-check
+        title: Aprobaron la lista de verduras
+        body: >-
+          Antes de sembrar nada, la clínica revisó cada producto que queríamos
+          cultivar y empacar. No entra al paquete nada que no esté en esa lista.
+      - icon: truck
+        title: Reciben la entrega
+        body: >-
+          Los paquetes llegan lavados, empacados y etiquetados, el día y la hora
+          que fija la clínica. Entregamos a ellos, nunca a un domicilio.
+      - icon: users
+        title: Deciden quién recibe
+        body: >-
+          La clínica elige a cuáles de las familias que ya atiende les
+          corresponde un paquete. Nosotras no participamos en eso ni queremos.
+      - icon: shield-check
+        title: Pueden detenerlo cuando quieran
+        body: >-
+          Si algo de las verduras, los horarios o el manejo no les funciona,
+          cambia o se detiene. Sin plazos de aviso y sin discusión.
+
+  - id: privacy
+    eyebrow: Lo que nunca vemos
+    title: No sabemos quién recibe un paquete.
+    body:
+      - >-
+        No guardamos nombres, ni datos de contacto, ni notas sobre ninguna
+        familia. La clínica nos reporta un conteo y nada más, que es todo lo que
+        publicamos y todo lo que queremos tener.
+      - >-
+        En este sitio no se nombra, fotografía ni describe a ninguna madre. Los
+        paquetes se fotografían solos, antes de la entrega.
+
+  - id: safety
+    eyebrow: Cómo se maneja la verdura
+    title: Lavada con agua, empacada la mañana en que sale.
+    body:
+      - >-
+        Todo va entero y crudo. No cortamos, no cocinamos y no conservamos nada.
+        Se cosecha temprano, se lava con agua corriente, se empaca en bolsas
+        limpias con una tarjeta que indica el contenido y se lleva el mismo día.
+      - >-
+        Nuestro protocolo escrito de inocuidad sigue las guías de la FDA para
+        elegir, lavar y guardar verduras frescas. La clínica tiene una copia, y
+        cualquier institución interesada la recibe antes de una primera entrega.
+    ctas:
+      - label: Lea en qué consiste una alianza
+        href: /partners
+        primary: true
+
+  - id: contact
+    eyebrow: Preguntas
+    title: Si usted trabaja en la clínica.
+    body:
+      - >-
+        Kreeshma se encarga de todo lo relacionado con clínicas. Use el correo
+        compartido y le llega a ella.
+    ctas:
+      - label: Escríbanos
+        href: /contact
+        primary: true
+      - label: Vea qué estamos cultivando
+        href: /garden

@@ -19,8 +19,29 @@ import { LOCALES, DEFAULT_LOCALE, type Locale } from './config';
 export type PageEntry = CollectionEntry<'pages'>;
 export type PageCopy = PageEntry['data'];
 
-/** Page ids, matching the filenames in src/content/pages/<locale>/. */
-export const PAGES = ['home', 'partners', 'about', 'get-involved', 'impact', 'contact'] as const;
+/**
+ * Page ids, matching the filenames in src/content/pages/<locale>/.
+ *
+ * An id may contain a slash, which becomes a real URL segment and a real
+ * subdirectory: "get-involved/donate" is
+ * `src/content/pages/en/get-involved/donate.yaml`, served at
+ * `/get-involved/donate/`. Both locales must carry every id — that is what
+ * `assertParity` below enforces.
+ */
+export const PAGES = [
+  'home',
+  'partners',
+  'our-partners',
+  'our-partners/help-pregnancy-center',
+  'our-partners/union-county-library',
+  'garden',
+  'recipe-ai',
+  'get-involved',
+  'get-involved/volunteer',
+  'get-involved/donate',
+  'get-involved/drop-off',
+  'contact',
+] as const;
 export type PageId = (typeof PAGES)[number];
 
 /**
@@ -58,7 +79,15 @@ export async function assertParity(): Promise<void> {
   const problems: string[] = [];
 
   for (const entry of all) {
-    const [locale, page] = entry.id.split('/');
+    /*
+      Split on the FIRST slash only. Page ids are nested now
+      ("get-involved/donate" -> src/content/pages/en/get-involved/donate.yaml),
+      and a plain destructure would take "get-involved" as the page id and drop
+      the rest — every subpage would then look missing in both locales.
+    */
+    const slash = entry.id.indexOf('/');
+    const locale = slash === -1 ? '' : entry.id.slice(0, slash);
+    const page = slash === -1 ? '' : entry.id.slice(slash + 1);
     if (!locale || !page) {
       problems.push(`Unexpected content path: ${entry.id} (expected <locale>/<page>)`);
       continue;

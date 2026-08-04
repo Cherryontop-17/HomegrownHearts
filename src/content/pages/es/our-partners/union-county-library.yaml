@@ -1,0 +1,70 @@
+# Biblioteca Pública del Condado de Union — TODAVÍA NO ES ALIADA.
+#
+# ⚠️ Regla 4 por analogía. Al 4 de agosto de 2026 la biblioteca no ha aceptado
+# nada. Esta página existe porque hay una conversación real en curso y decirlo
+# es más honesto que una lista de aliados vacía, pero cada línea debe dejar el
+# estado pendiente imposible de pasar por alto.
+#
+# En concreto: a nadie se le puede decir que lleve donaciones ahí.
+
+title: Biblioteca Pública del Condado de Union
+description: Homegrown Hearts está en conversaciones con la sede principal de la Biblioteca Pública del Condado de Union sobre un punto de entrega. Nada está confirmado.
+
+hero:
+  eyebrow: En conversaciones
+  title: Biblioteca Pública del Condado de Union, sede principal.
+  lead: >-
+    Ya preguntamos. Todavía no nos responden. Por favor, no lleve donaciones
+    allí hasta que esta página diga lo contrario.
+
+sections:
+  - id: status
+    eyebrow: Cómo está esto
+    title: No hay nada acordado.
+    body:
+      - >-
+        Nos acercamos a la sede principal para pedir que tuvieran una caja
+        pequeña de donaciones de materiales de huerto. Eso es todo: sin
+        verduras, sin voluntarios en el lugar, sin eventos y sin nada que
+        signifique trabajo para el personal más allá de dejar una caja ahí.
+      - >-
+        Hasta que digan que sí, no son aliados y no los vamos a describir como
+        tales. Esta página está aquí para que la conversación se vea, en vez de
+        quedar insinuada.
+    note: >-
+      Si quiere donar materiales hoy, tenemos un punto de entrega confirmado en
+      Monroe.
+    ctas:
+      - label: Puntos de entrega confirmados
+        href: /get-involved/drop-off
+        primary: true
+
+  - id: ask
+    eyebrow: Qué pedimos
+    title: Una caja y medio metro de piso.
+    items:
+      - icon: package
+        title: Una caja de donaciones
+        body: >-
+          Semillas, herramientas de mano, guantes y materiales de empaque
+          limpios. Nada perecedero y nada de valor.
+      - icon: clock
+        title: La vaciamos cada semana
+        body: >-
+          Nosotras pasamos y la vaciamos. Nunca se le pide al personal ordenar,
+          guardar ni manipular nada.
+      - icon: shield-check
+        title: Sin costo y sin compromiso
+        body: >-
+          Si se vuelve una molestia, se retira. Preferimos perder la caja antes
+          que ser un problema para una biblioteca.
+
+  - id: why
+    eyebrow: Por qué una biblioteca
+    title: Es donde nuestros vecinos ya están.
+    body:
+      - >-
+        Una biblioteca es el único edificio de un condado que todo el mundo usa
+        y en el que nadie tiene que pagar para entrar. Si le pedimos a la gente
+        que done un sobre de semillas, ahí es donde ese sobre debería poder
+        llegar.

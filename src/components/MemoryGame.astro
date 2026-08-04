@@ -1,0 +1,516 @@
+---
+/**
+ * "Name the crop" — a memory match, hidden behind a small prompt.
+ *
+ * ── Why this exists, and why it is an easter egg rather than a feature ────
+ * A donations page is a page of asks. Something to play with is a reason to
+ * stay on it, and matching a vegetable to its name is the one game on this
+ * site that is actually about the subject: the pairs come straight from
+ * `CROPS`, so it teaches the reader what is in the beds while they play.
+ *
+ * It is collapsed by default and opened deliberately. Nobody arriving to drop
+ * off seed packets should have to scroll past a game to find the address.
+ *
+ * ── Accessibility ─────────────────────────────────────────────────────────
+ * Real <button>s in a real grid, so it is keyboard-playable with no extra
+ * code. Every card announces its own state through its label rather than
+ * through colour, a live region calls each match and the win, and the "flip"
+ * is a cross-fade rather than a 3D rotation under reduced motion.
+ *
+ * ── Compliance ────────────────────────────────────────────────────────────
+ * The cards carry a crop's ICON and its NAME. Nothing else. It is deliberately
+ * not a quiz about what a vegetable is good for — see docs/CROPS.md.
+ */
+
+import Icon from './Icon.astro';
+import { CROPS } from '../crops';
+import type { IconName } from '../icons';
+
+interface Props {
+  /** Translated crop names, joined to src/crops.ts by `key`. */
+  crops: { key?: string; title: string }[];
+  /** Text on the closed prompt. */
+  openLabel: string;
+  /** Heading inside the panel. */
+  title: string;
+  /** One line of instructions. */
+  intro: string;
+  /** Button that deals a new board. */
+  resetLabel: string;
+  /** `{n}` is substituted with the move count. */
+  movesLabel: string;
+  /** Announced on a win. `{n}` is substituted. */
+  wonLabel: string;
+  /** Announced when two cards match. */
+  matchLabel: string;
+  class?: string;
+}
+
+const {
+  crops,
+  openLabel,
+  title,
+  intro,
+  resetLabel,
+  movesLabel,
+  wonLabel,
+  matchLabel,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const nameOf = new Map(crops.map((c) => [c.key, c.title]));
+
+/*
+  Six crops -> twelve cards, a 4x3 grid. Eight pairs was long enough that the
+  board stopped being a diversion and started being a task.
+*/
+const chosen = CROPS.slice(0, 6).map((c) => ({
+  id: c.id,
+  icon: c.icon,
+  name: nameOf.get(c.id) ?? c.id,
+}));
+
+/*
+  The deal is fixed at build time, not shuffled here — the same HTML has to go
+  to every reader for the page to stay cacheable. The client shuffles on load
+  and on every reset, so no two plays are the same.
+*/
+const cards = [
+  ...chosen.map((c) => ({ ...c, face: 'icon' as const })),
+  ...chosen.map((c) => ({ ...c, face: 'name' as const })),
+];
+---
+
+{/*
+  <details> carries the open/closed state with no JS, so the panel is reachable
+  even if the game script never loads — the board would simply not shuffle.
+*/}
+<details class:list={['game', className]} data-game {...rest}>
+  <summary class="game__summary">
+    <span class="game__spark"><Icon name="sparkles" size={16} /></span>
+    {openLabel}
+  </summary>
+
+  <div class="game__panel">
+    <div class="game__head">
+      <div>
+        <h3 class="game__title">{title}</h3>
+        <p class="game__intro">{intro}</p>
+      </div>
+
+      <div class="game__meta">
+        <span class="game__moves" data-game-moves data-template={movesLabel}></span>
+        <button type="button" class="game__reset" data-game-reset>{resetLabel}</button>
+      </div>
+    </div>
+
+    <div class="game__grid" data-game-grid>
+      {
+        cards.map((c) => (
+          <button
+            type="button"
+            class="card"
+            data-card
+            data-pair={c.id}
+            data-face={c.face}
+            aria-label={c.name}
+          >
+            <span class="card__back" aria-hidden="true">
+              <Icon name="leaf" size={20} />
+            </span>
+            <span class="card__front" aria-hidden="true">
+              {c.face === 'icon' ? (
+                <Icon name={c.icon as IconName} size={30} />
+              ) : (
+                <span class="card__name">{c.name}</span>
+              )}
+            </span>
+          </button>
+        ))
+      }
+    </div>
+
+    <p class="sr-only" role="status" aria-live="polite" data-game-status
+      data-won={wonLabel} data-match={matchLabel}></p>
+  </div>
+</details>
+
+<style>
+  .game {
+    margin-top: var(--spacing-block);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-line);
+    background-color: var(--color-card);
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+
+  /*
+    The prompt reads as an invitation rather than a link.
+
+    It was a small green sentence beside a sparkle, which looked like a footnote
+    somebody had forgotten to delete. Now it is a full-width bar with its own
+    surface, a chip, and a chevron that turns — the two affordances people
+    actually recognise as "there is something behind this".
+  */
+  .game__summary {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: 1.2;
+    color: var(--text-heading);
+    background-color: color-mix(in oklab, var(--color-harvest-tint) 60%, transparent);
+    transition: background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .game__summary:hover {
+    background-color: var(--color-harvest-tint);
+  }
+
+  /* Chevron, pushed to the far end. Rotates when the panel opens. */
+  .game__summary::after {
+    content: '';
+    margin-left: auto;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-right: 2px solid var(--color-season-harvest);
+    border-bottom: 2px solid var(--color-season-harvest);
+    rotate: 45deg;
+    translate: 0 -0.15rem;
+    transition: rotate var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .game[open] .game__summary::after {
+    rotate: -135deg;
+    translate: 0 0.15rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .game__summary,
+    .game__summary::after {
+      transition: none;
+    }
+  }
+
+  .game__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .game__summary:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+    border-radius: var(--radius-lg);
+  }
+
+  /* Chip, so the sparkle reads as a badge rather than as punctuation. */
+  .game__spark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-card);
+    color: var(--color-season-harvest);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .game__panel {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .game__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .game__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    color: var(--text-heading);
+  }
+
+  .game__intro {
+    margin-top: 0.2rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  .game__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .game__moves {
+    font-size: var(--text-small);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+  }
+
+  .game__reset {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-line-strong);
+    background-color: var(--color-card);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+    cursor: pointer;
+  }
+
+  .game__reset:hover {
+    border-color: var(--color-garden);
+    color: var(--color-garden-deep);
+  }
+
+  .game__reset:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+
+  /* ================= BOARD ============================================= */
+  .game__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.6rem;
+  }
+
+  @media (min-width: 34rem) {
+    .game__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border: 0;
+    padding: 0;
+    border-radius: var(--radius-md);
+    background: transparent;
+    cursor: pointer;
+    /* The whole tile is the target, so it clears 44px at every column count. */
+    min-height: 44px;
+  }
+
+  .card:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 3px;
+  }
+
+  .card__back,
+  .card__front {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
+    transition: opacity var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .card__back {
+    background-color: var(--color-garden);
+    color: var(--color-ink-inverse);
+    opacity: 1;
+  }
+
+  .card__front {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    color: var(--color-garden-deep);
+    opacity: 0;
+  }
+
+  .card__name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    color: var(--color-ink);
+  }
+
+  /* Face up, either because it is being looked at or because it is matched. */
+  .card.is-up .card__back,
+  .card.is-done .card__back {
+    opacity: 0;
+  }
+
+  .card.is-up .card__front,
+  .card.is-done .card__front {
+    opacity: 1;
+  }
+
+  .card.is-done .card__front {
+    background-color: var(--color-garden-tint);
+    border-color: var(--color-garden);
+  }
+
+  .card.is-done {
+    cursor: default;
+  }
+
+  /* A wrong pair shakes once. Transform-only and 240ms, well inside budget. */
+  .card.is-wrong {
+    animation: card-nope 240ms var(--ease-out-soft);
+  }
+
+  @keyframes card-nope {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    25% {
+      translate: -4px 0;
+    }
+    75% {
+      translate: 4px 0;
+    }
+  }
+
+  .card:hover:not(.is-done) .card__back {
+    background-color: var(--color-garden-deep);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card.is-wrong {
+      animation: none;
+    }
+    .card__back,
+    .card__front {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Memory match.
+   *
+   * Deliberately small: shuffle, flip up to two, resolve, count moves, and
+   * announce. No framework, no state library, no persistence.
+   */
+  function initGame() {
+    document.querySelectorAll<HTMLElement>('[data-game]').forEach((root) => {
+      if (root.dataset.gameBound === 'true') return;
+      root.dataset.gameBound = 'true';
+
+      const grid = root.querySelector<HTMLElement>('[data-game-grid]');
+      const status = root.querySelector<HTMLElement>('[data-game-status]');
+      const movesEl = root.querySelector<HTMLElement>('[data-game-moves]');
+      const resetBtn = root.querySelector<HTMLButtonElement>('[data-game-reset]');
+      if (!grid || !movesEl) return;
+
+      const cards = [...grid.querySelectorAll<HTMLButtonElement>('[data-card]')];
+      const movesTemplate = movesEl.dataset.template ?? '{n} moves';
+
+      let first: HTMLButtonElement | null = null;
+      let busy = false;
+      let moves = 0;
+      let matched = 0;
+
+      const setMoves = () => {
+        movesEl.textContent = movesTemplate.replace('{n}', String(moves));
+      };
+
+      const deal = () => {
+        // Fisher-Yates, then re-append in the new order. `order` on a grid item
+        // would leave the DOM order — and therefore the tab order — untouched,
+        // which would make the board trivially solvable with the keyboard.
+        const shuffled = [...cards];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        shuffled.forEach((c) => {
+          c.classList.remove('is-up', 'is-done', 'is-wrong');
+          c.disabled = false;
+          grid.appendChild(c);
+        });
+        first = null;
+        busy = false;
+        moves = 0;
+        matched = 0;
+        setMoves();
+        if (status) status.textContent = '';
+      };
+
+      cards.forEach((card) => {
+        card.addEventListener('click', () => {
+          if (busy || card.classList.contains('is-done') || card === first) return;
+          if (card.classList.contains('is-up')) return;
+
+          card.classList.add('is-up');
+
+          if (!first) {
+            first = card;
+            return;
+          }
+
+          moves += 1;
+          setMoves();
+
+          const a = first;
+          const b = card;
+
+          // A pair is two cards of the same crop showing DIFFERENT faces —
+          // the icon and the name. Two icons of the same crop is not a match,
+          // which is what makes it a naming game rather than a shape game.
+          const isPair =
+            a.dataset.pair === b.dataset.pair && a.dataset.face !== b.dataset.face;
+
+          if (isPair) {
+            a.classList.add('is-done');
+            b.classList.add('is-done');
+            a.disabled = true;
+            b.disabled = true;
+            matched += 1;
+            first = null;
+
+            if (status) {
+              const done = matched === cards.length / 2;
+              status.textContent = done
+                ? (status.dataset.won ?? '').replace('{n}', String(moves))
+                : `${status.dataset.match ?? ''} ${b.getAttribute('aria-label') ?? ''}`;
+            }
+            return;
+          }
+
+          busy = true;
+          a.classList.add('is-wrong');
+          b.classList.add('is-wrong');
+          window.setTimeout(() => {
+            a.classList.remove('is-up', 'is-wrong');
+            b.classList.remove('is-up', 'is-wrong');
+            first = null;
+            busy = false;
+          }, 720);
+        });
+      });
+
+      resetBtn?.addEventListener('click', deal);
+
+      // Shuffle on load so the server-rendered order is never the played order.
+      deal();
+    });
+  }
+
+  initGame();
+  document.addEventListener('astro:page-load', initGame);
+</script>

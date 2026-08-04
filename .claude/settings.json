@@ -29,7 +29,8 @@
       "Bash(node harvest-candidates.mjs)",
       "Bash(node scripts/check-overflow.mjs http://localhost:4365)",
       "Bash(node scripts/check-hero-contrast.mjs http://localhost:4365)",
-      "Bash(node scripts/check-motion.mjs http://localhost:4365)"
+      "Bash(node scripts/check-motion.mjs http://localhost:4365)",
+      "Bash(node scripts/check-a11y.mjs http://localhost:4360)"
     ]
   }
 }

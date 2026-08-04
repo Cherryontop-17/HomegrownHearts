@@ -1,0 +1,64 @@
+# Our partners — the index.
+#
+# ⚠️ COMPLIANCE Rule 4. An organisation appears on this page by name ONLY once
+# it has agreed in writing. HELP Pregnancy Center has; the library has not, and
+# its entry says so plainly rather than being quietly omitted or quietly
+# implied. See PARTNER_CLINIC and GARDEN_SITES in src/config.ts.
+#
+# "For clinics" (/partners) is the pitch to organisations who might join. This
+# page is the record of who already has.
+
+title: Our partners
+description: The organisations Homegrown Hearts works with in Union County, North Carolina, and exactly what each of them does with us.
+
+hero:
+  eyebrow: Our partners
+  title: We do not do any of this alone.
+  lead: >-
+    Two students can grow vegetables. Getting them to the families who want
+    them takes people who were already there.
+
+sections:
+  - id: current
+    eyebrow: Who we work with
+    title: Where things stand today.
+    body:
+      - >-
+        One confirmed partner and one conversation in progress. We list both,
+        and we say which is which, because a partner list that quietly includes
+        people who have not agreed is worth nothing to anybody.
+    items:
+      - icon: heart
+        title: HELP Pregnancy Center, Monroe
+        body: >-
+          Our delivery partner. They approved the produce list, they receive
+          every bundle, and they decide which families receive one.
+      - icon: clipboard-list
+        title: Union County Public Library, Main
+        body: >-
+          In discussion about becoming a supply drop-off point. Nothing is
+          agreed yet, so please do not take donations there.
+    ctas:
+      - label: About HELP Pregnancy Center
+        href: /our-partners/help-pregnancy-center
+        primary: true
+      - label: About the library
+        href: /our-partners/union-county-library
+
+  - id: join
+    eyebrow: For organisations
+    title: If you are reading this and wondering.
+    body:
+      - >-
+        We are looking for one or two more places willing to hold a donation
+        box, and we would talk to any clinic in or near Union County about
+        receiving produce.
+      - >-
+        The ask is small and we have written down exactly what it is, so nobody
+        has to sit through a meeting to find out.
+    ctas:
+      - label: What a partnership involves
+        href: /partners
+        primary: true
+      - label: Email us
+        href: /contact

@@ -1,0 +1,94 @@
+# Puntos de entrega — español.
+#
+# ⚠️ Las direcciones vienen de DROP_OFF en src/config.ts, no de este archivo.
+# La sección `locations` las muestra con un mapa cada una; aquí solo va el texto
+# que las envuelve. Agregar una dirección se hace en config.ts, donde está
+# escrita la regla de seguridad sobre las direcciones particulares.
+
+title: Puntos de entrega
+description: Dónde llevar semillas, herramientas y materiales de empaque donados a Homegrown Hearts en Monroe y el condado de Union, Carolina del Norte.
+
+hero:
+  eyebrow: Done materiales
+  title: Dónde llevar todo lo bueno.
+  lead: >-
+    Aceptamos únicamente materiales donados, nunca dinero. Aquí le decimos dónde
+    llevarlos.
+
+sections:
+  - id: locations
+    eyebrow: Puntos de entrega
+    title: Nuestras ubicaciones.
+    body:
+      - >-
+        Escríbanos antes de venir. Somos dos estudiantes con horario escolar, y
+        avisar primero es la diferencia entre entregar algo en mano y dejarlo en
+        la puerta.
+
+  - id: pending
+    eyebrow: Próximamente
+    title: Más puntos, cuando estén confirmados.
+    body:
+      - >-
+        Estamos conversando con una biblioteca pública y con dos huertos
+        comunitarios del condado de Union para que sean puntos de entrega.
+        Ninguno ha confirmado todavía, así que no los listamos como si usted
+        pudiera presentarse: agregaremos cada uno el día en que se acuerde.
+    note: >-
+      Si usted tiene un negocio, una iglesia o un espacio comunitario en Monroe
+      o cerca, y estaría dispuesto a guardarnos una caja, nos gustaría saberlo.
+
+  - id: what
+    eyebrow: Antes de cargar el carro
+    title: Qué podemos recibir y qué no.
+    items:
+      - icon: check
+        tone: 'yes'
+        title: Semillas, plántulas y plantas
+        body: >-
+          Sobres de semillas sin abrir y plantas de vivero en buen estado. La
+          lista completa está en la página principal.
+      - icon: check
+        tone: 'yes'
+        title: Herramientas, guantes y un enrejado
+        body: >-
+          Herramientas de mano y guantes que funcionen. Poco usados está bien.
+      - icon: check
+        tone: 'yes'
+        title: Materiales de empaque limpios
+        body: >-
+          Bolsas de papel sin usar y cajas de cartón limpias para llevar los
+          paquetes a la clínica.
+      - icon: x
+        tone: 'no'
+        title: Dinero, en cualquier forma
+        body: >-
+          No podemos recibir efectivo, cheques ni transferencias. Homegrown
+          Hearts es una iniciativa estudiantil sin cuenta bancaria, y las
+          donaciones no son deducibles de impuestos.
+      - icon: x
+        tone: 'no'
+        title: Alimentos, o cualquier cosa abierta
+        body: >-
+          Nada de verduras, nada de despensa y nada con el empaque abierto. Todo
+          lo que va en un paquete lo cultivamos nosotras.
+      - icon: x
+        tone: 'no'
+        title: Tierra de jardín usada
+        body: >-
+          La tierra en bolsa debe venir sellada y sin abrir. La tierra usada
+          puede meter enfermedades a los canteros.
+
+  - id: contact
+    eyebrow: Preguntas
+    title: Pregunte antes de manejar.
+    body:
+      - >-
+        Si no está seguro de si podemos usar algo, mándenos una foto. Es más
+        rápido para los dos que un viaje perdido.
+    ctas:
+      - label: Escríbanos
+        href: /contact
+        primary: true
+      - label: Ver la lista completa
+        href: /#wishlist

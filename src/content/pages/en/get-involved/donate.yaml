@@ -1,0 +1,91 @@
+# Donate supplies.
+#
+# ⚠️ COMPLIANCE Rule 2 governs this page more than any other. We accept
+# supplies only, never money, and this is the page a would-be donor lands on.
+# The refusal has to be plain, early, and unembarrassed — a vague "we prefer
+# supplies" invites someone to send money anyway, and there is no bank account
+# to receive it and no adult treasurer to be accountable for it.
+
+title: Donate supplies
+description: Homegrown Hearts accepts donated seeds, tools, and packing supplies for our garden in Union County, North Carolina. Supplies only, never money.
+
+hero:
+  eyebrow: Get involved
+  title: Seeds yes, cash no.
+  lead: >-
+    Everything we grow starts as something somebody donated. Here is what we
+    need, where to bring it, and why we cannot take cash.
+
+sections:
+  - id: why
+    eyebrow: Why supplies only
+    title: We have no bank account, and that is on purpose.
+    body:
+      - >-
+        Homegrown Hearts is a student-led initiative run by two high school
+        students. It is not incorporated, it has no tax-exempt status, and it
+        has no treasurer. Taking money without those things would be a real
+        legal problem and a real safeguarding one.
+      - >-
+        So the answer to "can I send you $20" is a list of things $20 buys. That
+        list is below, and it is genuinely more useful to us — we know exactly
+        what the beds need this month.
+    note: >-
+      Homegrown Hearts is a student-led initiative. We accept donated supplies
+      only. Donations are not tax-deductible.
+
+  - id: needs
+    eyebrow: What we need
+    title: The current list.
+    body:
+      - >-
+        Seeds and seedlings, hand tools, gloves, a trellis, clean paper bags,
+        and unused cardboard boxes. The full list, with quantities, lives on the
+        homepage and is updated as the season moves.
+    ctas:
+      - label: See the full supply list
+        href: /#wishlist
+        primary: true
+
+  - id: how
+    eyebrow: How to give
+    title: Three steps. The first one is just an email.
+    items:
+      - icon: mail
+        title: Email us first
+        body: >-
+          Tell us what you have. We will confirm we can use it and agree a time.
+          This one step prevents almost every wasted trip.
+      - icon: map-pin
+        title: Bring it to a drop-off point
+        body: >-
+          We have one confirmed location in Monroe, with more being arranged.
+          Each one has a map.
+      - icon: sprout
+        title: It goes in the ground
+        body: >-
+          Seeds and plants go into the beds on the next planting day. Tools and
+          bags go straight into use on the next packing morning.
+    ctas:
+      - label: Drop-off locations
+        href: /get-involved/drop-off
+        primary: true
+      - label: Email us
+        href: /contact
+
+  - id: business
+    eyebrow: For businesses
+    title: If you run a garden center or a hardware store.
+    body:
+      - >-
+        A standing arrangement is worth more to us than a one-off box. If you
+        can set aside end-of-season seed stock, seconds, or slightly damaged
+        packaging, tell us what you have and how often, and we will work around
+        your schedule.
+      - >-
+        We are also looking for places willing to hold a donation box. That
+        costs you a square foot of floor and nothing else.
+    ctas:
+      - label: Get in touch
+        href: /contact
+        primary: true

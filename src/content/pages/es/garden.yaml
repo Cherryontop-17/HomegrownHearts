@@ -1,0 +1,264 @@
+# El huerto — el calendario de siembra y lo que crece en el.
+#
+# Esta pagina existe porque la pagina principal medía 17.000px y el calendario
+# quedaba siete secciones mas abajo, donde nadie lo encontraba.
+#
+# AVISO: Los ids de seccion son funcionales. ContentPage.astro muestra `roadmap`
+# como el calendario y `crops` como el grafico de cultivo, y src/copy.ts detiene
+# la compilacion si el archivo en ingles no trae el mismo conjunto.
+#
+# AVISO: Las `key` de cada etapa conectan con ROADMAP en src/config.ts, donde
+# estan las fechas reales. `value` es la etiqueta visible y si se traduce.
+
+title: El calendario del huerto
+description: Que siembra y cosecha Homegrown Hearts cada mes en el condado de Union, Carolina del Norte, de agosto a noviembre de 2026.
+
+hero:
+  eyebrow: El huerto
+  title: Que hay sembrado, y cuando.
+  lead: >-
+    Cuatro meses, siete cultivos y un calendario de entregas. Avance por los
+    meses para ver que pasa en cada uno.
+
+sections:
+  # ── Plan de trabajo ────────────────────────────────────────────────────────
+  # `key` conecta cada etapa con ROADMAP en src/config.ts, donde están las
+  # fechas reales. `value` es la etiqueta visible y sí se traduce; las fechas no.
+  - id: roadmap
+    eyebrow: El plan
+    title: Del lanzamiento a la primera entrega, en un mes.
+    body:
+      - >-
+        Los cultivos de ciclo corto y los de temporada larga se siembran la misma
+        semana con ritmos distintos, de modo que haya algo que cosechar en la
+        semana tres mientras los tomates siguen creciendo. Se llama siembra
+        escalonada, y es lo que evita que nuestro calendario de entregas quede con
+        un hueco en medio.
+    items:
+      - key: digital
+        value: 7 y 8 de agosto
+        icon: qr-code
+        title: Lanzamiento digital
+        body: >-
+          Este sitio, el registro de voluntarios y el sistema de etiquetas entran
+          en funcionamiento antes de sembrar, para que el seguimiento exista
+          desde la primera cosecha y no se agregue después.
+      - key: garden
+        value: 9 de agosto
+        icon: shovel
+        title: Apertura del huerto
+        body: >-
+          Se preparan los canteros. Estamos en conversaciones con huertos
+          comunitarios del condado de Union y publicaremos el lugar aquí en
+          cuanto quede definido.
+      - key: planting
+        value: 10 al 16 de agosto
+        icon: sprout
+        title: Semana 2, se siembra todo
+        body: >-
+          Albahaca y col rizada de ciclo corto, tomates de verano y cultivos de
+          raíz (zanahorias y pepinos), todo en la misma semana.
+      - key: harvest
+        value: 17 al 23 de agosto
+        icon: leafy-green
+        title: Semana 3, primera cosecha pequeña
+        body: >-
+          Salen los cultivos de ciclo corto mientras los tomates y las raíces
+          siguen creciendo. Primeras verduras, dos semanas después de sembrar.
+      - key: delivery
+        value: 24 al 30 de agosto
+        icon: truck
+        title: Semana 4, siembra escalonada y primera entrega
+        body: >-
+          La siguiente tanda entra en los canteros ya despejados, y el primer
+          paquete piloto sale hacia nuestra clínica asociada.
+      - key: sep-cycle
+        value: 1 al 13 de septiembre
+        icon: basket
+        title: Primer ciclo completo de cosecha
+        body: >-
+          La albahaca, la lechuga y la col rizada producen al mismo tiempo. Las
+          entregas pasan de una bolsa piloto a un ritmo constante, y descubrimos
+          cuanto toma de verdad una manana de empaque.
+      - key: sep-fall-sow
+        value: 14 al 20 de septiembre
+        icon: sprout
+        title: Entra la tanda de otono
+        body: >-
+          Espinaca, una segunda siembra de lechuga y mas col rizada entran en
+          los canteros que acaban de despejar los cultivos rapidos. Esta es la
+          siembra escalonada que evita que octubre quede vacio.
+      - key: sep-weekly
+        value: 21 al 30 de septiembre
+        icon: truck
+        title: Entregas semanales
+        body: >-
+          Un paquete por semana, sostenido por las verduras de hoja mientras los
+          tomates y las raices terminan. Primer mes en que el calendario es
+          rutina y no experimento.
+      - key: oct-summer
+        value: 1 al 11 de octubre
+        icon: sprout
+        title: Llegan los cultivos de verano
+        body: >-
+          Los pepinos y los primeros tomates cherry estan listos. Los paquetes
+          se vuelven mas pesados y variados, que es justamente el objetivo de
+          haber sembrado tres ritmos distintos la misma semana.
+      - key: oct-roots
+        value: 12 al 20 de octubre
+        icon: carrot
+        title: Las raices estan listas
+        body: >-
+          Las zanahorias salen sesenta dias despues de sembrarlas. Las raices
+          duran mucho mas que las hojas, asi que hacen que un paquete sirva por
+          mas de tres dias.
+      - key: oct-greens
+        value: 21 al 31 de octubre
+        icon: leafy-green
+        title: Segunda cosecha de hojas
+        body: >-
+          La siembra de septiembre esta lista, y la col rizada de agosto todavia
+          se puede cortar. El mes mas fuerte en peso y en variedad.
+      - key: nov-last
+        value: 1 al 14 de noviembre
+        icon: leafy-green
+        title: Ultima cosecha al aire libre
+        body: >-
+          La col rizada y la espinaca aguantan una helada ligera y siguen; todo
+          lo demas ya termino. Ultimas entregas de la temporada.
+      - key: nov-beds
+        value: 15 al 23 de noviembre
+        icon: shovel
+        title: Canteros despejados y cubiertos
+        body: >-
+          Se sacan las plantas agotadas y se cubren los canteros para el
+          invierno, para que la tierra no quede desnuda hasta la primavera.
+      - key: nov-review
+        value: 24 al 30 de noviembre
+        icon: clipboard-list
+        title: Balance de temporada con la clinica
+        body: >-
+          Nos sentamos con nuestra clinica asociada, repasamos que funciono y
+          acordamos la lista de verduras de la proxima temporada antes de
+          encargar una sola semilla.
+
+  # ── Detalle de cultivos ────────────────────────────────────────────────────
+  # Alimenta los paneles desplegables del gráfico. `key` conecta cada entrada
+  # con src/crops.ts, donde están los días de cultivo.
+  #
+  # ⚠️ Regla 1 de COMPLIANCE, y esta es la sección con más riesgo de romperla.
+  # Cada línea describe CÓMO CRECE LA PLANTA o QUÉ SE HACE CON ELLA EN LA
+  # COCINA. Nada describe qué le hace al cuerpo comerla. Sin nutrientes, sin
+  # «bueno para», sin «ayuda a» — ni siquiera con una cita, porque una cita no
+  # convierte una afirmación de salud en algo permitido. Ver docs/CROPS.md.
+  - id: crops
+    eyebrow: Qué hay sembrado
+    title: Siete cultivos, tres ritmos distintos.
+    body:
+      - >-
+        Abra cualquier cultivo para ver cuánto tarda, cuándo está listo y qué
+        hacer con él en la cocina. Las barras se trazan con los días reales de
+        cultivo, así que usted mismo puede ver dónde caen las cosechas.
+    items:
+      - key: basil
+        title: Albahaca genovesa
+        body: >-
+          Entra como planta de vivero y no como semilla, que es lo que permite
+          que una siembra de agosto llegue a la primera entrega. Si se pellizcan
+          las puntas, se ramifica en lugar de espigarse.
+        details:
+          - label: Lista cuando
+            value: Tiene varios pares de hojas verdaderas y alcanza el alto de una mano.
+          - label: Cómo se corta
+            value: Tallos enteros por encima de un par de hojas, nunca hoja por hoja.
+          - label: Cómo se guarda
+            value: Con los tallos en un vaso con agua, fuera del refrigerador, que la ennegrece.
+          - label: En la cocina
+            value: Se agrega al final, sobre el plato caliente. El calor le quita el aroma.
+      - key: kale
+        title: Col rizada
+        body: >-
+          La más resistente. Se corta pequeña para la primera cosecha y la misma
+          planta sigue produciendo durante meses.
+        details:
+          - label: Lista cuando
+            value: Las hojas son del tamaño de la palma, o de una mano abierta si se quiere grande.
+          - label: Cómo se corta
+            value: Las hojas de afuera primero, dejando siempre el centro intacto.
+          - label: Cómo se guarda
+            value: En bolsa floja en el refrigerador, cerca de una semana.
+          - label: En la cocina
+            value: Sin el tallo y en tiras. Aguanta la cocción larga mejor que la espinaca.
+      - key: lettuce
+        title: Mezcla de lechugas
+        body: >-
+          Lo más rápido del huerto y la razón por la que hay algo que cosechar
+          en la semana tres. Se siembra en mezcla para dar varios colores y
+          texturas de un solo cantero.
+        details:
+          - label: Lista cuando
+            value: Las hojas miden unos diez centímetros. Mejor temprano que tarde.
+          - label: Cómo se corta
+            value: Todo el cantero, a dos centímetros del suelo. Rebrota dos o tres veces.
+          - label: Cómo se guarda
+            value: Lavada, bien seca, en bolsa con una servilleta. De tres a cinco días.
+          - label: En la cocina
+            value: Cruda. Se aliña justo antes de servir o se marchita.
+      - key: spinach
+        title: Espinaca
+        body: >-
+          Es de clima fresco, así que sembrarla en agosto aquí queda en el borde
+          caluroso de su rango. La siembra confiable es la tanda de otoño.
+        details:
+          - label: Lista cuando
+            value: Las hojas se pueden cortar sin desgarrar el centro de la planta.
+          - label: Cómo se corta
+            value: Las hojas de afuera, o la planta entera desde la base.
+          - label: Cómo se guarda
+            value: Seca y en bolsa floja en el refrigerador. Se marchita antes que la col.
+          - label: En la cocina
+            value: Cruda cuando es pequeña, salteada cuando es grande. Se reduce muchísimo.
+      - key: tomato
+        title: Tomates cherry
+        body: >-
+          El cultivo de largo plazo. Entra como plántula y, una vez que arranca,
+          produce de forma constante, que es lo que sostiene las entregas
+          posteriores.
+        details:
+          - label: Listos cuando
+            value: Tienen color parejo y se desprenden con un giro suave.
+          - label: Cómo se cortan
+            value: El racimo entero si casi todos están maduros; si no, uno por uno.
+          - label: Cómo se guardan
+            value: Sobre la mesa, con el tallo hacia arriba. El refrigerador arruina la textura.
+          - label: En la cocina
+            value: Crudos, partidos a la mitad, o asados enteros hasta que revientan.
+      - key: carrot
+        title: Zanahorias
+        body: >-
+          Lentas y vale la pena esperarlas. Más que cualquier otra cosa
+          necesitan tierra suelta, por eso los canteros se trabajan bien antes
+          de sembrar.
+        details:
+          - label: Listas cuando
+            value: El hombro mide unos dos centímetros y medio donde nacen las hojas.
+          - label: Cómo se sacan
+            value: Se riega primero y se jala con un giro. En tierra seca se quiebran.
+          - label: Cómo se guardan
+            value: Sin las hojas, en el refrigerador. Las hojas puestas le quitan agua a la raíz.
+          - label: En la cocina
+            value: Cepilladas, no peladas. Crudas, asadas o en cualquier guiso largo.
+      - key: cucumber
+        title: Pepinos
+        body: >-
+          Necesitan algo por donde trepar, por eso el enrejado está en la lista
+          de insumos. En vertical dan fruta más recta y se pudre mucho menos.
+        details:
+          - label: Listos cuando
+            value: Están firmes, de color parejo y del tamaño que usted compraría. Revisar a diario.
+          - label: Cómo se cortan
+            value: Se corta el tallo. Si se jalan, se desgarra la guía.
+          - label: Cómo se guardan
+            value: En el refrigerador, cerca de una semana. Se ablandan desde la punta de la flor.
+          - label: En la cocina
+            value: Crudos y fríos. Se salan las rodajas y se escurren antes de aliñar.

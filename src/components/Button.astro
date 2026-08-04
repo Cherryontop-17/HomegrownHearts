@@ -95,7 +95,9 @@ const attrs: Record<string, unknown> = href
       background-color var(--duration-fast) var(--ease-out-soft),
       border-color var(--duration-fast) var(--ease-out-soft),
       color var(--duration-fast) var(--ease-out-soft),
-      transform var(--duration-fast) var(--ease-out-soft),
+      /* Overshoot on the transform only — it settles past the target and
+         back, which is the whole difference between springy and merely moved. */
+      transform var(--duration-fast) var(--ease-overshoot),
       box-shadow var(--duration-fast) var(--ease-out-soft);
   }
 
@@ -141,16 +143,38 @@ const attrs: Record<string, unknown> = href
 
   /* Lift is the site's one shared hover gesture. 1px — enough to feel
      responsive, not enough to read as a toy. */
+  /*
+    A springier hover than a 1px nudge.
+
+    `--ease-overshoot` is already in the token set and never used; it slightly
+    passes the target and settles back, which is what reads as "springy" rather
+    than "moved". Scale plus lift, both transform-only so neither can shift
+    layout or cost CLS.
+
+    The travel is deliberately small. This is a button on a site for people who
+    may be nauseated — it should feel alive when you touch it, not leap.
+  */
   .btn:hover:not([aria-disabled='true']):not(:disabled) {
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.03);
+  }
+
+  /* The arrow, where a button has one, runs ahead on hover. */
+  .btn:hover:not([aria-disabled='true']):not(:disabled) :global(.icon) {
+    translate: 3px 0;
+  }
+
+  .btn :global(.icon) {
+    transition: translate var(--duration-fast) var(--ease-out-soft);
   }
 
   .btn--primary:hover:not([aria-disabled='true']):not(:disabled) {
     box-shadow: var(--shadow-lift);
   }
 
+  /* Press compresses below the resting size, so the button feels physical. */
   .btn:active:not([aria-disabled='true']):not(:disabled) {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.97);
+    transition-duration: 90ms;
   }
 
   .btn:disabled,

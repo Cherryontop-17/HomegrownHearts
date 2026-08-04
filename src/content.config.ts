@@ -38,8 +38,48 @@ const item = z.object({
   /** Attribution for a cited number. Must map to an entry in docs/SOURCES.md. */
   source: z.string().optional(),
   sourceHref: z.url().optional(),
-  /** For stat items. */
+  /** For stat items. Also carries the human-readable date on roadmap phases. */
   value: z.string().optional(),
+  /**
+   * Stable identifier used to join this item to locale-independent data in
+   * `src/config.ts` — currently the roadmap phases, which take their real ISO
+   * dates from `ROADMAP_DATES` while the YAML carries only the display label.
+   *
+   * Dates live in config rather than here so English and Spanish cannot drift
+   * to different dates; the parity check compares section ids, not item fields.
+   */
+  key: z.string().optional(),
+  /**
+   * Grouping label for items rendered as a filterable grid (the supply
+   * wishlist). Translated, because it is shown to the reader.
+   */
+  group: z.string().optional(),
+  /**
+   * Positive/negative colouring for the icon chip. Used by the "what we can and
+   * cannot take" list, where a green tick and a red cross carry the meaning
+   * faster than the sentence under them does.
+   *
+   * Declared rather than inferred from the icon name: a component that quietly
+   * colours anything called "x" red is a rule nobody can find later.
+   */
+  tone: z.enum(['yes', 'no']).optional(),
+  /**
+   * Labelled facts, rendered as a definition list. Used by the crop panels in
+   * the planting calendar.
+   *
+   * ⚠️ COMPLIANCE Rule 1. These rows describe how a plant GROWS and what a
+   * kitchen does with it. A row about nutrients, or about what a vegetable is
+   * "good for", is a health claim and is banned here as everywhere else — a
+   * citation does not make it allowed. See docs/CROPS.md.
+   */
+  details: z
+    .array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+      }),
+    )
+    .optional(),
 });
 
 const section = z.object({

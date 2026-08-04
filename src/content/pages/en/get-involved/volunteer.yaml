@@ -1,0 +1,96 @@
+# Volunteer.
+#
+# The sign-up link comes from FORMS.volunteer in src/config.ts. While that is
+# null, ContentPage renders the "sign-up opens soon, email us" fallback instead
+# of a dead button — see `has.volunteerForm()`. Paste the Google Form URL into
+# config and the button appears everywhere at once.
+#
+# ⚠️ Rule 3: volunteers never meet a recipient. Any copy here that implies a
+# volunteer hands a bundle to a mother is wrong, and it is an easy slip to make
+# when writing about why the work matters.
+
+title: Volunteer with us
+description: Help grow, harvest, and pack free produce bundles for a partner clinic in Union County, North Carolina. No experience needed.
+
+hero:
+  eyebrow: Get involved
+  title: No experience, no problem, no minimum.
+  lead: >-
+    No experience needed, no minimum commitment, and nothing to bring. If you
+    can kneel in a garden bed for an hour, you can do every job we have.
+
+sections:
+  - id: shifts
+    eyebrow: What you would do
+    title: Pick your kind of morning.
+    items:
+      - icon: shovel
+        title: Planting days
+        body: >-
+          Preparing beds and getting seeds and seedlings into the ground. The
+          heaviest work, and the least frequent.
+      - icon: droplets
+        title: Garden care
+        body: >-
+          Watering, weeding, and checking for pests. An hour, most weeks,
+          whenever suits you.
+      - icon: basket
+        title: Harvest and pack mornings
+        body: >-
+          Picking, washing, and packing on delivery days. Early starts, because
+          everything is picked the morning it goes out. This is the busiest and
+          most useful shift.
+      - icon: truck
+        title: Driving
+        body: >-
+          Getting bundles from the garden to the clinic. You need a license, a
+          car, and about an hour.
+
+  - id: expect
+    eyebrow: What to expect
+    title: Honest about the small stuff.
+    items:
+      - icon: users
+        title: You will not be alone
+        body: >-
+          At least one of us is at every shift, along with our adult advisor.
+          Nobody is ever sent to the garden by themselves.
+      - icon: clock
+        title: Shifts are short
+        body: >-
+          Most are an hour. Harvest mornings run to two. We would rather have
+          you back next week than exhausted once.
+      - icon: shield-check
+        title: You will not meet a recipient
+        body: >-
+          Bundles go to our partner clinic, and the clinic decides who receives
+          them. We never hold a family's name, and neither will you.
+      - icon: user-check
+        title: Under 18 is welcome
+        body: >-
+          Most of us are. You will need a parent or guardian to sign off before
+          your first shift.
+
+  - id: signup
+    eyebrow: Sign up
+    title: Tell us when you are free.
+    body:
+      - >-
+        The form takes about two minutes. We will get back to you within a few
+        days with the next shift that matches what you picked.
+
+  - id: groups
+    eyebrow: Groups
+    title: Clubs, classes, and youth groups.
+    body:
+      - >-
+        We can take a group of up to eight on a planting or harvest day, and it
+        is genuinely useful — a bed that takes two of us a fortnight takes a
+        group one morning.
+      - >-
+        Email us with rough numbers and a date range rather than using the form
+        above, and we will find a day that works.
+    ctas:
+      - label: Email us about a group
+        href: /contact
+        primary: true

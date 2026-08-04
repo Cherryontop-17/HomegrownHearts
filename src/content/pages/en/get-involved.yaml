@@ -3,10 +3,10 @@ description: Volunteer with Homegrown Hearts in Union County, North Carolina, or
 
 hero:
   eyebrow: Get involved
-  title: Come and grow something.
+  title: Come get your hands dirty.
   lead: >-
     Everything we deliver is grown, picked, washed, packed, and driven by
-    volunteers. There is room for more of them.
+    volunteers. There is always room for more of us.
 
 sections:
   - id: volunteer
@@ -30,11 +30,11 @@ sections:
       - icon: calendar
         title: Driving
         body: >-
-          Getting bundles from the garden to the clinic. You need a licence, a
+          Getting bundles from the garden to the clinic. You need a license, a
           car, and about an hour.
     note: >-
       Volunteers under 18 need a parent or guardian to sign off. Anyone
-      recognisable in a photograph on this site has agreed to be there.
+      recognizable in a photograph on this site has agreed to be there.
 
   - id: supplies
     eyebrow: Donate supplies

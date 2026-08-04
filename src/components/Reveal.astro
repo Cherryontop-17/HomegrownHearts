@@ -196,6 +196,65 @@ const style = [
       }
       observer.observe(el);
     });
+
+    /*
+      Scroll-position safety net.
+
+      IntersectionObserver samples; it does not integrate. A fast flick, an
+      anchor jump, or a programmatic `scrollTo` can move an element from below
+      the root to above it between two samples, and the callback then never
+      fires for it — the element stays at opacity 0 permanently, having been
+      scrolled straight past. `npm run check:motion` caught this on the long
+      homepage: "26 of 29 revealed", with the skipped one 13,000px above the
+      viewport by the time the scroll finished.
+
+      This re-tests the observer's own condition on scroll, so it can only ever
+      reveal something the observer would already have revealed — the -18%
+      tuning is preserved rather than weakened. It also covers the separate
+      case of an element in the last 18% of the document, which the shrunken
+      root can never contain because there is nothing left to scroll.
+    */
+    const REVEAL_LINE = 0.82; // matches the observer's -18% bottom margin
+
+    const revealRemaining = () => {
+      const remaining = document.querySelectorAll<HTMLElement>(
+        '[data-reveal]:not(.is-revealed)',
+      );
+      if (remaining.length === 0) {
+        window.removeEventListener('scroll', onScroll);
+        return;
+      }
+
+      const line = window.innerHeight * REVEAL_LINE;
+
+      /*
+        Second condition, and the one the homepage needs. The final call to
+        action sits inside the last 18% of the document, so its top is never
+        above the line no matter how far the reader scrolls — the shrunken root
+        simply cannot reach it, and it would stay invisible forever. Once there
+        is nothing left to scroll, anything still hidden is on screen and must
+        be shown.
+      */
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2;
+
+      remaining.forEach((el) => {
+        // `top < line` catches the element in the reveal zone and the one
+        // already scrolled clean past (negative top).
+        if (atBottom || el.getBoundingClientRect().top < line) {
+          el.classList.add('is-revealed');
+          observer.unobserve(el);
+        }
+      });
+    };
+
+    // Passive: this never calls preventDefault, and scroll handlers that are
+    // not marked passive block scrolling on touch devices.
+    const onScroll = () => requestAnimationFrame(revealRemaining);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    // Run once in case the page is already scrolled to the bottom on load.
+    revealRemaining();
   }
 
   initReveals();

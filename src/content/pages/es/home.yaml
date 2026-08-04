@@ -8,6 +8,9 @@
 #     Se usa «fresco», «de temporada», «recién cosechado».
 #   - «ayudar a» es una afirmación de salud en cuanto toca un cuerpo.
 #     «ayudar a las familias» sí; «ayudar a su embarazo» jamás.
+#
+# ⚠️ Los ids de sección deben coincidir exactamente con los del archivo en
+# inglés. src/copy.ts detiene la compilación si falta uno o si sobra otro.
 
 title: Alimentos frescos para nuevas madres
 description: Cultivamos verduras en el condado de Union, Carolina del Norte, y entregamos paquetes gratuitos de temporada a madres embarazadas y recién dadas a luz.
@@ -27,9 +30,46 @@ hero:
       href: /get-involved
 
 sections:
+  # ── Garantías ──────────────────────────────────────────────────────────────
+  # La sección de credibilidad. Una clínica que lee este sitio busca una sola
+  # cosa: que dos estudiantes no estén tomando decisiones clínicas.
+  - id: safety
+    eyebrow: Cómo cuidamos el proceso
+    title: Las decisiones importantes no nos corresponden a nosotras.
+    body:
+      - >-
+        Somos dos estudiantes de secundaria. Cultivamos verduras y las llevamos a
+        una clínica. Todo lo que va más allá de eso queda en manos de personas
+        con la formación para decidirlo, y el programa está armado para que siga
+        siendo así.
+    items:
+      - icon: file-check
+        title: Una lista de verduras aprobada por la clínica
+        body: >-
+          Nuestra clínica asociada revisó y aprobó cada producto que podemos
+          cultivar y empacar. No entra al paquete nada que no esté en esa lista.
+      - icon: user-check
+        title: Una persona adulta responsable
+        body: >-
+          Una persona adulta responsable supervisa el programa y autoriza lo que
+          entregamos. Nada sale sin su visto bueno.
+      - icon: shield-check
+        title: Entero, crudo y lavado solo con agua
+        body: >-
+          No cortamos, no cocinamos y no conservamos nada. Los paquetes se
+          empacan la misma mañana en que salen y van directo a la clínica.
+      - icon: truck
+        title: La clínica decide quién recibe
+        body: >-
+          Nunca conocemos a quien recibe un paquete y nunca guardamos un nombre.
+          Nuestra clínica asociada los entrega a las familias que atiende.
+    note: >-
+      Describimos el alimento y nada más. Para orientación sobre la alimentación
+      durante el embarazo, consulte a su profesional clínico.
+
   - id: why
     eyebrow: Por qué verduras
-    title: Las verduras frescas son lo primero que se recorta.
+    title: Las verduras frescas son lo primero que se deja de comprar.
     body:
       - >-
         Cuestan caro, se echan a perder pronto y toman tiempo de preparar. Cuando
@@ -88,35 +128,203 @@ sections:
 
   - id: bundle
     eyebrow: Qué trae un paquete
-    title: Lo que esté listo esa semana.
+    title: Lo que el huerto quiera darnos esa semana.
     body:
       - >-
         El paquete no es una caja fija. Trae lo que el huerto dio esa semana:
         verduras de hoja y rábanos en primavera; tomates y calabacitas en verano;
-        berzas y camotes en otoño, todo cultivado en el Piedmont de Carolina del
-        Norte.
+        berzas y camotes en otoño, todo cultivado aquí cerca.
       - >-
         Todo va entero y crudo. No cortamos, no cocinamos y no conservamos nada.
     note: >-
-      Nuestra lista de verduras está pendiente de revisión por parte de la
-      clínica asociada. No la describiremos como aprobada hasta que lo esté.
+      Todo lo que cultivamos sale de la lista de verduras que nuestra clínica
+      asociada revisó y aprobó.
+
+  # ── El código QR ───────────────────────────────────────────────────────────
+  # ⚠️ Regla 1 de COMPLIANCE. La herramienta responde a las verduras de la
+  # etiqueta y a nada sobre la persona que recibe la bolsa. Cualquier redacción
+  # que haga sonar las recetas como personalizadas la convierte en asesoría
+  # dietética.
+  - id: smart
+    eyebrow: En cada paquete
+    title: Una etiqueta que le dice qué hacer con lo que recibió.
+    body:
+      - >-
+        Una bolsa de verduras desconocidas es una bolsa que se queda en el
+        cajón. Cada paquete lleva una etiqueta con lo que se empacó esa mañana, y
+        al escanearla aparecen formas sencillas de cocinar esas verduras.
+      - >-
+        La etiqueta sabe qué hay en la bolsa. Eso es todo lo que sabe y todo lo
+        que necesita saber.
+    items:
+      - icon: basket
+        title: Nosotras empacamos
+        body: La etiqueta indica lo que entró esa mañana.
+      - icon: scan-line
+        title: Usted escanea
+        body: No hay que instalar nada. Se abre en el navegador.
+      - icon: sparkles
+        title: Se lee esa lista
+        body: Las verduras de la etiqueta son el único dato de entrada.
+      - icon: leafy-green
+        title: Aparecen formas de cocinarlas
+        body: >-
+          Métodos sencillos para lo que tiene enfrente, con lo que ya hay en su
+          cocina.
+
+  # ── Metas de temporada ─────────────────────────────────────────────────────
+  # ⚠️ Regla 5 de COMPLIANCE. Las cifras están en GOALS en src/config.ts y solo
+  # se muestran mediante <GoalMeter>, que imprime el dato real junto a cada meta.
+  - id: goals
+    eyebrow: Hacia dónde vamos
+    title: Nuestras metas para la primera temporada.
+    body:
+      - >-
+        Los canteros se siembran el 9 de agosto, así que hoy todas estas cifras
+        están en cero. Preferimos mostrarle el plan con el número real al lado
+        antes que una cifra que usted no pueda verificar.
+
+
+
+  # ── Lista de insumos ───────────────────────────────────────────────────────
+  # `group` genera los filtros y sí se traduce. El orden aquí es el orden de los
+  # filtros: las semillas van primero porque son lo que más se dona.
+  - id: wishlist
+    eyebrow: Done materiales
+    title: Cosas que de verdad nos encantaría recibir.
+    body:
+      - >-
+        Solo materiales, nunca dinero. Si está en un vivero o en una ferretería y
+        quiere apoyar, esta es la lista completa.
+    items:
+      - group: Semillas y plántulas
+        icon: flower-2
+        title: Albahaca genovesa
+        value: 6 plantas
+        body: Ciclo corto. Lo primero que se cosecha.
+      - group: Semillas y plántulas
+        icon: sprout
+        title: Tomates cherry
+        value: 4 plantas
+        body: Cultivo de verano. Temporada larga y buen rendimiento.
+      - group: Semillas y plántulas
+        icon: leafy-green
+        title: Col rizada
+        value: 1 sobre
+        body: Ciclo corto y sigue produciendo después del corte.
+      - group: Semillas y plántulas
+        icon: leafy-green
+        title: Espinaca
+        value: 1 sobre
+        body: Cultivo de clima fresco. Entra en la tanda de otoño.
+      - group: Semillas y plántulas
+        icon: salad
+        title: Mezcla de lechugas
+        value: 1 sobre
+        body: Se corta y vuelve a crecer, así una siembra rinde semanas.
+      - group: Semillas y plántulas
+        icon: carrot
+        title: Zanahorias
+        value: 1 sobre
+        body: Cultivo de raíz. Lento, y vale la espera.
+      - group: Semillas y plántulas
+        icon: sprout
+        title: Pepinos
+        value: 2 plantas
+        body: Necesitan un enrejado, que también nos hace falta.
+      - group: Herramientas
+        icon: shovel
+        title: Palas de mano y tijeras de podar
+        value: 2 de cada una
+        body: Las dos herramientas que se nos acaban en una mañana de empaque.
+      - group: Herramientas
+        icon: droplets
+        title: Regadera o manguera
+        value: Cualquiera
+        body: Se usa todos los días que hay sol.
+      - group: Herramientas
+        icon: shovel
+        title: Guantes de jardinería
+        value: 4 pares
+        body: Talla adulto chica y mediana.
+      - group: Empaque
+        icon: package
+        title: Cajas de cartón
+        value: Cualquiera
+        body: Limpias y sin usar, para llevar los paquetes a la clínica.
+      - group: Empaque
+        icon: basket
+        title: Bolsas de papel limpias
+        value: Cualquiera
+        body: Un paquete por bolsa. Solo sin usar.
+    note: >-
+      Aceptamos únicamente materiales donados, nunca dinero. Homegrown Hearts es
+      una iniciativa estudiantil sin cuenta bancaria y sin exención de impuestos.
+
+  # ── Volantes ───────────────────────────────────────────────────────────────
+  # Esta sección solo aparece si hay imágenes en src/assets/flyers/. Se declara
+  # igual en ambos idiomas porque src/copy.ts compara los ids de sección.
+  - id: flyers
+    eyebrow: Imprima y comparta
+    title: Nuestros volantes.
+    body:
+      - >-
+        Imprima uno para una sala de descanso, un tablero de anuncios o una sala
+        de espera. Todo lo que dicen está también escrito en este sitio.
+
+  # ── Quiénes somos ──────────────────────────────────────────────────────────
+  # Integrado desde la antigua página /about. El enlace «Quiénes somos» del
+  # encabezado apunta a esta sección, así que el id también sirve de ancla.
+  # ── Quiénes somos ──────────────────────────────────────────────────────────
+  # Integrado desde la antigua página /about. El enlace «Quiénes somos» del
+  # encabezado apunta a esta sección, así que el id también sirve de ancla.
+  # ── Sobre la organización ──────────────────────────────────────────────────
+  # El enlace «Quiénes somos» del encabezado ancla aquí. Responde qué ES esto,
+  # no quién lo lleva: las personas tienen su propia sección justo debajo.
+  - id: about
+    eyebrow: Sobre nosotras
+    title: Un huerto estudiantil con una clínica al final.
+    body:
+      - >-
+        Homegrown Hearts cultiva verduras en el condado de Union, Carolina del
+        Norte, y las regala. Todo lo que cosechamos va a una clínica asociada,
+        que lo entrega a las familias que ya atiende. Nunca cobramos nada y nunca
+        decidimos quién recibe.
+      - >-
+        Es una iniciativa estudiantil sin constituir y sin cuenta bancaria, y las
+        donaciones no son deducibles de impuestos. Una persona adulta responsable
+        supervisa qué cultivamos, cómo lo manejamos y qué entregamos.
+    items:
+      - icon: sprout
+        title: Comenzó en 2026
+        body: >-
+          Dos estudiantes de secundaria, una temporada de cultivo y una lista de
+          verduras que nuestra clínica asociada aprobó antes de sembrar nada.
+      - icon: map-pin
+        title: Condado de Union, Carolina del Norte
+        body: >-
+          Todo se cultiva, se empaca y se entrega dentro del condado. No enviamos
+          nada por paquetería ni compramos nada hecho.
+      - icon: user-check
+        title: Con supervisión de una persona adulta
+        body: >-
+          Disponible para cualquier institución que quiera hablar directamente
+          con ella, antes de una primera entrega o en cualquier momento después.
+    note: >-
+      Aceptamos únicamente materiales donados, nunca dinero de nadie para nada.
 
   - id: founders
-    eyebrow: Quiénes somos
-    title: Dos estudiantes en el condado de Union, Carolina del Norte.
+    eyebrow: Quiénes lo llevan
+    title: Nosotras dos.
     items:
       - title: Kreeshma Vasikarla
         body: >-
           Responsable de misión y enlace médico. Coordina el contacto con
-          clínicas y la lista de verduras.
+          clínicas, la lista de verduras y el protocolo de inocuidad.
       - title: Charishya Yarram
         body: >-
           Responsable de operaciones y tecnología. Coordina los calendarios de
-          cultivo, la logística y este sitio.
-    body:
-      - >-
-        Trabajamos con el apoyo de una persona adulta responsable, que supervisa
-        todo lo que entregamos.
+          cultivo, la logística, el sistema de etiquetas y este sitio.
 
   - id: impact
     eyebrow: Nuestro impacto

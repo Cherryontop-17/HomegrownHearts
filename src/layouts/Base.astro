@@ -13,6 +13,7 @@ import { SITE_URL, ORG } from '../config';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Vine from '../components/Vine.astro';
+import Schema from '../components/Schema.astro';
 
 import '../styles/global.css';
 
@@ -125,6 +126,12 @@ const fullTitle = `${title} · ${ORG.name}`;
     <script is:inline>
       document.documentElement.classList.add('js');
     </script>
+
+    {
+      /* Structured data. Reads from config; anything unset is omitted rather
+        than guessed, because a placeholder in structured data is a claim. */
+    }
+    <Schema locale={locale} canonical={canonical} title={fullTitle} description={description} />
 
     <ClientRouter />
 

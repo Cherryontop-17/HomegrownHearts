@@ -1,0 +1,74 @@
+# Union County Public Library, Main — NOT YET A PARTNER.
+#
+# ⚠️ COMPLIANCE Rule 4 by analogy. As of 2026-08-04 the library has not agreed
+# to anything. This page exists because a conversation is genuinely in progress
+# and saying so is more honest than an empty partners list — but every line
+# must make the pending status unmissable.
+#
+# Specifically: nobody may be told to take donations there. A donor turning up
+# at a library that has not agreed to hold a box is a real failure, and it
+# would also be the fastest possible way to lose the conversation.
+#
+# When they agree: update this file, add the address to DROP_OFF in
+# src/config.ts, and say so on /get-involved/drop-off.
+
+title: Union County Public Library
+description: Homegrown Hearts is in discussion with the Union County Public Library main branch about a supply drop-off point. Nothing is confirmed yet.
+
+hero:
+  eyebrow: In discussion
+  title: Union County Public Library, Main.
+  lead: >-
+    We have asked. They have not answered yet. Please do not take donations
+    there until this page says otherwise.
+
+sections:
+  - id: status
+    eyebrow: Where this stands
+    title: Nothing is agreed.
+    body:
+      - >-
+        We approached the main branch about holding a small donation box for
+        garden supplies. That is the whole of it: no produce, no volunteers on
+        site, no events, and nothing that would put any work on library staff
+        beyond letting a box sit somewhere.
+      - >-
+        Until they say yes, they are not a partner and we will not describe them
+        as one. This page is here so the conversation is visible rather than
+        implied.
+    note: >-
+      If you want to donate supplies today, we have one confirmed drop-off point
+      in Monroe.
+    ctas:
+      - label: Confirmed drop-off locations
+        href: /get-involved/drop-off
+        primary: true
+
+  - id: ask
+    eyebrow: What we asked for
+    title: A box, and about a square foot of floor.
+    items:
+      - icon: package
+        title: One donation box
+        body: >-
+          Seeds, hand tools, gloves, and clean packing materials. Nothing
+          perishable and nothing valuable.
+      - icon: clock
+        title: Collected weekly
+        body: >-
+          We come and empty it. Staff are never asked to sort, store, or handle
+          anything.
+      - icon: shield-check
+        title: No cost, no commitment
+        body: >-
+          If it becomes a nuisance, it goes. We would rather lose the box than
+          be a problem for a library.
+
+  - id: why
+    eyebrow: Why a library
+    title: It is where our neighbours already are.
+    body:
+      - >-
+        A library is the one building in a county that everybody uses and
+        nobody has to pay to enter. If we are asking people to donate a packet
+        of seeds, that is where the packet of seeds should be able to go.

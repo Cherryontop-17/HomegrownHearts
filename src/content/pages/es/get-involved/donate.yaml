@@ -1,0 +1,92 @@
+# Done materiales — español.
+#
+# ⚠️ La Regla 2 de COMPLIANCE manda en esta página más que en ninguna otra.
+# Aceptamos materiales, nunca dinero, y esta es la página donde aterriza quien
+# quiere donar. La negativa tiene que ser clara y temprana: un «preferimos
+# materiales» ambiguo invita a que alguien mande dinero igual, y no hay cuenta
+# bancaria que lo reciba ni persona adulta responsable de administrarlo.
+
+title: Done materiales
+description: Homegrown Hearts recibe semillas, herramientas y materiales de empaque donados para nuestro huerto en el condado de Union, Carolina del Norte.
+
+hero:
+  eyebrow: Participe
+  title: Semillas sí, dinero no.
+  lead: >-
+    Todo lo que cultivamos empezó siendo algo que alguien donó. Aquí está lo que
+    necesitamos, dónde llevarlo y por qué no podemos recibir efectivo.
+
+sections:
+  - id: why
+    eyebrow: Por qué solo materiales
+    title: No tenemos cuenta bancaria, y es a propósito.
+    body:
+      - >-
+        Homegrown Hearts es una iniciativa estudiantil llevada por dos
+        estudiantes de secundaria. No está constituida legalmente, no tiene
+        exención de impuestos y no tiene tesorería. Recibir dinero sin eso sería
+        un problema legal real y también un problema de protección de menores.
+      - >-
+        Así que la respuesta a «¿les puedo mandar 20 dólares?» es una lista de
+        lo que compran esos 20 dólares. Está más abajo, y de verdad nos sirve
+        más: sabemos exactamente qué les falta a los canteros este mes.
+    note: >-
+      Homegrown Hearts es una iniciativa estudiantil. Aceptamos únicamente
+      materiales donados. Las donaciones no son deducibles de impuestos.
+
+  - id: needs
+    eyebrow: Qué necesitamos
+    title: La lista actual.
+    body:
+      - >-
+        Semillas y plántulas, herramientas de mano, guantes, un enrejado, bolsas
+        de papel limpias y cajas de cartón sin usar. La lista completa, con
+        cantidades, está en la página principal y se actualiza con la temporada.
+    ctas:
+      - label: Ver la lista completa
+        href: /#wishlist
+        primary: true
+
+  - id: how
+    eyebrow: Cómo donar
+    title: Tres pasos, y el primero es un correo.
+    items:
+      - icon: mail
+        title: Escríbanos primero
+        body: >-
+          Cuéntenos qué tiene. Le confirmamos que podemos usarlo y acordamos una
+          hora. Este paso evita casi todos los viajes perdidos.
+      - icon: map-pin
+        title: Llévelo a un punto de entrega
+        body: >-
+          Tenemos una ubicación confirmada en Monroe y estamos gestionando más.
+          Cada una tiene su mapa.
+      - icon: sprout
+        title: Va directo a la tierra
+        body: >-
+          Las semillas y plantas entran a los canteros el siguiente día de
+          siembra. Las herramientas y bolsas se usan la siguiente mañana de
+          empaque.
+    ctas:
+      - label: Puntos de entrega
+        href: /get-involved/drop-off
+        primary: true
+      - label: Escríbanos
+        href: /contact
+
+  - id: business
+    eyebrow: Para negocios
+    title: Si tiene un vivero o una ferretería.
+    body:
+      - >-
+        Un acuerdo permanente nos sirve más que una caja aislada. Si puede
+        apartar semillas de fin de temporada, producto de segunda o empaques con
+        algún golpe, díganos qué tiene y cada cuánto, y nos acomodamos a su
+        calendario.
+      - >-
+        También buscamos lugares dispuestos a tener una caja de donaciones. Eso
+        le cuesta medio metro de piso y nada más.
+    ctas:
+      - label: Contáctenos
+        href: /contact
+        primary: true

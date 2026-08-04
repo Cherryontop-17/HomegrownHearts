@@ -3,9 +3,9 @@
  * The homepage. Rendered entirely from `src/content/pages/<locale>/home.yaml`.
  *
  * Design idiom follows the founders' other sites (roomrow.com,
- * pushkarcamp.roomrow.com): centred section headers with pill badges, content
+ * pushkarcamp.roomrow.com): centered section headers with pill badges, content
  * carried in rounded cards with imagery, a floating fact strip, a gallery grid,
- * and a solid brand-colour CTA band before the footer.
+ * and a solid brand-color CTA band before the footer.
  *
  * An earlier editorial/print treatment — left-aligned, hairline rules, sparse —
  * was rejected as reading dated. This keeps the warm earth palette and the
@@ -24,10 +24,23 @@ import Photo from './Photo.astro';
 import WordRise from './WordRise.astro';
 import Cards from './Cards.astro';
 import Icon from './Icon.astro';
+import Botanical from './Botanical.astro';
+import GoalMeter from './GoalMeter.astro';
+import Wishlist from './Wishlist.astro';
+import SmartRecipe from './SmartRecipe.astro';
+import Flyers from './Flyers.astro';
+import UpdatesLog from './UpdatesLog.astro';
+import { Image } from 'astro:assets';
+/* The painted badge, background keyed out. Imported directly rather than
+   through <Logo>, which is the small drawn mark — these are two different
+   assets for two different sizes, not variants of one. */
+import brandLogo from '../assets/brand/logo-full.png';
 
 import { getCopy, section, assertParity } from '../copy';
 import { localizePath, useTranslations } from '../i18n/utils';
-import { IMPACT, ORG } from '../config';
+import { IMPACT, GOALS, ORG, PARTNER_CLINIC, has } from '../config';
+import { hasFlyers } from '../flyers';
+import { seasonGoals } from '../goals';
 import type { Locale } from '../config';
 import type { IconName } from '../icons';
 
@@ -42,9 +55,15 @@ await assertParity();
 const copy = await getCopy('home', locale);
 const t = useTranslations(locale);
 
+const safety = section(copy, 'safety');
 const why = section(copy, 'why');
 const how = section(copy, 'how');
 const bundle = section(copy, 'bundle');
+const smart = section(copy, 'smart');
+const goals = section(copy, 'goals');
+const wishlist = section(copy, 'wishlist');
+const flyers = section(copy, 'flyers');
+const about = section(copy, 'about');
 const founders = section(copy, 'founders');
 const impact = section(copy, 'impact');
 const cta = section(copy, 'cta');
@@ -55,6 +74,8 @@ const impactStats = [
   { value: IMPACT.volunteers, label: t('impact.volunteers') },
 ];
 
+const goalMeters = seasonGoals(t);
+
 /**
  * The strip under the hero. Every entry is a plain fact about the service, not
  * a metric — there are no metrics yet, and inventing one would breach
@@ -64,35 +85,76 @@ const facts = [
   { icon: 'map-pin' as IconName, value: ORG.location.county, label: ORG.location.state },
   { icon: 'basket' as IconName, value: t('facts.cost'), label: t('facts.costNote') },
   { icon: 'sprout' as IconName, value: t('facts.season'), label: t('facts.seasonNote') },
-  { icon: 'shield-check' as IconName, value: t('facts.route'), label: t('facts.routeNote') },
+  /*
+    Named only when COMPLIANCE Rule 4 is satisfied — `approvedToDisplay` in
+    config.ts, which the founders set on the basis of written permission. If
+    that is ever withdrawn, flipping the flag reverts this to the generic
+    wording with no other edit.
+  */
+  has.partnerClinic() && PARTNER_CLINIC.name
+    ? {
+        icon: 'shield-check' as IconName,
+        value: PARTNER_CLINIC.name,
+        label: t('facts.partner'),
+      }
+    : { icon: 'shield-check' as IconName, value: t('facts.route'), label: t('facts.routeNote') },
 ];
 ---
 
-<Base title={copy.title} description={copy.description} transparentHeader vine={false}>
-  {/* ================= HERO ============================================= */}
-  <section class="hero">
-    <div class="hero__media">
-      <Photo photo="hero" eager kenBurns scrim aspect="16 / 10" class="hero__photo" />
-    </div>
+<Base title={copy.title} description={copy.description} vine={false}>
+  {/* ================= HERO =============================================
+      An editorial split, not type-over-photo.
 
-    <div class="hero__content">
-      {copy.hero?.eyebrow && <span class="hero__badge">{copy.hero.eyebrow}</span>}
-      <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
-      <Reveal delay={420}>
-        {copy.hero?.lead && <p class="hero__lead">{copy.hero.lead}</p>}
-        <div class="hero__actions">
-          {
-            (copy.hero?.ctas ?? []).map((c) => (
-              <Button
-                href={localizePath(c.href, locale)}
-                variant={c.primary ? 'primary' : 'secondary'}
-                size="lg"
-                class={c.primary ? undefined : 'btn-on-dark'}
-              >
-                {c.label}
-              </Button>
-            ))
-          }
+      The previous version laid cream type across a full-bleed photograph. That
+      is what every nonprofit homepage does, and it fights itself: the scrim has
+      to be dark enough to carry the text, which mutes the photograph it exists
+      to show. Splitting them lets the type be near-black on cream — far more
+      readable, no contrast battle — and lets the photography be bright.
+
+      The photo stack is three overlapping cards at slight angles. Overlap and
+      rotation are what make a set of rectangles read as arranged rather than
+      placed, and they show three photographs where a banner shows one. */}
+  <section class="hero">
+    <div class="hero__inner">
+      <div class="hero__copy">
+        {copy.hero?.eyebrow && <span class="hero__badge">{copy.hero.eyebrow}</span>}
+
+        <WordRise text={copy.hero?.title ?? ''} as="h1" class="hero__title" />
+
+        <Reveal delay={380}>
+          {copy.hero?.lead && <p class="hero__lead">{copy.hero.lead}</p>}
+          <div class="hero__actions">
+            {
+              (copy.hero?.ctas ?? []).map((c) => (
+                <Button
+                  href={localizePath(c.href, locale)}
+                  variant={c.primary ? 'primary' : 'secondary'}
+                  size="lg"
+                >
+                  {c.label}
+                </Button>
+              ))
+            }
+          </div>
+        </Reveal>
+      </div>
+
+      {/* `hero` is a decorative slot and takes no alt; the other two are
+          declared meaningful in src/photos.ts and carry theirs. <Photo> fails
+          the build either way round, which is how this stayed honest. */}
+      <Reveal delay={200} class="hero__stack">
+        <span class="hero__plate" aria-hidden="true">
+          <Botanical plate="sprig" size={340} weight={1} />
+        </span>
+
+        <div class="shot shot--main">
+          <Photo photo="hero" eager kenBurns aspect="4 / 5" />
+        </div>
+        <div class="shot shot--top">
+          <Photo photo="harvest" alt={t('gallery.harvest')} eager aspect="1 / 1" />
+        </div>
+        <div class="shot shot--low">
+          <Photo photo="bundle" alt={t('gallery.produce')} aspect="4 / 3" />
         </div>
       </Reveal>
     </div>
@@ -115,8 +177,79 @@ const facts = [
     </Reveal>
   </div>
 
-  {/* ================= WHY — centred header + stat cards ================ */}
-  <Section accent="grow" surface="cream" id={why.id}>
+  {/* ================= ABOUT ===========================================
+      The first thing after the hero, because a homepage has to say what this
+      IS before it says anything else. It also carries the one placement of the
+      full painted logo: the artwork is a raster badge whose ribbon text is
+      illegible at the 28-36px the header uses, so the header and footer keep
+      the drawn SVG mark and the badge appears here at size. */}
+  <Section accent="care" surface="cream" id={about.id} ornament="leafpair" ornamentSide="right">
+    <Reveal class="brandmark">
+      <Image
+        src={brandLogo}
+        alt=""
+        widths={[420, 840]}
+        sizes="(min-width: 40rem) 420px, 80vw"
+        class="brandmark__img"
+      />
+    </Reveal>
+
+    <Reveal class="head">
+      {about.eyebrow && <Eyebrow align="center">{about.eyebrow}</Eyebrow>}
+      {about.title && <h2 class="head__title">{about.title}</h2>}
+      {(about.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+
+    <Reveal stagger={100} class="gates">
+      {
+        (about.items ?? []).map((item) => (
+          <article class="gate">
+            <span class="gate__icon">
+              <Icon name={(item.icon ?? 'sprout') as IconName} size={22} />
+            </span>
+            <div>
+              <h3 class="gate__title">{item.title}</h3>
+              {item.body && <p class="gate__body">{item.body}</p>}
+            </div>
+          </article>
+        ))
+      }
+    </Reveal>
+
+    {about.note && <p class="note note--center">{about.note}</p>}
+  </Section>
+
+  {/* ================= IMPACT — tiles ================================== */}
+  <Section accent="care" surface="sand" id={impact.id}>
+    <Reveal class="head">
+      {impact.eyebrow && <Eyebrow align="center">{impact.eyebrow}</Eyebrow>}
+      {impact.title && <h2 class="head__title">{impact.title}</h2>}
+      {(impact.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+
+    <Reveal stagger={100} class="tiles">
+      {
+        impactStats.map((s) => (
+          <div class="tile">
+            <span class="tile__value" data-count-up={String(s.value)}>
+              {s.value}
+            </span>
+            <span class="tile__label">{s.label}</span>
+          </div>
+        ))
+      }
+    </Reveal>
+    <p class="note note--center">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
+
+    {/* Delivery notes, newest first. The `updates` content collection and this
+        component were both orphaned when /impact folded into the homepage —
+        the collection is the one part of the site expected to change monthly,
+        so it belongs here rather than nowhere. Renders its own empty state. */}
+    <UpdatesLog locale={locale} />
+  </Section>
+
+  {/* ================= WHY — centered header + stat cards ================ */}
+  <Section accent="grow" surface="cream" id={why.id} ornament="seedhead" ornamentSide="left">
     <Reveal class="head">
       {why.eyebrow && <Eyebrow align="center">{why.eyebrow}</Eyebrow>}
       {why.title && <h2 class="head__title">{why.title}</h2>}
@@ -151,8 +284,8 @@ const facts = [
     {why.note && <p class="note note--center">{why.note}</p>}
   </Section>
 
-  {/* ================= HOW — centred header + numbered icon cards ======= */}
-  <Section accent="harvest" surface="sand" id={how.id}>
+  {/* ================= HOW — centered header + numbered icon cards ======= */}
+  <Section accent="harvest" surface="sand" id={how.id} ornament="sprig" ornamentSide="right">
     <Reveal class="head">
       {how.eyebrow && <Eyebrow align="center">{how.eyebrow}</Eyebrow>}
       {how.title && <h2 class="head__title">{how.title}</h2>}
@@ -199,6 +332,68 @@ const facts = [
     </div>
   </Section>
 
+  {/* ================= SMART RECIPE — the QR pipeline ===================
+      On the ink band. This is the one section that is about the operation
+      rather than about the food, and the surface change is what marks the
+      shift — the dark band reads as a different chapter. */}
+  <Section accent="harvest" surface="ink" id={smart.id} ornament="vine" ornamentSide="left">
+    <Reveal class="head">
+      {smart.eyebrow && <Eyebrow align="center">{smart.eyebrow}</Eyebrow>}
+      {smart.title && <h2 class="head__title">{smart.title}</h2>}
+      {(smart.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+
+    <SmartRecipe
+      steps={[...(smart.items ?? [])]}
+      status={t('smart.status')}
+      qrCaption={t('smart.qrCaption')}
+      disclaimer={t('smart.disclaimer')}
+    />
+  </Section>
+
+  {/* ================= SEASON GOALS ===================================== */}
+  <Section accent="grow" surface="cream" id={goals.id} ornament="rootveg" ornamentSide="right">
+    <Reveal class="head">
+      {goals.eyebrow && <Eyebrow align="center">{goals.eyebrow}</Eyebrow>}
+      {goals.title && <h2 class="head__title">{goals.title}</h2>}
+      {(goals.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+
+    <GoalMeter goals={goalMeters} caption={t('goals.caption')} />
+
+    {/* The homepage's route into the detail. The calendar is the single most
+        substantial thing on this site and it now lives on its own page, so
+        every path to it matters. */}
+    <Reveal class="actions actions--center">
+      <Button href={localizePath('/garden', locale)} variant="primary" size="lg">
+        {t('nav.calendar')}
+      </Button>
+    </Reveal>
+  </Section>
+
+  {/* The calendar and the grow chart used to sit here. They now live on
+      /garden/, because stacking every detail on one route made the homepage
+      17,000px long and buried the calendar seven sections down where nobody
+      found it. The goals section above links there. */}
+
+  {/* ================= SUPPLY WISHLIST ================================== */}
+  <Section accent="harvest" surface="sand" id={wishlist.id} ornament="sprig" ornamentSide="left">
+    <Reveal class="head">
+      {wishlist.eyebrow && <Eyebrow align="center">{wishlist.eyebrow}</Eyebrow>}
+      {wishlist.title && <h2 class="head__title">{wishlist.title}</h2>}
+      {(wishlist.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+
+    <Wishlist
+      items={[...(wishlist.items ?? [])]}
+      allLabel={t('wishlist.all')}
+      filterLabel={t('wishlist.filter')}
+      countLabel={t('wishlist.count')}
+    />
+
+    {wishlist.note && <p class="note note--center">{wishlist.note}</p>}
+  </Section>
+
   {/* ================= GALLERY ========================================== */}
   <Section accent="harvest" surface="sand" rhythm="tight">
     <Reveal class="head">
@@ -218,8 +413,28 @@ const facts = [
     </div>
   </Section>
 
-  {/* ================= FOUNDERS ======================================== */}
-  <Section accent="care" surface="cream" id={founders.id}>
+  {/* ================= FLYERS ==========================================
+      Whole band is skipped when src/assets/flyers/ is empty. A heading with
+      nothing under it reads as broken, so the check is on the section rather
+      than inside the component. */}
+  {
+    hasFlyers && (
+      <Section accent="care" surface="parchment" id={flyers.id}>
+        <Reveal class="head">
+          {flyers.eyebrow && <Eyebrow align="center">{flyers.eyebrow}</Eyebrow>}
+          {flyers.title && <h2 class="head__title">{flyers.title}</h2>}
+          {(flyers.body ?? []).map((p) => (
+            <p class="head__lead">{p}</p>
+          ))}
+        </Reveal>
+
+        <Flyers downloadLabel={t('flyers.download')} viewLabel={t('flyers.view')} />
+      </Section>
+    )
+  }
+
+  {/* ================= FOUNDERS — the two people ======================== */}
+  <Section accent="care" surface="sand" id={founders.id}>
     <Reveal class="head">
       {founders.eyebrow && <Eyebrow align="center">{founders.eyebrow}</Eyebrow>}
       {founders.title && <h2 class="head__title">{founders.title}</h2>}
@@ -243,35 +458,40 @@ const facts = [
         ))
       }
     </div>
-
-    {(founders.body ?? []).map((p) => <p class="note note--center">{p}</p>)}
   </Section>
 
-  {/* ================= IMPACT — tiles ================================== */}
-  <Section accent="care" surface="sand" id={impact.id}>
+  {/* ================= SAFETY GATE =====================================
+      Placed immediately after the fact strip on purpose: a clinic reader is
+      looking for "who is accountable here" before anything else, and this is
+      the section that answers it. */}
+  <Section accent="care" surface="cream" id={safety.id} ornament="leafpair" ornamentSide="right">
     <Reveal class="head">
-      {impact.eyebrow && <Eyebrow align="center">{impact.eyebrow}</Eyebrow>}
-      {impact.title && <h2 class="head__title">{impact.title}</h2>}
-      {(impact.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+      {safety.eyebrow && <Eyebrow align="center">{safety.eyebrow}</Eyebrow>}
+      {safety.title && <h2 class="head__title">{safety.title}</h2>}
+      {(safety.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
     </Reveal>
 
-    <Reveal stagger={100} class="tiles">
+    <Reveal stagger={100} class="gates">
       {
-        impactStats.map((s) => (
-          <div class="tile">
-            <span class="tile__value" data-count-up={String(s.value)}>
-              {s.value}
+        (safety.items ?? []).map((item) => (
+          <article class="gate">
+            <span class="gate__icon">
+              <Icon name={(item.icon ?? 'shield-check') as IconName} size={22} />
             </span>
-            <span class="tile__label">{s.label}</span>
-          </div>
+            <div>
+              <h3 class="gate__title">{item.title}</h3>
+              {item.body && <p class="gate__body">{item.body}</p>}
+            </div>
+          </article>
         ))
       }
     </Reveal>
-    <p class="note note--center">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
+
+    {safety.note && <p class="note note--center">{safety.note}</p>}
   </Section>
 
   {/* ================= CTA BAND ======================================== */}
-  <Section accent="grow" surface="garden" id={cta.id}>
+  <Section accent="grow" surface="garden" id={cta.id} ornament="vine" ornamentSide="right">
     <Reveal class="head">
       {cta.eyebrow && <Eyebrow align="center">{cta.eyebrow}</Eyebrow>}
       {cta.title && <h2 class="head__title head__title--inverse">{cta.title}</h2>}
@@ -301,44 +521,44 @@ const facts = [
   .hero {
     position: relative;
     isolation: isolate;
+    overflow: clip;
+    background-color: var(--color-cream);
+    /* Warm light from the top-left, cooling into the sand the fact strip sits
+       on. A flat cream here made the whole first screen feel like a document. */
+    background-image:
+      radial-gradient(
+        70% 55% at 12% 0%,
+        color-mix(in oklab, var(--color-harvest-tint) 85%, transparent) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        60% 60% at 100% 100%,
+        color-mix(in oklab, var(--color-garden-tint) 90%, transparent) 0%,
+        transparent 60%
+      );
+    padding-block: clamp(2.5rem, 7vh, 5rem) clamp(6rem, 14vh, 10rem);
+    padding-inline: var(--spacing-gutter);
+  }
+
+  .hero__inner {
     display: grid;
-    grid-template-areas: 'stack';
-    /* `minmax(0, 1fr)`, not `auto`. The hero photo has an aspect-ratio and is
-       stretched to the hero's height, and an aspect-ratio box with a definite
-       height resolves its WIDTH from that height. An auto column then grows to
-       fit it and the whole page scrolls sideways. */
-    grid-template-columns: minmax(0, 1fr);
-    min-height: min(92svh, 52rem);
-    align-items: end;
-    overflow: hidden;
-  }
-
-  .hero__media,
-  .hero__content {
-    grid-area: stack;
-  }
-
-  .hero__media {
-    position: relative;
-    height: 100%;
-  }
-
-  .hero__photo {
-    height: 100%;
-    border-radius: 0;
-  }
-
-  .hero__content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    align-items: center;
     max-width: var(--container-page);
     margin-inline: auto;
-    padding-inline: var(--spacing-gutter);
-    /* Extra bottom padding so the fact strip can overlap without covering the
-       buttons. */
-    padding-block: clamp(3rem, 8vh, 6rem) clamp(5.5rem, 13vh, 9rem);
-    color: var(--color-ink-inverse);
+  }
+
+  @media (min-width: 62rem) {
+    .hero__inner {
+      /* Type gets the larger share. The photographs support the sentence; they
+         are not the sentence. */
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    }
+  }
+
+  .hero__copy {
+    position: relative;
+    z-index: 2;
   }
 
   .hero__badge {
@@ -346,51 +566,150 @@ const facts = [
     padding: 0.5rem 1rem;
     margin-bottom: 1.5rem;
     border-radius: var(--radius-pill);
-    background-color: rgb(253 251 246 / 0.16);
-    border: 1px solid rgb(253 251 246 / 0.28);
-    backdrop-filter: blur(6px);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
     font-size: var(--text-eyebrow);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: var(--text-eyebrow--letter-spacing);
     text-transform: uppercase;
-    color: var(--color-ink-inverse);
+    color: var(--color-garden-deep);
   }
 
   .hero__title {
-    font-size: var(--text-mega);
-    line-height: var(--text-mega--line-height);
-    letter-spacing: var(--text-mega--letter-spacing);
+    /* One step down from --text-mega: the headline now shares the row with the
+       photo stack rather than owning the full width, and mega overflowed it. */
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
     font-weight: 600;
-    color: var(--color-ink-inverse);
-    max-width: 15ch;
+    color: var(--color-clay);
+    max-width: 14ch;
+    text-wrap: balance;
   }
 
   .hero__lead {
     margin-top: 1.5rem;
-    max-width: 46ch;
+    max-width: 44ch;
     font-size: var(--text-lead);
     line-height: var(--text-lead--line-height);
-    color: var(--color-ink-inverse);
-    opacity: 0.92;
+    color: var(--color-ink-muted);
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.875rem;
-    margin-top: 2rem;
+    margin-top: 2.25rem;
   }
 
-  .hero__actions :global(.btn-on-dark) {
-    border-color: rgb(253 251 246 / 0.45);
-    color: var(--color-ink-inverse);
-    background-color: rgb(253 251 246 / 0.08);
-    backdrop-filter: blur(6px);
+  /* ================= PHOTO STACK =======================================
+     Three cards, overlapping, at slight angles. The angles are small on
+     purpose — past about 4deg it stops reading as a considered arrangement and
+     starts reading as a mistake. */
+  .hero__stack {
+    position: relative;
+    /* Reserves the box the absolutely positioned cards sit in, so nothing
+       shifts as the photographs decode. */
+    aspect-ratio: 1 / 1;
+    max-width: 34rem;
+    margin-inline: auto;
+    width: 100%;
   }
 
-  .hero__actions :global(.btn-on-dark:hover) {
-    border-color: var(--color-ink-inverse);
-    background-color: rgb(253 251 246 / 0.18);
+  .hero__plate {
+    position: absolute;
+    right: -8%;
+    top: -6%;
+    z-index: 0;
+    color: var(--color-leaf);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .shot {
+    position: absolute;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background-color: var(--color-card);
+    /* A cream edge lifts each card off the one behind it — without it the
+       overlaps read as one torn shape. */
+    border: 6px solid var(--color-cream);
+    box-shadow: var(--shadow-lift);
+  }
+
+  .shot--main {
+    left: 6%;
+    top: 0;
+    width: 62%;
+    z-index: 2;
+    rotate: -2.5deg;
+  }
+
+  .shot--top {
+    right: 0;
+    top: 12%;
+    width: 40%;
+    z-index: 3;
+    rotate: 3deg;
+  }
+
+  .shot--low {
+    left: 0;
+    bottom: 2%;
+    width: 46%;
+    z-index: 4;
+    rotate: 2deg;
+  }
+
+  /* The stack is the one place on the site where a little play is welcome.
+     Transform-only, so it cannot shift layout. */
+  .shot {
+    transition:
+      rotate var(--duration-base) var(--ease-out-soft),
+      translate var(--duration-base) var(--ease-out-soft);
+  }
+
+  .hero__stack:hover .shot--main {
+    rotate: -4deg;
+    translate: -1% 0;
+  }
+
+  .hero__stack:hover .shot--top {
+    rotate: 5deg;
+    translate: 2% -2%;
+  }
+
+  .hero__stack:hover .shot--low {
+    rotate: 3.5deg;
+    translate: -2% 2%;
+  }
+
+  @media (max-width: 62rem) {
+    .hero__stack {
+      max-width: 28rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shot {
+      transition: none;
+    }
+    .hero__stack:hover .shot--main,
+    .hero__stack:hover .shot--top,
+    .hero__stack:hover .shot--low {
+      rotate: initial;
+      translate: none;
+    }
+    .hero__stack:hover .shot--main {
+      rotate: -2.5deg;
+    }
+    .hero__stack:hover .shot--top {
+      rotate: 3deg;
+    }
+    .hero__stack:hover .shot--low {
+      rotate: 2deg;
+    }
   }
 
   /* ================= FACT STRIP ======================================== */
@@ -408,7 +727,7 @@ const facts = [
   .strip {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    /* 1px gaps over a line-coloured background give hairline dividers between
+    /* 1px gaps over a line-colored background give hairline dividers between
        cells without a border on each one. */
     gap: 1px;
     background-color: var(--color-line);
@@ -458,7 +777,7 @@ const facts = [
     color: var(--text-muted);
   }
 
-  /* ================= CENTRED SECTION HEADER =========================== */
+  /* ================= CENTERED SECTION HEADER =========================== */
   .head {
     display: flex;
     flex-direction: column;
@@ -493,7 +812,7 @@ const facts = [
   .tiles {
     display: grid;
     gap: 1.25rem;
-    margin-top: clamp(2.5rem, 6vh, 4rem);
+    margin-top: var(--spacing-block);
   }
 
   @media (min-width: 48rem) {
@@ -559,6 +878,13 @@ const facts = [
   }
 
   .statcard__src {
+    /* inline-flex + min-height so the tappable box clears the 44px floor.
+       As plain inline text the link measured 39px and failed the target-size
+       check — the text is small by design, so the height comes from the box
+       rather than from the type. */
+    display: inline-flex;
+    align-items: flex-end;
+    min-height: 44px;
     margin-top: auto;
     padding-top: 0.75rem;
     font-size: var(--text-small);
@@ -586,7 +912,14 @@ const facts = [
     font-variant-numeric: tabular-nums;
     letter-spacing: var(--text-numeral--letter-spacing);
     color: var(--accent, var(--color-clay));
-    opacity: 0.45;
+    /*
+      Full strength, not faded. This was `opacity: 0.45`, which reads as a
+      quiet folio number but blends the accent toward the card behind it and
+      fails WCAG AA on the sand band — caught by `npm run check:a11y`. The
+      accent colours are individually contrast-checked against every surface
+      (see Section.astro), so they are safe at opacity 1 and only at opacity 1.
+      Keep it subtle with size, never with transparency.
+    */
   }
 
   .howcard__icon {
@@ -610,6 +943,68 @@ const facts = [
   }
 
   .howcard__body {
+    font-size: var(--text-small);
+    line-height: 1.65;
+    color: var(--text-muted);
+  }
+
+  /* ================= BRAND MARK ======================================= */
+  .brandmark {
+    display: flex;
+    justify-content: center;
+    margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+  }
+
+  .brandmark__img {
+    width: min(26rem, 78vw);
+    height: auto;
+  }
+
+  /* ================= SAFETY GATES ===================================== */
+  .gates {
+    display: grid;
+    gap: 1rem;
+    margin-top: var(--spacing-block);
+  }
+
+  @media (min-width: 48rem) {
+    .gates {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .gate {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.5rem 1.6rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .gate__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 12%, transparent);
+    color: var(--accent, var(--color-clay));
+  }
+
+  .gate__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    color: var(--text-heading);
+    margin-bottom: 0.3rem;
+  }
+
+  .gate__body {
     font-size: var(--text-small);
     line-height: 1.65;
     color: var(--text-muted);
@@ -663,7 +1058,7 @@ const facts = [
   .gallery {
     display: grid;
     gap: 1.25rem;
-    margin-top: clamp(2.5rem, 6vh, 4rem);
+    margin-top: var(--spacing-block);
   }
 
   .gallery :global(.photo) {
@@ -685,7 +1080,7 @@ const facts = [
   .people {
     display: grid;
     gap: 1.5rem;
-    margin-top: clamp(2.5rem, 6vh, 4rem);
+    margin-top: var(--spacing-block);
   }
 
   @media (min-width: 44rem) {
@@ -805,7 +1200,7 @@ const facts = [
     justify-content: center;
   }
 
-  /* Garden is the site's action colour, so a garden-filled button on a garden
+  /* Garden is the site's action color, so a garden-filled button on a garden
      band would vanish. On this one surface the primary inverts to cream. */
   .actions :global(.btn-on-green.btn--primary) {
     background-color: var(--color-ink-inverse);

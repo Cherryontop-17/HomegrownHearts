@@ -15,7 +15,7 @@
 
 interface Props {
   /** Which plate. Each is a different botanical study. */
-  plate?: 'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair';
+  plate?: 'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair' | 'gourd';
   /** Rendered width in px. Height follows the 200:280 field. */
   size?: number;
   /** Line weight. Lower reads more like an etching. */
@@ -84,6 +84,29 @@ const PLATES: Record<string, { stroke: string[]; fill?: string[] }> = {
       'M112 132 C132 132 150 118 156 96 C134 94 116 110 112 132Z',
     ],
   },
+  /*
+    Autumn gourd — a pumpkin or winter squash, drawn as ribs rather than as an
+    outline with a face. It exists for the October calendar, where the season
+    wants something other than another leaf, and it is drawn on the same field
+    and weight as the rest so it reads as part of the set.
+  */
+  gourd: {
+    stroke: [
+      // Body: two mirrored shoulders meeting at a flat base.
+      'M100 92 C142 92 172 128 172 176 C172 224 142 258 100 258 C58 258 28 224 28 176 C28 128 58 92 100 92Z',
+      // Ribs. Each is a shallow arc from stem to base, spaced by eye.
+      'M100 94 C86 130 84 214 100 256',
+      'M100 94 C114 130 116 214 100 256',
+      'M72 102 C56 138 56 210 74 248',
+      'M128 102 C144 138 144 210 126 248',
+      // Stem, with a curl.
+      'M100 92 C100 78 98 66 96 54',
+      'M96 54 C90 40 96 26 112 22 C122 20 130 28 128 38 C126 46 118 48 114 44',
+      // One leaf off the stem.
+      'M98 68 C76 66 58 50 52 26 C78 26 96 44 98 68Z',
+    ],
+  },
+
   // Two leaves meeting — the logo's sprout, drawn as a study.
   leafpair: {
     stroke: [

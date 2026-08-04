@@ -18,7 +18,7 @@ interface Props {
   color?: 'accent' | 'clay' | 'muted';
   /** Badge or hairline. */
   variant?: 'pill' | 'rule';
-  /** Centre it, for centred section headers. */
+  /** Center it, for centered section headers. */
   align?: 'start' | 'center';
   class?: string;
 }
@@ -68,10 +68,17 @@ const {
     align-self: flex-start;
     padding: 0.45rem 0.9rem;
     border-radius: var(--radius-pill);
-    /* Tinted from the section's own accent, so the badge shifts with the
-       seasonal drift rather than being a fixed colour. */
-    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 12%, transparent);
-    border: 1px solid color-mix(in oklab, var(--accent, var(--color-clay)) 22%, transparent);
+    /*
+      Tinted from the section's accent so the badge shifts with the seasonal
+      drift — but mixed over the CARD color, not over the band.
+
+      Mixing over the band darkens it, and darkening the background of colored
+      text lowers contrast. `harvest` on parchment starts at 4.71:1 and any
+      tint at all pushed it under 4.5, at every opacity down to 6%. Tinting
+      over white raises the background instead, so the worst pairing is 5.16:1.
+    */
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 10%, var(--color-card));
+    border: 1px solid color-mix(in oklab, var(--accent, var(--color-clay)) 24%, var(--color-card));
   }
 
   /* A 12% tint of the accent is nearly invisible on the dark band. */

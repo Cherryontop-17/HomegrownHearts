@@ -1,0 +1,11 @@
+# Homegrown Hearts
+
+User-agent: *
+Allow: /
+
+# The 404 is noindex and is not in the sitemap; this stops a crawler wasting
+# a fetch on it after following a stale link.
+Disallow: /404
+Disallow: /404.html
+
+Sitemap: https://homegrownhearts.org/sitemap-index.xml

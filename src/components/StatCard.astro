@@ -149,12 +149,15 @@ const {
    * counting would be meaningless.
    */
   function initCountUp() {
-    const stats = document.querySelectorAll<HTMLElement>('[data-count-up]');
+    // `:not(.is-counted)` so a second call cannot start a second rAF loop on
+    // a counter that is already running.
+    const stats = document.querySelectorAll<HTMLElement>('[data-count-up]:not(.is-counted)');
     if (stats.length === 0) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const run = (el: HTMLElement) => {
+      el.classList.add('is-counted');
       const card = el.closest<HTMLElement>('.stat');
       card?.classList.add('is-counted');
 

@@ -52,6 +52,37 @@ for (const route of ROUTES) {
   });
   await goto(send, `${BASE}${route}`, { settle: 1800 });
 
+  /*
+    This check only means anything when the hero type is laid OVER a
+    photograph. The homepage hero is now an editorial split — type on cream
+    beside the pictures, not on top of them — and measuring cream type against
+    a cream background yields a meaningless 1.00:1 and six false failures.
+
+    So: establish whether any hero text actually overlaps hero imagery, and
+    skip the route if it does not. The check stays armed for the day someone
+    puts type back over an image, which is the failure it exists to catch.
+  */
+  const overImage = await evaluate(
+    send,
+    `(() => {
+       const media = [...document.querySelectorAll('.hero img, .hero picture, .hero__media')];
+       if (media.length === 0) return false;
+       const text = [...document.querySelectorAll('.hero__title,.hero__lead,.hero__badge')];
+       return text.some(t => {
+         const a = t.getBoundingClientRect();
+         return media.some(m => {
+           const b = m.getBoundingClientRect();
+           return a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+         });
+       });
+     })()`,
+  );
+
+  if (!overImage) {
+    console.log(`  skip  ${route} — hero type is not over imagery on this layout`);
+    continue;
+  }
+
   const boxes = await evaluate(
     send,
     `(() => {

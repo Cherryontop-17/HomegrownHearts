@@ -44,6 +44,38 @@ const ICONS = [
   'calendar', // delivery schedule
   'leaf',
   'sun',
+
+  // Roadmap — the August calendar and the phase rail both need a status glyph
+  // per milestone. Three states only: shipped, in progress, not yet.
+  'calendar-days',
+  'circle-check', // a phase that has happened
+  'circle-dot', // the phase we are in now
+  'clock', // still ahead
+  'chevron-right',
+
+  // The QR -> recipe pipeline section
+  'qr-code',
+  'scan-line',
+  'sparkles',
+
+  // Supply wishlist. Produce gets a real botanical glyph rather than a generic
+  // basket, because the grid is the one place a donor scans for "what do I buy".
+  'carrot',
+  'leafy-green',
+  'salad',
+  'flower-2', // herbs
+  'shovel', // tools
+  'package', // cardboard boxes
+  'droplets',
+
+  // Safety gate + partner credibility
+  'stethoscope', // medical lead
+  'user-check', // adult advisor
+  'file-check', // clinic-approved produce list
+  'truck', // delivery to the clinic
+
+  'download', // flyer PDFs
+  'external-link',
 ];
 
 mkdirSync(dirname(OUT), { recursive: true });

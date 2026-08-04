@@ -18,7 +18,7 @@
  *
  * ── Why the stem and the leaves are separate SVGs ─────────────────────────
  * The stem stretches to the document height with `preserveAspectRatio="none"`,
- * which scales x and y unequally. That would shear anything with a recognisable
+ * which scales x and y unequally. That would shear anything with a recognizable
  * shape. `vector-effect: non-scaling-stroke` keeps the stem's weight honest
  * under that scale, and the leaves are rendered as their own small, undistorted
  * SVGs positioned at percentages down the track.
@@ -163,6 +163,9 @@ const LEAF = 'M12 20C7.2 17.4 4 12.8 3.4 6.4C9.8 7.4 13.4 12.4 12 20Z';
   function initVine() {
     const vine = document.querySelector<HTMLElement>('[data-vine]');
     if (!vine) return;
+    // Bind once — see the note in Header.astro.
+    if (vine.dataset.vineBound === '1') return;
+    vine.dataset.vineBound = '1';
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const leaves = Array.from(vine.querySelectorAll<SVGElement>('.vine__leaf'));

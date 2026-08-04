@@ -1,0 +1,1087 @@
+---
+/**
+ * Operational roadmap — four calendar months wired to a phase rail.
+ *
+ * ── Why a calendar and not a row of dots ──────────────────────────────────
+ * A dotted timeline shows ORDER. A calendar shows DENSITY: that planting and
+ * the first harvest are seventeen days apart, that the pilot delivery lands in
+ * the same month as the launch. For a partner clinic deciding whether this is a
+ * real operation, the gap between milestones is the information. So the grid is
+ * the primary object and the phase cards annotate it, rather than the reverse.
+ *
+ * ── Month paging ──────────────────────────────────────────────────────────
+ * Every month in `ROADMAP` is rendered server-side; the arrows beside the month
+ * title swap which one is shown, and the phase rail swaps with it. The rail is
+ * therefore always describing the month you are looking at.
+ *
+ * Without JavaScript all four months render stacked, which is a complete and
+ * readable page rather than a broken one. The `.js` gate in global.css is what
+ * collapses them to one at a time, so the enhancement can never hide content
+ * from a reader whose script failed to load.
+ *
+ * ── The two halves ────────────────────────────────────────────────────────
+ * Dates are locale-independent facts and live in `ROADMAP` in src/config.ts.
+ * Prose is translated and lives in `garden.yaml` under the `roadmap` section.
+ * They are joined by `key`. This is deliberate: the content parity check
+ * compares section ids, not item fields, so if the dates lived in YAML the
+ * Spanish page could quietly drift to a different August.
+ *
+ * A key in the YAML with no match in config is a build error rather than a
+ * silently undated card — see the throw below.
+ *
+ * ── Status is derived, never authored ─────────────────────────────────────
+ * "done / now / ahead" comes from comparing each phase to the build date. No
+ * one has to remember to tick a phase over, and the timeline cannot sit there
+ * claiming a milestone is upcoming three weeks after it passed. The site
+ * rebuilds on every deploy, so this stays current at deploy granularity.
+ *
+ * ── Interaction ───────────────────────────────────────────────────────────
+ * Hovering or focusing a phase card lights that phase's days in the grid, and
+ * vice versa. Everything stays readable with no pointer, no JS, and no colour
+ * vision — each phase card carries its own date range as text, and a phase day
+ * is marked with a dot as well as a tint.
+ */
+
+import Icon from './Icon.astro';
+import Botanical from './Botanical.astro';
+import { ROADMAP } from '../config';
+import { CROPS, cropsSownOn } from '../crops';
+import type { Locale } from '../config';
+import type { IconName } from '../icons';
+
+interface Phase {
+  key?: string;
+  title: string;
+  body?: string;
+  /** Display date label, e.g. "Aug 7-8". Translated, so it comes from YAML. */
+  value?: string;
+  icon?: string;
+}
+
+/** Just enough of a crop to name it. Full data is in src/crops.ts. */
+interface CropName {
+  key?: string;
+  title: string;
+}
+
+interface Props {
+  items: Phase[];
+  locale: Locale;
+  /**
+   * Translated crop names, so sowing days can be labelled. Joined to
+   * src/crops.ts by `key`.
+   */
+  crops: CropName[];
+  /** Heading for the sowing-day list under the calendar. */
+  sowingLabel: string;
+  /** Accessible names for the month arrows. */
+  prevLabel: string;
+  nextLabel: string;
+  /** Key beneath the grid, explaining the two dot shapes. */
+  phaseDayLabel: string;
+  sowingDayLabel: string;
+  todayLabel: string;
+  /** Heading id to label the region for screen readers. */
+  labelledBy?: string;
+  class?: string;
+}
+
+const {
+  items,
+  locale,
+  crops,
+  sowingLabel,
+  prevLabel,
+  nextLabel,
+  phaseDayLabel,
+  sowingDayLabel,
+  todayLabel,
+  labelledBy,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const intl = locale === 'es' ? 'es-ES' : 'en-US';
+
+/** crop id -> translated name. */
+const cropName = new Map(crops.map((c) => [c.key, c.title]));
+
+/** Midnight local, so a date-only ISO string is not shifted by the timezone. */
+function parseISO(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+/** Local ISO. Not toISOString, which converts to UTC and can shift the day. */
+function isoFor(y: number, m: number, d: number): string {
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+}
+
+function namesFor(iso: string): string[] {
+  return cropsSownOn(iso).map((c) => cropName.get(c.id) ?? c.id);
+}
+
+/* ── Join YAML prose to config dates ─────────────────────────────────────── */
+
+/*
+  Widened to `string` on purpose. ROADMAP is `as const`, so its keys are a
+  literal union — but the lookup key comes from YAML, which is plain `string`.
+  Typing the map to the union would make every lookup a type error, and the
+  runtime guard below is what actually catches a bad key, with a message naming
+  the valid ones.
+*/
+const dateFor = new Map<string, (typeof ROADMAP)[number]>(ROADMAP.map((p) => [p.key, p]));
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+type Status = 'done' | 'now' | 'ahead';
+
+const phases = items.map((item, i) => {
+  const dates = item.key ? dateFor.get(item.key) : undefined;
+  if (!dates) {
+    throw new Error(
+      `Roadmap phase "${item.title}" has key "${item.key ?? '(none)'}", which is not in ROADMAP ` +
+        `in src/config.ts. Known keys: ${ROADMAP.map((p) => p.key).join(', ')}. ` +
+        `Every phase needs a key so its dates are shared across both languages.`,
+    );
+  }
+
+  const start = parseISO(dates.start);
+  const end = parseISO(dates.end);
+  const status: Status = end < today ? 'done' : start > today ? 'ahead' : 'now';
+
+  return {
+    ...item,
+    index: i,
+    start,
+    end,
+    status,
+    monthKey: `${start.getFullYear()}-${start.getMonth()}`,
+    ordinal: String(i + 1).padStart(2, '0'),
+  };
+});
+
+/*
+  Colour slot, spread across the whole ramp within each month.
+
+  The ramp runs green -> olive -> amber -> clay over five slots. Numbering
+  phases sequentially from 0 meant a three-phase month only ever used slots
+  0, 1 and 2 — three near-identical greens, so September's calendar read as one
+  undifferentiated block. Spreading instead maps the first phase to 0 and the
+  last to 4 whatever the count, so every month uses the full spread and adjacent
+  phases are always distinguishable.
+*/
+const toneOf = new Map<string, number>();
+{
+  const counts = new Map<string, number>();
+  for (const p of phases) counts.set(p.monthKey, (counts.get(p.monthKey) ?? 0) + 1);
+
+  const seen = new Map<string, number>();
+  for (const p of phases) {
+    const n = seen.get(p.monthKey) ?? 0;
+    const total = counts.get(p.monthKey) ?? 1;
+    // Single-phase month: slot 0 rather than a divide by zero.
+    const tone = total <= 1 ? 0 : Math.round((n * 4) / (total - 1));
+    toneOf.set(p.key ?? String(p.index), tone);
+    seen.set(p.monthKey, n + 1);
+  }
+}
+
+const toned = phases.map((p) => ({ ...p, tone: toneOf.get(p.key ?? String(p.index)) ?? 0 }));
+
+/* ── Group into months ───────────────────────────────────────────────────── */
+
+const monthFmt = new Intl.DateTimeFormat(intl, { month: 'long', year: 'numeric' });
+const dayFmt = new Intl.DateTimeFormat(intl, { dateStyle: 'long' });
+const shortMonthFmt = new Intl.DateTimeFormat(intl, { month: 'short' });
+
+/*
+  Weekday initials, generated rather than hardcoded so Spanish gets its own.
+  Sunday-first, matching the US convention the audience reads; 2026-02-01 was a
+  Sunday, used purely as a known reference date.
+*/
+const weekdayFmt = new Intl.DateTimeFormat(intl, { weekday: 'short' });
+const weekdays = Array.from({ length: 7 }, (_, i) => weekdayFmt.format(new Date(2026, 1, 1 + i)));
+
+/** Every distinct month covered by the roadmap, in order. */
+const monthKeys = [...new Set(toned.map((p) => p.monthKey))];
+
+const months = monthKeys.map((key) => {
+  const [year, month] = key.split('-').map(Number);
+  const inMonth = toned.filter((p) => p.monthKey === key);
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  /** Blank cells before the 1st, so it lands under the right weekday. */
+  const leadingBlanks = new Date(year, month, 1).getDay();
+
+  const days = Array.from({ length: daysInMonth }, (_, i) => {
+    const day = i + 1;
+    const date = new Date(year, month, day);
+    const phase = inMonth.find((p) => date >= p.start && date <= p.end);
+    const sown = namesFor(isoFor(year, month, day));
+    return {
+      day,
+      phase,
+      sown,
+      isToday: date.getTime() === today.getTime(),
+      label: dayFmt.format(date),
+    };
+  });
+
+  /* Sowing days inside this month, as real text under the grid. */
+  const sowingDays = [...new Set(CROPS.map((c) => c.sownOn))]
+    .filter((iso) => {
+      const d = parseISO(iso);
+      return d.getFullYear() === year && d.getMonth() === month;
+    })
+    .sort()
+    .map((iso) => ({
+      label: new Intl.DateTimeFormat(intl, { month: 'short', day: 'numeric' }).format(
+        parseISO(iso),
+      ),
+      crops: namesFor(iso),
+    }));
+
+  return {
+    key,
+    year,
+    month,
+    label: monthFmt.format(new Date(year, month, 1)),
+    short: shortMonthFmt.format(new Date(year, month, 1)),
+    phases: inMonth,
+    days,
+    sowingDays,
+    weeks: Math.ceil((leadingBlanks + daysInMonth) / 7),
+    leadingBlanks,
+    daysInMonth,
+    /** True if today falls in this month — the month opened by default. */
+    isCurrent: today.getFullYear() === year && today.getMonth() === month,
+  };
+});
+
+/**
+ * A seasonal plate behind each month's calendar card.
+ *
+ * Keyed by calendar month rather than by position, so extending the roadmap
+ * into another month picks up the right drawing instead of the next one in a
+ * list. August and September are still growing; October is the gourd; November
+ * is a bare vine, which is what the beds actually look like by then.
+ *
+ * Same illustration set, same weight and same very low opacity as the section
+ * ornaments on the homepage — the point is that the calendar feels like it
+ * belongs to the month, not that anyone notices a picture.
+ */
+const MONTH_PLATE: Record<number, 'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair' | 'gourd'> = {
+  7: 'leafpair', // August
+  8: 'sprig', // September
+  9: 'gourd', // October
+  10: 'vine', // November
+};
+
+const statusIcon: Record<Status, IconName> = {
+  done: 'circle-check',
+  now: 'circle-dot',
+  ahead: 'clock',
+};
+---
+
+<div
+  class:list={['roadmap', className]}
+  data-roadmap
+  {...rest}
+>
+  {
+    months.map((m, mi) => (
+      <section
+        class="month"
+        data-month={m.key}
+        data-month-index={String(mi)}
+        aria-label={m.label}
+      >
+        {/* ── Calendar ───────────────────────────────────────────────── */}
+        <div class="cal">
+          <span class="cal__season" aria-hidden="true">
+            <Botanical plate={MONTH_PLATE[m.month] ?? 'sprig'} size={230} weight={1} />
+          </span>
+
+          <div class="cal__head">
+            <button
+              type="button"
+              class="cal__arrow"
+              data-month-prev
+              aria-label={`${prevLabel}: ${months[mi - 1]?.label ?? ''}`}
+              disabled={mi === 0}
+            >
+              <Icon name="chevron-right" size={18} class="cal__arrow-icon cal__arrow-icon--prev" />
+            </button>
+
+            <h3 class="cal__month" data-month-title>
+              {m.label}
+            </h3>
+
+            <button
+              type="button"
+              class="cal__arrow"
+              data-month-next
+              aria-label={`${nextLabel}: ${months[mi + 1]?.label ?? ''}`}
+              disabled={mi === months.length - 1}
+            >
+              <Icon name="chevron-right" size={18} class="cal__arrow-icon" />
+            </button>
+          </div>
+
+          {/* Which month of the season this is, as dots. Cheap orientation. */}
+          <div class="cal__pips" aria-hidden="true">
+            {months.map((_, i) => (
+              <span class:list={['pip', i === mi && 'is-on']} />
+            ))}
+          </div>
+
+          {/*
+            A real <table>. A calendar IS tabular data, and a screen reader in
+            table mode then announces "row 3, column Wednesday" while moving
+            through it. `role="presentation"` on a calendar is a common and
+            wrong shortcut.
+          */}
+          <table class="cal__grid" aria-labelledby={labelledBy}>
+            <caption class="sr-only">{m.label}</caption>
+            <thead>
+              <tr>
+                {weekdays.map((w) => (
+                  <th scope="col" class="cal__weekday">
+                    <span aria-hidden="true">{w.slice(0, 1)}</span>
+                    <span class="sr-only">{w}</span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.from({ length: m.weeks }, (_, week) => (
+                <tr>
+                  {Array.from({ length: 7 }, (_, dow) => {
+                    const dayNum = week * 7 + dow - m.leadingBlanks + 1;
+                    if (dayNum < 1 || dayNum > m.daysInMonth) {
+                      return <td class="cal__cell cal__cell--empty" />;
+                    }
+                    const d = m.days[dayNum - 1];
+                    return (
+                      <td
+                        class:list={[
+                          'cal__cell',
+                          d.phase && 'cal__cell--phase',
+                          d.phase && `cal__cell--t${d.phase.tone}`,
+                          d.phase && `is-${d.phase.status}`,
+                          d.isToday && 'cal__cell--today',
+                        ]}
+                        data-phase={d.phase?.key}
+                      >
+                        <span class="cal__stack">
+                          <span class="cal__num">{d.day}</span>
+                          <span class="cal__slot" aria-hidden="true">
+                            {d.phase && (
+                              <span
+                                class:list={['cal__dot', d.sown.length > 0 && 'cal__dot--sow']}
+                              />
+                            )}
+                          </span>
+                        </span>
+
+                        {/* The only place the day-to-phase mapping exists as
+                            text. Without it the grid means nothing to a screen
+                            reader or to anyone who cannot separate the tints. */}
+                        {d.phase && (
+                          <span class="sr-only">
+                            {d.label} — {d.phase.title}
+                            {d.sown.length > 0 && (
+                              <>
+                                . {sowingLabel}: {d.sown.join(', ')}
+                              </>
+                            )}
+                          </span>
+                        )}
+                        {d.isToday && <span class="sr-only">(today)</span>}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* What the two markers mean. Without this the filled and hollow
+              dots are decoration a reader has to guess at. */}
+          <ul class="key">
+            <li class="key__item">
+              <span class="key__dot" aria-hidden="true"></span>
+              {phaseDayLabel}
+            </li>
+            <li class="key__item">
+              <span class="key__dot key__dot--sow" aria-hidden="true"></span>
+              {sowingDayLabel}
+            </li>
+            <li class="key__item">
+              <span class="key__dot key__dot--today" aria-hidden="true"></span>
+              {todayLabel}
+            </li>
+          </ul>
+
+          {m.sowingDays.length > 0 && (
+            <div class="sowing">
+              <h4 class="sowing__head">
+                <Icon name="sprout" size={16} />
+                {sowingLabel}
+              </h4>
+              <ul class="sowing__list">
+                {m.sowingDays.map((d) => (
+                  <li class="sowing__row">
+                    <span class="sowing__date">{d.label}</span>
+                    <span class="sowing__crops">{d.crops.join(', ')}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* ── Phase rail ─────────────────────────────────────────────── */}
+        <div class="phases">
+          {m.phases.map((p, pi) => (
+            <article
+              class:list={[
+                'phase',
+                `phase--t${p.tone}`,
+                `is-${p.status}`,
+                pi === m.phases.length - 1 && 'is-last',
+              ]}
+              data-phase-card={p.key}
+              tabindex="0"
+            >
+              <div class="phase__rail" aria-hidden="true">
+                <span class="phase__node">
+                  <Icon name={statusIcon[p.status]} size={14} />
+                </span>
+              </div>
+
+              <div class="phase__body">
+                <div class="phase__meta">
+                  <span class="phase__ordinal">{p.ordinal}</span>
+                  {p.value && <span class="phase__date">{p.value}</span>}
+                </div>
+
+                <h3 class="phase__title">
+                  {p.icon && <Icon name={p.icon as IconName} size={16} class="phase__glyph" />}
+                  {p.title}
+                </h3>
+
+                {p.body && <p class="phase__text">{p.body}</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .roadmap {
+    margin-top: var(--spacing-block);
+    /*
+      Five tints, derived from the two brand hues rather than invented. They
+      read as one family because they share a chroma.
+
+      ⚠️ Each is used as a TEXT colour on `.phase__ordinal`, so every one must
+      clear 4.5:1 on cream, sand AND parchment. An earlier version used
+      --color-leaf (#6a8659) here, which the palette marks decorative-only at
+      3.2:1, and `npm run check:a11y` failed it as a serious contrast
+      violation. Check any replacement on all three surfaces.
+    */
+    --t0: #2f6b4f; /* 6.1:1 worst case */
+    --t1: #426a4d; /* 6.4:1 */
+    --t2: #4f6b3a; /* 4.8:1 */
+    --t3: #8a5a12; /* 4.9:1 */
+    --t4: #9a3412; /* 5.8:1 */
+  }
+
+  /*
+    All four months are on the page, stacked, and the arrows scroll between
+    them.
+
+    They used to swap in place with only one visible. That was rejected in use:
+    pressing "next" changed the panel without moving the page, which read as
+    the calendar snapping back to August rather than advancing to September.
+    Scrolling is legible — you can see where you went, and you can also just
+    scroll past the arrows entirely.
+  */
+  .month + .month {
+    margin-top: clamp(2.5rem, 6vh, 4rem);
+  }
+
+  @media (min-width: 60rem) {
+    .month {
+      display: grid;
+      /*
+        The calendar is the primary object and takes the larger share; the rail
+        annotates it. 1.35fr / 1fr rather than a fixed 22rem calendar, which
+        made the grid squares small and cramped on a wide screen.
+      */
+      grid-template-columns: minmax(0, 1.95fr) minmax(0, 1fr);
+      gap: clamp(2rem, 4vw, 3.5rem);
+      align-items: start;
+    }
+
+  }
+
+  /* ================= CALENDAR ========================================== */
+  /* The seasonal plate. Behind the grid, clipped by the card, and faint enough
+     that it never competes with a date for attention. */
+  .cal__season {
+    position: absolute;
+    right: -2.5rem;
+    bottom: -2rem;
+    z-index: 0;
+    color: var(--color-leaf);
+    opacity: 0.16;
+    pointer-events: none;
+  }
+
+  .cal > *:not(.cal__season) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cal {
+    position: relative;
+    overflow: clip;
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .cal__head {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 2.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .cal__month {
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    line-height: 1.1;
+    text-align: center;
+    color: var(--text-heading);
+    /* Intl gives "August 2026" / "agosto de 2026" — cap the Spanish too. */
+    text-transform: capitalize;
+  }
+
+  .cal__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem; /* clears the 44px target floor */
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-line-strong);
+    background-color: transparent;
+    color: var(--color-ink);
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft),
+      color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .cal__arrow:hover:not(:disabled) {
+    border-color: var(--color-garden);
+    background-color: var(--color-garden-tint);
+    color: var(--color-garden-deep);
+  }
+
+  .cal__arrow:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+  }
+
+  .cal__arrow:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  /* One chevron asset, mirrored for the back arrow. */
+  .cal__arrow-icon--prev {
+    transform: rotate(180deg);
+  }
+
+  .cal__pips {
+    display: flex;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .pip {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background-color: var(--color-line-strong);
+    transition: background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .pip.is-on {
+    background-color: var(--color-garden);
+    /* Wider rather than only darker, so the active month is distinguishable
+       without relying on colour. */
+    width: 1.1rem;
+    border-radius: var(--radius-pill);
+  }
+
+  .cal__grid {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 3px;
+    table-layout: fixed;
+  }
+
+  .cal__weekday {
+    padding-bottom: 0.5rem;
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .cal__cell {
+    /*
+      An explicit height, NOT `aspect-ratio: 1`. A table cell's height is driven
+      by its row, and aspect-ratio does not apply to it.
+
+      The contents are a flex column — numeral above, marker below — rather than
+      a centred numeral with an absolutely positioned dot under it. Absolute
+      positioning meant the two were laid out independently, so at any cell
+      height where they happened to meet, the dot sat directly on the digits and
+      the day read as struck through. In a column they cannot overlap at all.
+    */
+    height: 4.4rem;
+    padding: 0.5rem 0;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: var(--radius-md);
+    font-size: var(--text-body);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-muted);
+    transition:
+      background-color var(--duration-fast) var(--ease-out-soft),
+      color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .cal__stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+    height: 100%;
+  }
+
+  /* Reserved whether or not this day carries a marker, so a day with one and a
+     day without still align on their numerals. */
+  .cal__slot {
+    display: block;
+    height: 0.5rem;
+  }
+
+  .cal__cell--empty {
+    /* A blank leading cell is not a date and must not be announced as one. */
+    visibility: hidden;
+  }
+
+  .cal__cell--phase {
+    font-weight: 600;
+    color: var(--color-ink);
+    background-color: color-mix(in oklab, var(--cell-accent) 14%, transparent);
+  }
+
+  .cal__cell--t0 {
+    --cell-accent: var(--t0);
+  }
+  .cal__cell--t1 {
+    --cell-accent: var(--t1);
+  }
+  .cal__cell--t2 {
+    --cell-accent: var(--t2);
+  }
+  .cal__cell--t3 {
+    --cell-accent: var(--t3);
+  }
+  .cal__cell--t4 {
+    --cell-accent: var(--t4);
+  }
+
+  /* A phase day carries a marker as well as a tint, so the grid still parses
+     with no colour vision at all. Filled = a phase day. */
+  .cal__dot {
+    display: block;
+    width: 0.35rem;
+    height: 0.35rem;
+    margin-inline: auto;
+    border-radius: 50%;
+    background-color: var(--cell-accent);
+  }
+
+  /* A sowing day gets a hollow ring — different in SHAPE, not only colour, so
+     the two markers are still distinguishable in greyscale. The key beneath
+     the grid says which is which. */
+  .cal__dot--sow {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: transparent;
+    border: 1.75px solid var(--cell-accent);
+  }
+
+  /* Today gets a ring rather than a fill, which would compete with the phase
+     tint for the same cell. */
+  .cal__cell--today {
+    outline: 2px solid var(--color-clay);
+    outline-offset: -2px;
+    color: var(--color-clay);
+  }
+
+  .cal__cell.is-linked {
+    background-color: color-mix(in oklab, var(--cell-accent) 32%, transparent);
+  }
+
+  /* ================= KEY =============================================== */
+  .key {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.25rem;
+    margin-top: 1rem;
+    padding: 0;
+    list-style: none;
+  }
+
+  .key__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .key__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--color-garden);
+  }
+
+  .key__dot--sow {
+    background-color: transparent;
+    border: 1.75px solid var(--color-garden);
+  }
+
+  .key__dot--today {
+    background-color: transparent;
+    border: 2px solid var(--color-clay);
+    width: 0.7rem;
+    height: 0.7rem;
+  }
+
+  /* ================= SOWING SCHEDULE =================================== */
+  .sowing {
+    margin-top: 1.35rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .sowing__head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+    font-family: var(--font-body);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .sowing__head :global(.icon) {
+    color: var(--color-garden);
+  }
+
+  .sowing__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    list-style: none;
+    padding: 0;
+  }
+
+  .sowing__row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.5rem;
+    font-size: var(--text-small);
+    line-height: 1.45;
+  }
+
+  .sowing__date {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-garden-deep);
+  }
+
+  .sowing__crops {
+    color: var(--text-muted);
+  }
+
+  /* ================= PHASE RAIL ======================================== */
+  .phases {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+  }
+
+  @media (min-width: 60rem) {
+    .phases {
+      margin-top: 0;
+    }
+  }
+
+  .phase {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: 0.85rem;
+    border-radius: var(--radius-md);
+    padding: 0.25rem 0.85rem 1.5rem 0;
+    transition: background-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .phase.is-last {
+    padding-bottom: 0;
+  }
+
+  .phase--t0 {
+    --phase-accent: var(--t0);
+  }
+  .phase--t1 {
+    --phase-accent: var(--t1);
+  }
+  .phase--t2 {
+    --phase-accent: var(--t2);
+  }
+  .phase--t3 {
+    --phase-accent: var(--t3);
+  }
+  .phase--t4 {
+    --phase-accent: var(--t4);
+  }
+
+  /* The connecting line runs the full height of each card and butts against
+     the next, giving one continuous line down the list with no wrapper. */
+  .phase__rail {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .phase__rail::before {
+    content: '';
+    position: absolute;
+    top: 1.9rem;
+    bottom: -1.5rem;
+    width: 2px;
+    background-color: var(--color-line-strong);
+  }
+
+  .phase.is-last .phase__rail::before {
+    display: none;
+  }
+
+  .phase__node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: var(--color-card);
+    border: 2px solid var(--color-line-strong);
+    color: var(--text-muted);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Completed and current phases colour their node; future ones stay neutral,
+     so progress is visible at a glance without reading a word. */
+  .phase.is-done .phase__node {
+    border-color: var(--phase-accent);
+    background-color: var(--phase-accent);
+    color: var(--color-ink-inverse);
+  }
+
+  .phase.is-now .phase__node {
+    border-color: var(--phase-accent);
+    color: var(--phase-accent);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--phase-accent) 18%, transparent);
+  }
+
+  .phase__meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .phase__ordinal {
+    font-size: var(--text-numeral);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--text-numeral--letter-spacing);
+    color: var(--phase-accent);
+  }
+
+  .phase__date {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .phase__title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: var(--text-heading);
+    margin-bottom: 0.25rem;
+  }
+
+  .phase__glyph {
+    color: var(--phase-accent);
+    flex: none;
+  }
+
+  .phase__text {
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .phase:hover,
+  .phase.is-linked {
+    background-color: color-mix(in oklab, var(--phase-accent) 7%, transparent);
+  }
+
+  .phase:focus-visible {
+    outline: 2px solid var(--phase-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cal__cell,
+    .cal__arrow,
+    .phase,
+    .pip {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Month paging, and the two-way highlight between a phase card and its days.
+   *
+   * Both are progressive enhancement. With this script absent every month
+   * renders stacked, every phase shows its own date range as text, and every
+   * phase day carries a dot and a tint — nothing here is load-bearing for
+   * comprehension.
+   */
+  function initRoadmap() {
+    document.querySelectorAll<HTMLElement>('[data-roadmap]').forEach((root) => {
+      if (root.dataset.roadmapBound === 'true') return;
+      root.dataset.roadmapBound = 'true';
+
+      const months = [...root.querySelectorAll<HTMLElement>('[data-month]')];
+      if (months.length === 0) return;
+
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      /*
+        Every month is already on the page. The arrows are a shortcut past the
+        scrolling, not a way of revealing hidden content — so all they do is
+        move the viewport to the neighbouring panel.
+
+        Offset by the sticky header plus a little air, or the month title lands
+        underneath the header bar.
+      */
+      const goTo = (index: number) => {
+        const target = months[index];
+        if (!target) return;
+        const top = target.getBoundingClientRect().top + window.scrollY - 96;
+        window.scrollTo({
+          top,
+          behavior: reducedMotion.matches ? 'instant' : 'smooth',
+        });
+      };
+
+      months.forEach((panel, i) => {
+        const prev = panel.querySelector<HTMLButtonElement>('[data-month-prev]');
+        const next = panel.querySelector<HTMLButtonElement>('[data-month-next]');
+
+        // First and last keep their arrow rendered but disabled, so the control
+        // never moves position between months.
+        if (prev) {
+          prev.disabled = i === 0;
+          prev.addEventListener('click', () => goTo(i - 1));
+        }
+        if (next) {
+          next.disabled = i === months.length - 1;
+          next.addEventListener('click', () => goTo(i + 1));
+        }
+      });
+
+      /* --- Two-way phase highlight --- */
+      const cards = root.querySelectorAll<HTMLElement>('[data-phase-card]');
+      const cells = root.querySelectorAll<HTMLElement>('[data-phase]');
+
+      const link = (key: string | undefined, on: boolean) => {
+        if (!key) return;
+        cells.forEach((cell) => {
+          if (cell.dataset.phase === key) cell.classList.toggle('is-linked', on);
+        });
+        cards.forEach((card) => {
+          if (card.dataset.phaseCard === key) card.classList.toggle('is-linked', on);
+        });
+      };
+
+      cards.forEach((card) => {
+        const key = card.dataset.phaseCard;
+        card.addEventListener('mouseenter', () => link(key, true));
+        card.addEventListener('mouseleave', () => link(key, false));
+        // Keyboard parity: tabbing the rail lights the calendar too.
+        card.addEventListener('focus', () => link(key, true));
+        card.addEventListener('blur', () => link(key, false));
+      });
+
+      cells.forEach((cell) => {
+        const key = cell.dataset.phase;
+        cell.addEventListener('mouseenter', () => link(key, true));
+        cell.addEventListener('mouseleave', () => link(key, false));
+      });
+    });
+  }
+
+  initRoadmap();
+  document.addEventListener('astro:page-load', initRoadmap);
+</script>

@@ -21,9 +21,62 @@
  *
  * Path data lives in src/brand.js, shared with the favicon/OG generator, so a
  * change to the mark reaches every rendered asset instead of only this file.
+ *
+ * ── Custom logo override ──────────────────────────────────────────────────
+ * If the founders drop a file into `src/assets/brand/`, it replaces the drawn
+ * mark everywhere the logo appears. Same `import.meta.glob` idiom as <Photo>
+ * and <Flyers>: an empty folder is an absent key, not an error, so the built-in
+ * mark stays the fallback and nothing is broken while that folder is empty.
+ *
+ * The wordmark is NOT replaced — it stays live text beside whichever mark is in
+ * use. See `src/assets/brand/README.md` for why a logo with a baked-in wordmark
+ * should be supplied as the symbol alone.
+ *
+ * The custom mark cannot be draw-in animated (there are no known paths to
+ * dash), so `animate` is ignored when one is present. It is a decorative
+ * flourish, not information.
  */
 
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { HEART, STEM, LEAF_LEFT, LEAF_RIGHT } from '../brand.js';
+
+/*
+  Preference order: SVG first (resolution-independent at every size the mark is
+  used), then PNG, then whatever else is there. Sorting by extension rank keeps
+  the choice deterministic if someone leaves two files in the folder.
+*/
+const EXTENSION_RANK = ['svg', 'png', 'webp', 'avif', 'jpg', 'jpeg'];
+
+const customFiles = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/brand/logo.{svg,png,webp,avif,jpg,jpeg}',
+  { eager: true },
+);
+
+const customPath = Object.keys(customFiles).sort((a, b) => {
+  const rank = (p: string) => {
+    const ext = p.split('.').pop()?.toLowerCase() ?? '';
+    const i = EXTENSION_RANK.indexOf(ext);
+    return i === -1 ? EXTENSION_RANK.length : i;
+  };
+  return rank(a) - rank(b) || a.localeCompare(b);
+})[0];
+
+const customLogo = customPath ? customFiles[customPath].default : null;
+/* SVGs pass through `astro:assets` unprocessed, so they go in a plain <img>. */
+const customIsSvg = customPath?.toLowerCase().endsWith('.svg') ?? false;
+
+/*
+  Narrowed once, here, rather than relying on the JSX ternary to do it —
+  TypeScript does not carry the `customLogo ?` guard into the <Image> below, so
+  `src` was typed `ImageMetadata | null` and failed `astro check`.
+
+  `widths` on <Image> is 2x the rendered size so the mark stays sharp on a
+  retina screen. That note lives out here because a block comment written
+  INSIDE an attribute list is parsed as attributes: an earlier version stamped
+  `so`, `the`, `mark` and `stays` onto the element as real properties.
+*/
+const customRaster = !customIsSvg && customLogo ? customLogo : null;
 
 interface Props {
   /** `lockup` = mark + wordmark. `mark` = the symbol alone. */
@@ -64,23 +117,49 @@ const decorative = isLockup || !title;
   style={`--mark-size:${size}px`}
   {...rest}
 >
-  <svg
-    class:list={['mark', solid && 'mark--solid', animate && 'mark--animate']}
-    viewBox="0 0 48 48"
-    width={size}
-    height={size}
-    role={decorative ? undefined : 'img'}
-    aria-hidden={decorative ? 'true' : undefined}
-    focusable="false"
-  >
-    {!decorative && <title>{title}</title>}
+  {
+    customLogo ? (
+      customIsSvg || !customRaster ? (
+        <img
+          class="mark mark--custom"
+          src={customLogo.src}
+          width={size}
+          height={size}
+          alt={decorative ? '' : (title ?? '')}
+          aria-hidden={decorative ? 'true' : undefined}
+          loading="eager"
+          decoding="async"
+        />
+      ) : (
+        <Image
+          class="mark mark--custom"
+          src={customRaster}
+          widths={[size * 2]}
+          alt={decorative ? '' : (title ?? '')}
+          aria-hidden={decorative ? 'true' : undefined}
+          loading="eager"
+        />
+      )
+    ) : (
+      <svg
+        class:list={['mark', solid && 'mark--solid', animate && 'mark--animate']}
+        viewBox="0 0 48 48"
+        width={size}
+        height={size}
+        role={decorative ? undefined : 'img'}
+        aria-hidden={decorative ? 'true' : undefined}
+        focusable="false"
+      >
+        {!decorative && <title>{title}</title>}
 
-    {/* Order matters for the draw-in: heart first, then the sprout grows out of it. */}
-    <path class="mark__heart" d={HEART} pathLength="1"></path>
-    <path class="mark__stem" d={STEM} pathLength="1"></path>
-    <path class="mark__leaf mark__leaf--left" d={LEAF_LEFT} pathLength="1"></path>
-    <path class="mark__leaf mark__leaf--right" d={LEAF_RIGHT} pathLength="1"></path>
-  </svg>
+        {/* Order matters for the draw-in: heart first, then the sprout grows out of it. */}
+        <path class="mark__heart" d={HEART} pathLength="1" />
+        <path class="mark__stem" d={STEM} pathLength="1" />
+        <path class="mark__leaf mark__leaf--left" d={LEAF_LEFT} pathLength="1" />
+        <path class="mark__leaf mark__leaf--right" d={LEAF_RIGHT} pathLength="1" />
+      </svg>
+    )
+  }
 
   {isLockup && <span class="wordmark">Homegrown Hearts</span>}
 </span>
@@ -113,6 +192,17 @@ const decorative = isLockup || !title;
   .mark--solid {
     fill: currentColor;
     stroke: none;
+  }
+
+  /* A dropped-in file is a raster or an opaque SVG, so none of the stroke
+     rules above apply to it. `contain` rather than `cover` so a non-square
+     logo is letterboxed inside its box instead of being cropped. */
+  .mark--custom {
+    width: var(--mark-size);
+    height: var(--mark-size);
+    object-fit: contain;
+    stroke: none;
+    fill: none;
   }
 
   /* The stem stays a stroke even in the solid build — filling a 2px open path

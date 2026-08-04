@@ -1,0 +1,111 @@
+---
+/**
+ * JSON-LD structured data (task 6.2).
+ *
+ * Two graphs, linked by `@id`:
+ *   - an `NGO` describing the organization, and
+ *   - a `WebSite` describing this site, pointing back at the NGO as publisher.
+ *
+ * `NGO` rather than `Organization`: it is the precise type, and search engines
+ * treat the specific subtype as a stronger signal. It is **not** `NonprofitType`
+ * or any of the 501(c) enumerations — those assert a registered tax status this
+ * project does not hold, and putting one here would be the machine-readable
+ * version of the claim COMPLIANCE.md Rule 2 forbids in prose.
+ *
+ * Everything is read from `src/config.ts`, and anything the founders have not
+ * filled in is omitted rather than guessed. A structured-data field with a
+ * placeholder in it is worse than an absent one — it is a claim.
+ */
+
+import { SITE_URL, ORG, CONTACT, ADVISOR, SOCIAL, has } from '../config';
+import { LOCALE_TAGS } from '../i18n/utils';
+import type { Locale } from '../config';
+
+interface Props {
+  locale: Locale;
+  /** Absolute URL of the page this is rendered on. */
+  canonical: string;
+  /** Page title, used for the WebPage node. */
+  title: string;
+  description: string;
+}
+
+const { locale, canonical, title, description }: Props = Astro.props;
+
+const orgId = `${SITE_URL}/#organization`;
+const siteId = `${SITE_URL}/#website`;
+
+/** Only include a link we actually have. */
+const sameAs = [has.instagram() ? `https://instagram.com/${SOCIAL.instagram}` : null].filter(
+  Boolean,
+) as string[];
+
+const organization: Record<string, unknown> = {
+  '@type': 'NGO',
+  '@id': orgId,
+  name: ORG.name,
+  url: SITE_URL,
+  foundingDate: String(ORG.foundedYear),
+  description:
+    'A student-led initiative growing fresh produce and delivering free bundles to pregnant and postpartum mothers through a partner clinic.',
+  // Where we operate, which is the useful signal for a local search.
+  areaServed: {
+    '@type': 'AdministrativeArea',
+    name: `${ORG.location.county}, ${ORG.location.state}`,
+    address: {
+      '@type': 'PostalAddress',
+      addressRegion: ORG.location.stateCode,
+      addressCountry: 'US',
+    },
+  },
+  // No street address on purpose. Both founders are minors and the garden is
+  // not a public location; `areaServed` gives the locality without publishing
+  // somewhere a person can be found.
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'general enquiries',
+    email: CONTACT.email,
+    availableLanguage: ['en', 'es'],
+  },
+  logo: {
+    '@type': 'ImageObject',
+    url: new URL('/icon-512.png', SITE_URL).href,
+    width: 512,
+    height: 512,
+  },
+  knowsLanguage: ['en-US', 'es-US'],
+};
+
+if (sameAs.length) organization.sameAs = sameAs;
+// The advisor appears only once there is written permission to publish a name.
+if (has.advisor() && ADVISOR.name) {
+  organization.member = { '@type': 'Person', name: ADVISOR.name };
+}
+
+const graph = [
+  organization,
+  {
+    '@type': 'WebSite',
+    '@id': siteId,
+    url: SITE_URL,
+    name: ORG.name,
+    inLanguage: LOCALE_TAGS[locale],
+    publisher: { '@id': orgId },
+  },
+  {
+    '@type': 'WebPage',
+    '@id': canonical,
+    url: canonical,
+    name: title,
+    description,
+    inLanguage: LOCALE_TAGS[locale],
+    isPartOf: { '@id': siteId },
+    about: { '@id': orgId },
+  },
+];
+
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+
+{/* `set:html` so the JSON is emitted raw — escaping it would break the parser. */}
+<script type="application/ld+json" is:inline set:html={jsonLd} />

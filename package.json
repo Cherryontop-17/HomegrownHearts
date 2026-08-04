@@ -19,13 +19,16 @@
     "check:i18n": "node scripts/check-i18n-urls.mjs",
     "check:overflow": "node scripts/check-overflow.mjs",
     "check:motion": "node scripts/check-motion.mjs",
+    "check:headers": "node scripts/check-headers.mjs",
     "sync:fonts": "node scripts/sync-fonts.mjs",
     "sync:icons": "node scripts/sync-icons.mjs",
     "photos": "node scripts/grade-photos.mjs",
     "brand": "node scripts/generate-brand-assets.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "astro build && wrangler deploy",
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "check:all": "npm run check && npm run check:compliance && npm run check:contrast && npm run check:i18n && npm run check:fonts && npm run check:headers && npm run check:hero && npm run check:a11y && npm run check:overflow && npm run check:motion"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.5",
@@ -39,6 +42,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "axe-core": "^4.12.1",
     "lucide-static": "^1.27.0",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",

@@ -1,0 +1,60 @@
+# Nuestras alianzas — el índice.
+#
+# ⚠️ Regla 4 de COMPLIANCE. Una organización aparece aquí con su nombre SOLO
+# cuando ha aceptado por escrito. HELP Pregnancy Center lo hizo; la biblioteca
+# no, y su entrada lo dice con claridad en vez de omitirlo o insinuarlo.
+
+title: Nuestras alianzas
+description: Las organizaciones con las que trabaja Homegrown Hearts en el condado de Union, Carolina del Norte, y qué hace exactamente cada una con nosotras.
+
+hero:
+  eyebrow: Nuestras alianzas
+  title: Nada de esto lo hacemos solas.
+  lead: >-
+    Dos estudiantes pueden cultivar verduras. Llevarlas a las familias que las
+    quieren requiere gente que ya estaba ahí.
+
+sections:
+  - id: current
+    eyebrow: Con quiénes trabajamos
+    title: Cómo están las cosas hoy.
+    body:
+      - >-
+        Una alianza confirmada y una conversación en curso. Listamos las dos y
+        decimos cuál es cuál, porque una lista de aliados que incluye en
+        silencio a quien no ha aceptado no le sirve a nadie.
+    items:
+      - icon: heart
+        title: HELP Pregnancy Center, Monroe
+        body: >-
+          Nuestra clínica aliada. Aprobó la lista de verduras, recibe cada
+          paquete y decide qué familias lo reciben.
+      - icon: clipboard-list
+        title: Biblioteca Pública del Condado de Union, sede principal
+        body: >-
+          En conversaciones para ser punto de entrega de materiales. Todavía no
+          hay nada acordado, así que por favor no lleve donaciones allí.
+    ctas:
+      - label: Sobre HELP Pregnancy Center
+        href: /our-partners/help-pregnancy-center
+        primary: true
+      - label: Sobre la biblioteca
+        href: /our-partners/union-county-library
+
+  - id: join
+    eyebrow: Para organizaciones
+    title: Si está leyendo esto y se lo pregunta.
+    body:
+      - >-
+        Buscamos uno o dos lugares más dispuestos a tener una caja de
+        donaciones, y hablaríamos con cualquier clínica del condado de Union o
+        de los alrededores sobre recibir verduras.
+      - >-
+        Lo que pedimos es poco y está escrito con detalle, para que nadie tenga
+        que sentarse en una reunión solo para averiguarlo.
+    ctas:
+      - label: En qué consiste una alianza
+        href: /partners
+        primary: true
+      - label: Escríbanos
+        href: /contact

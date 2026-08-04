@@ -58,9 +58,21 @@ export function stripLocale(pathname: string): string {
  * `trailingSlash: 'always'` in astro.config.mjs pins the other half of this.
  */
 export function localizePath(path: string, locale: Locale): string {
-  const clean = stripLocale(path);
+  /*
+    Split the hash off first. Nav items point at homepage anchors (`/#roadmap`),
+    and without this the trailing-slash rule below would turn that into
+    `/#roadmap/` — a fragment named "roadmap/" that matches no element, so the
+    link silently lands at the top of the page instead of the calendar.
+  */
+  const hashAt = path.indexOf('#');
+  const hash = hashAt === -1 ? '' : path.slice(hashAt);
+  const pathname = hashAt === -1 ? path : path.slice(0, hashAt);
+
+  const clean = stripLocale(pathname);
   const base = locale === DEFAULT_LOCALE ? clean : `/${locale}${clean}`;
-  return base.endsWith('/') ? base : `${base}/`;
+  const withSlash = base.endsWith('/') ? base : `${base}/`;
+
+  return `${withSlash}${hash}`;
 }
 
 /**

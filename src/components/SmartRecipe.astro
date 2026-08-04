@@ -1,0 +1,364 @@
+---
+/**
+ * The QR -> recipe pipeline.
+ *
+ * ── What this section may and may not say ─────────────────────────────────
+ * COMPLIANCE Rule 1 is the binding constraint here, and it is easy to breach by
+ * accident in exactly this section. A recipe tool aimed at pregnant and
+ * postpartum mothers is dietary advice the moment the recipes are described as
+ * tailored TO THE READER. Neither founder is a clinician.
+ *
+ * The line this component holds:
+ *   - The tool is keyed to WHAT IS IN THE BAG, never to who is holding it.
+ *   - It suggests ways to cook a vegetable. It does not suggest what to eat,
+ *     how much, or when.
+ *   - No mention of nutrients, pregnancy, recovery, or outcomes anywhere.
+ *
+ * Phrased that way it is a cooking aid attached to a bag of produce, which is
+ * what it actually is. `disclaimer` is rendered unconditionally and is not
+ * optional — do not add a prop to turn it off.
+ *
+ * ── Honesty about status ──────────────────────────────────────────────────
+ * The tool is not built. COMPLIANCE Rule 5's spirit ("numbers are true")
+ * extends to capabilities: a section describing a live feature that does not
+ * exist is the same failure. `status` renders a visible "in development" badge,
+ * and the QR block is explicitly marked as a preview rather than presented as a
+ * working code a reader might try to scan.
+ *
+ * ── The QR graphic ────────────────────────────────────────────────────────
+ * Deliberately NOT a real QR code. Generating a scannable code that resolves to
+ * nothing would be worse than an illustration — a reader would scan it, get an
+ * error, and conclude the site is broken. It is a deterministic pattern from a
+ * seeded PRNG so it looks like a code, renders identically on every build, and
+ * is `aria-hidden` because it carries no information.
+ */
+
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+import type { IconName } from '../icons';
+
+interface Step {
+  icon?: string;
+  title: string;
+  body?: string;
+}
+
+interface Props {
+  steps: Step[];
+  /** Badge text, e.g. "In development". Required — see the note above. */
+  status: string;
+  /** Caption under the QR block, e.g. "Preview - not a working code". */
+  qrCaption: string;
+  /** The Rule 1 line. Rendered unconditionally. */
+  disclaimer: string;
+  class?: string;
+}
+
+const { steps, status, qrCaption, disclaimer, class: className, ...rest }: Props = Astro.props;
+
+/*
+  Seeded PRNG (mulberry32). A fixed seed means the "code" is byte-identical on
+  every build, so it never shows up as noise in a visual diff.
+*/
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const GRID = 21; // a real QR version-1 is 21x21, which is why this reads as one
+const rand = mulberry32(20260809);
+
+/** True where the three finder squares sit, so the pattern reads as a QR code. */
+function isFinder(x: number, y: number) {
+  const inBox = (ox: number, oy: number) =>
+    x >= ox && x < ox + 7 && y >= oy && y < oy + 7;
+  return inBox(0, 0) || inBox(GRID - 7, 0) || inBox(0, GRID - 7);
+}
+
+const cells: { x: number; y: number }[] = [];
+for (let y = 0; y < GRID; y++) {
+  for (let x = 0; x < GRID; x++) {
+    if (isFinder(x, y)) continue;
+    if (rand() > 0.55) cells.push({ x, y });
+  }
+}
+
+/** The three concentric finder squares, drawn as rings rather than 49 cells. */
+const finders = [
+  { x: 0, y: 0 },
+  { x: GRID - 7, y: 0 },
+  { x: 0, y: GRID - 7 },
+];
+---
+
+<div class:list={['smart', className]} {...rest}>
+  {/* ── The bag tag ──────────────────────────────────────────────────────── */}
+  <Reveal class="smart__tag">
+    <div class="tag">
+      <span class="tag__badge">
+        <Icon name="sparkles" size={14} />
+        {status}
+      </span>
+
+      <svg
+        class="tag__qr"
+        viewBox={`0 0 ${GRID} ${GRID}`}
+        aria-hidden="true"
+        focusable="false"
+        shape-rendering="crispEdges"
+      >
+        {cells.map((c) => <rect x={c.x} y={c.y} width="1" height="1" rx="0.18" />)}
+        {
+          finders.map((f) => (
+            <>
+              <rect x={f.x} y={f.y} width="7" height="7" rx="1.6" class="tag__finder" />
+              <rect
+                x={f.x + 1}
+                y={f.y + 1}
+                width="5"
+                height="5"
+                rx="1"
+                class="tag__finder-gap"
+              />
+              <rect x={f.x + 2} y={f.y + 2} width="3" height="3" rx="0.7" />
+            </>
+          ))
+        }
+      </svg>
+
+      <p class="tag__caption">{qrCaption}</p>
+    </div>
+  </Reveal>
+
+  {/* ── The pipeline ─────────────────────────────────────────────────────── */}
+  <div class="smart__flow">
+    <Reveal stagger={110} class="flow">
+      {
+        steps.map((s, i) => (
+          <article class="flow__step">
+            <span class="flow__icon">
+              <Icon name={(s.icon ?? 'leaf') as IconName} size={22} />
+            </span>
+            <div>
+              <h3 class="flow__title">
+                <span class="flow__num">{String(i + 1).padStart(2, '0')}</span>
+                {s.title}
+              </h3>
+              {s.body && <p class="flow__body">{s.body}</p>}
+            </div>
+          </article>
+        ))
+      }
+    </Reveal>
+
+    <p class="smart__disclaimer">
+      <Icon name="shield-check" size={16} />
+      <span>{disclaimer}</span>
+    </p>
+  </div>
+</div>
+
+<style>
+  .smart {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    margin-top: var(--spacing-block);
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .smart {
+      grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
+    }
+  }
+
+  /* ================= BAG TAG ============================================ */
+  .tag {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    /* Dashed, because the thing being depicted is a card tied to a bag. */
+    border: 2px dashed var(--color-line-strong);
+    text-align: center;
+  }
+
+  .tag__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.7rem;
+    margin-bottom: 1.1rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-harvest-tint);
+    color: var(--color-season-harvest);
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+  }
+
+  .tag__qr {
+    width: min(11rem, 60vw);
+    height: auto;
+    /* The pattern is one colour; only the finder gap punches back to the card. */
+    fill: var(--color-ink);
+  }
+
+  .tag__finder-gap {
+    fill: var(--color-card);
+  }
+
+  .tag__caption {
+    margin-top: 1rem;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--text-muted);
+    text-wrap: balance;
+  }
+
+  /* ================= FLOW =============================================== */
+  .flow {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 44rem) {
+    .flow {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .flow__step {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.9rem;
+    padding: 1.35rem 1.4rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .flow__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex: none;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 12%, transparent);
+    color: var(--accent, var(--color-clay));
+  }
+
+  .flow__title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: var(--text-heading);
+  }
+
+  .flow__num {
+    font-family: var(--font-body);
+    font-size: var(--text-numeral);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--text-numeral--letter-spacing);
+    color: var(--accent, var(--color-clay));
+    /*
+      No `opacity`. This was 0.6, which blends the accent toward the ink band
+      behind it and fails WCAG AA — the same mistake `.howcard__step` made and
+      the same fix. The accents are contrast-checked per surface at full
+      strength only. Keep a numeral quiet with size, never with transparency.
+    */
+  }
+
+  .flow__body {
+    margin-top: 0.3rem;
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  /* ================= DISCLAIMER ========================================= */
+  .smart__disclaimer {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    padding: 1rem 1.15rem;
+    border-radius: var(--radius-md);
+    background-color: var(--color-garden-tint);
+    border-left: 3px solid var(--color-garden);
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--color-ink);
+  }
+
+  .smart__disclaimer :global(.icon) {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--color-garden);
+  }
+
+  /* ================= DARK BAND OVERRIDES ===============================
+     This component is placed on `surface="ink"`, where the ink band inverts
+     --text-heading and --text-muted to cream. A card left at --color-card is
+     then cream text on white — invisible, and flagged as a serious contrast
+     failure by `npm run check:a11y`. Every raised surface here has to invert
+     with the text roles, not independently of them. */
+  :global(.section--ink) .tag,
+  :global(.section--ink) .flow__step {
+    background-color: var(--color-ink-deep-soft);
+    border-color: color-mix(in oklab, var(--color-ink-inverse) 18%, transparent);
+    box-shadow: none;
+  }
+
+  :global(.section--ink) .tag {
+    border-style: dashed;
+    border-color: color-mix(in oklab, var(--color-ink-inverse) 30%, transparent);
+  }
+
+  /* The QR pattern is drawn in ink, which vanishes on an ink card. */
+  :global(.section--ink) .tag__qr {
+    fill: var(--color-ink-inverse);
+  }
+
+  :global(.section--ink) .tag__finder-gap {
+    fill: var(--color-ink-deep-soft);
+  }
+
+  :global(.section--ink) .smart__disclaimer {
+    background-color: color-mix(in oklab, var(--color-garden) 22%, transparent);
+    border-left-color: var(--color-ink-inverse);
+    color: var(--color-ink-inverse);
+  }
+
+  :global(.section--ink) .smart__disclaimer :global(.icon) {
+    color: var(--color-ink-inverse);
+  }
+
+  /*
+    The step numeral cannot use `--accent` here.
+
+    On the ink band the accent resolves to --color-clay-soft, which the palette
+    marks "3.6:1 — decorative ONLY, never text", and these cards sit on
+    --color-ink-deep-soft, which is lighter still. axe flagged it as a serious
+    contrast failure. --color-line is the surface's own muted-text role and
+    clears it comfortably while staying warm.
+  */
+  :global(.section--ink) .flow__num {
+    color: var(--color-line);
+  }
+</style>

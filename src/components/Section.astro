@@ -15,6 +15,8 @@
  *   - `bleed` removes the container so a child can run edge to edge.
  */
 
+import Botanical from './Botanical.astro';
+
 interface Props {
   id?: string;
   /** Surface band. Alternate these down a page so sections separate without rules. */
@@ -29,6 +31,21 @@ interface Props {
   bleed?: boolean;
   /** Folio number, e.g. "01". Rendered in the margin on wide screens. */
   numeral?: string;
+  /**
+   * A botanical plate behind the content, in the margin.
+   *
+   * <Botanical> was built as "the site's own illustration layer" and then never
+   * wired into a single page, which is most of why the site read as flat and
+   * corporate — warm palette, good type, and nothing on it. These are large,
+   * very low opacity, and behind everything: the effect should register as
+   * texture rather than as a picture.
+   *
+   * Only shown from 68rem up. Below that there is no margin to put one in, and
+   * an illustration behind body text on a phone is just a legibility problem.
+   */
+  ornament?: 'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair';
+  /** Which margin the plate sits in. Alternate down a page. */
+  ornamentSide?: 'left' | 'right';
   as?: 'section' | 'div';
   /** Accessible name. A <section> with no name is not exposed as a landmark. */
   label?: string;
@@ -43,6 +60,8 @@ const {
   measure = false,
   bleed = false,
   numeral,
+  ornament,
+  ornamentSide = 'right',
   as: Tag = 'section',
   label,
   class: className,
@@ -59,11 +78,20 @@ const {
     rhythm !== 'default' && `section--${rhythm}`,
     bleed && 'section--bleed',
     numeral && 'section--numbered',
+    ornament && `section--ornament-${ornamentSide}`,
     className,
   ]}
   aria-label={label}
   {...rest}
 >
+  {
+    ornament && (
+      <span class="section__ornament" aria-hidden="true">
+        <Botanical plate={ornament} size={420} weight={1} />
+      </span>
+    )
+  }
+
   <div class:list={['section__inner', measure && 'section__inner--measure']}>
     {
       numeral && (
@@ -100,7 +128,7 @@ const {
     padding-block: 0;
   }
 
-  /* The container has to go too, or "full bleed" is just a centred image with
+  /* The container has to go too, or "full bleed" is just a centered image with
      no gutter. */
   .section--bleed .section__inner {
     max-width: none;
@@ -117,11 +145,44 @@ const {
   }
 
   /*
+    A very soft light source at the top of each light band.
+
+    Flat fills are the single biggest reason a warm palette reads as a template:
+    every band is one dead colour edge to edge, so the page has no depth and the
+    cards sitting on it have nothing to sit on. This is a barely-there wash —
+    a few percent, biased to the top where a page's implied light comes from —
+    and it costs one gradient with no extra element and no request.
+
+    Deliberately NOT applied to the ink or garden bands, where a light wash
+    would fight the inverted text roles instead of supporting them.
+  */
+  .section--cream::before,
+  .section--sand::before,
+  .section--parchment::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        120% 70% at 50% 0%,
+        rgb(255 255 255 / 0.55) 0%,
+        rgb(255 255 255 / 0) 60%
+      ),
+      radial-gradient(
+        90% 60% at 100% 100%,
+        color-mix(in oklab, var(--color-leaf) 7%, transparent) 0%,
+        transparent 65%
+      );
+  }
+
+  /*
     Brand-green band, for the call to action immediately above the footer.
     It exists because the CTA and the footer were BOTH ink-deep and merged into
     one undifferentiated dark block with no seam between them. Two adjacent
     surfaces need to differ, and green is the brand's own answer rather than an
-    arbitrary third grey.
+    arbitrary third gray.
   */
   .section--garden {
     background-color: var(--color-garden-deep);
@@ -174,8 +235,51 @@ const {
     --accent: var(--color-ink-inverse);
   }
 
+  /* --- Ornament ------------------------------------------------------------
+     Sits above the background wash and below every piece of content. Clipped by
+     the section's own overflow so a plate can bleed off the edge rather than
+     widening the page — `npm run check:overflow` fails on a single stray pixel. */
+  .section__ornament {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    z-index: 0;
+    pointer-events: none;
+    color: var(--color-leaf);
+    opacity: 0.13;
+  }
+
+  .section--ornament-right .section__ornament {
+    right: clamp(-6rem, -4vw, -2rem);
+  }
+
+  .section--ornament-left .section__ornament {
+    left: clamp(-6rem, -4vw, -2rem);
+    /* Mirrored so the two sides do not read as the same drawing twice. */
+    scale: -1 1;
+  }
+
+  .section {
+    overflow: clip;
+  }
+
+  @media (max-width: 68rem) {
+    .section__ornament {
+      display: none;
+    }
+  }
+
+  /* On the dark bands the plate has to lighten rather than darken, or it
+     disappears into the background entirely. */
+  .section--ink .section__ornament,
+  .section--garden .section__ornament {
+    color: var(--color-ink-inverse);
+    opacity: 0.09;
+  }
+
   .section__inner {
     position: relative;
+    z-index: 1;
     max-width: var(--container-page);
     margin-inline: auto;
   }

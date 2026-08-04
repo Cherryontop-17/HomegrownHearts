@@ -1,0 +1,570 @@
+---
+/**
+ * "What should I cook tonight?" — shuffling cards, stopped by a button.
+ *
+ * ── Why this is about the BAG and not about the reader ────────────────────
+ * This started as a "cravings translator": a mother taps what she is craving
+ * and the site offers a nutrient-dense alternative. That version cannot ship.
+ * COMPLIANCE Rule 1 bans `nutrient-rich` by name, and suggesting a pregnant
+ * woman eat something other than what she is craving is dietary counselling —
+ * from two people who are not clinicians, to the exact audience the partner
+ * clinic serves. Cravings are also genuinely clinical ground (pica,
+ * gestational diabetes); it is not ours to play with.
+ *
+ * The MECHANIC is untouched: cards shuffle, a button stops them, confetti
+ * fires, a result opens. Only the input changed. The cards are the vegetables
+ * actually growing in our beds, and the answer is a way to cook one — which is
+ * the same contract the QR tag already runs on, and the same reason that one
+ * is compliant. It is keyed to what is in the bag, never to who is holding it.
+ *
+ * ⚠️ Do not reintroduce the reader as an input. No "what do you feel like",
+ * no "instead of", no swaps, no nutrients. See docs/CROPS.md.
+ *
+ * ── Honesty ───────────────────────────────────────────────────────────────
+ * The recipes are not written yet, so the result panel says so in as many
+ * words rather than showing a plausible-looking placeholder. Same principle as
+ * the Recipe AI page: an unfinished thing says it is unfinished.
+ */
+
+import Icon from './Icon.astro';
+import { CROPS } from '../crops';
+import type { IconName } from '../icons';
+
+interface Props {
+  /** Translated crop names, joined to src/crops.ts by `key`. */
+  crops: { key?: string; title: string }[];
+  /** Button that starts/stops the shuffle. */
+  spinLabel: string;
+  stopLabel: string;
+  againLabel: string;
+  /** Heading above the cards. */
+  title: string;
+  intro: string;
+  /** Result panel. */
+  resultEyebrow: string;
+  /** The honest placeholder, shown large. */
+  pendingLabel: string;
+  pendingBody: string;
+  closeLabel: string;
+  /** The escape hatch to the Recipe AI page. */
+  altLabel: string;
+  altHref: string;
+  class?: string;
+}
+
+const {
+  crops,
+  spinLabel,
+  stopLabel,
+  againLabel,
+  title,
+  intro,
+  resultEyebrow,
+  pendingLabel,
+  pendingBody,
+  closeLabel,
+  altLabel,
+  altHref,
+  class: className,
+  ...rest
+}: Props = Astro.props;
+
+const nameOf = new Map(crops.map((c) => [c.key, c.title]));
+
+const deck = CROPS.map((c) => ({
+  id: c.id,
+  icon: c.icon as IconName,
+  name: nameOf.get(c.id) ?? c.id,
+}));
+
+/* Five slots on screen; the deck cycles through them. */
+const SLOTS = 5;
+---
+
+<div class:list={['shuffle', className]} data-shuffle {...rest}>
+  <div class="shuffle__head">
+    <h3 class="shuffle__title">{title}</h3>
+    <p class="shuffle__intro">{intro}</p>
+  </div>
+
+  <div class="shuffle__deck" data-deck>
+    {
+      Array.from({ length: SLOTS }, (_, i) => (
+        <div class="scard" data-slot={String(i)}>
+          <span class="scard__icon">
+            <Icon name={deck[i % deck.length].icon} size={26} />
+          </span>
+          <span class="scard__name">{deck[i % deck.length].name}</span>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="shuffle__actions">
+    <button type="button" class="shuffle__go" data-shuffle-go data-spin={spinLabel} data-stop={stopLabel} data-again={againLabel}>
+      {spinLabel}
+    </button>
+  </div>
+
+  {/*
+    The result. A real <dialog> — Escape closes it, clicking the backdrop
+    closes it, and focus is handled by the platform rather than by us.
+  */}
+  <dialog class="result" data-result aria-labelledby="shuffle-result-title">
+    <div class="result__inner">
+      <p class="result__eyebrow">{resultEyebrow}</p>
+      <p class="result__crop" data-result-crop></p>
+
+      <p class="result__pending" id="shuffle-result-title">{pendingLabel}</p>
+      <p class="result__body">{pendingBody}</p>
+
+      <div class="result__actions">
+        <a class="result__alt" href={altHref}>{altLabel}</a>
+        <button type="button" class="result__close" data-result-close>{closeLabel}</button>
+      </div>
+    </div>
+  </dialog>
+
+  {/* Confetti lands here. Emptied as soon as the burst finishes. */}
+  <div class="confetti" data-confetti aria-hidden="true"></div>
+
+  {/* Deck data for the script, so the crop list is not duplicated in JS. */}
+  <script is:inline type="application/json" data-deck-json set:html={JSON.stringify(deck)} />
+</div>
+
+<style>
+  .shuffle {
+    position: relative;
+    margin-top: var(--spacing-block);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .shuffle__head {
+    text-align: center;
+    margin-bottom: var(--spacing-block);
+  }
+
+  .shuffle__title {
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+    color: var(--text-heading);
+  }
+
+  .shuffle__intro {
+    margin-top: 0.5rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  /* ================= DECK ============================================== */
+  .shuffle__deck {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 40rem) {
+    .shuffle__deck {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .scard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+    min-height: 7rem;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-garden-tint);
+    border: 1px solid transparent;
+    text-align: center;
+    /* Transform-only, so a shuffling card can never move the page. */
+    transition:
+      transform var(--duration-fast) var(--ease-out-soft),
+      background-color var(--duration-fast) var(--ease-out-soft),
+      border-color var(--duration-fast) var(--ease-out-soft);
+  }
+
+  .scard__icon {
+    color: var(--color-garden-deep);
+  }
+
+  .scard__name {
+    font-size: var(--text-small);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  /* Mid-shuffle: a small lift, staggered per slot so the row ripples. */
+  .shuffle.is-spinning .scard {
+    animation: scard-hop 420ms var(--ease-out-soft) infinite;
+  }
+
+  .shuffle.is-spinning .scard[data-slot='1'] {
+    animation-delay: 60ms;
+  }
+  .shuffle.is-spinning .scard[data-slot='2'] {
+    animation-delay: 120ms;
+  }
+  .shuffle.is-spinning .scard[data-slot='3'] {
+    animation-delay: 180ms;
+  }
+  .shuffle.is-spinning .scard[data-slot='4'] {
+    animation-delay: 240ms;
+  }
+
+  @keyframes scard-hop {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-8px) rotate(-1.5deg);
+    }
+  }
+
+  /* The one that was landed on. */
+  .scard.is-picked {
+    background-color: var(--color-harvest-tint);
+    border-color: var(--color-season-harvest);
+    transform: scale(1.06);
+  }
+
+  /* ================= ACTION ============================================ */
+  .shuffle__actions {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--spacing-block);
+  }
+
+  .shuffle__go {
+    min-height: 44px;
+    padding: 0.85rem 2rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-garden);
+    color: var(--color-ink-inverse);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-fast) var(--ease-out-soft),
+      transform var(--duration-fast) var(--ease-overshoot);
+  }
+
+  .shuffle__go:hover {
+    background-color: var(--color-garden-deep);
+    transform: translateY(-2px) scale(1.04);
+  }
+
+  .shuffle__go:active {
+    transform: scale(0.97);
+  }
+
+  .shuffle__go:focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 3px;
+  }
+
+  /* ================= RESULT ============================================ */
+  .result {
+    width: min(30rem, calc(100vw - 2rem));
+    /* `margin: auto` is what centres a modal <dialog>. The UA stylesheet sets
+       it, but declaring width in a scoped block reset the shorthand and the
+       panel pinned itself to the top-left corner. */
+    margin: auto;
+    padding: 0;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-2xl);
+    background-color: var(--color-card);
+    box-shadow: var(--shadow-deep);
+    color: var(--color-ink);
+  }
+
+  .result::backdrop {
+    background-color: rgb(26 24 21 / 0.45);
+  }
+
+  .result__inner {
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    text-align: center;
+  }
+
+  .result__eyebrow {
+    font-size: var(--text-eyebrow);
+    font-weight: 700;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--color-garden);
+  }
+
+  .result__crop {
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    font-size: var(--text-h2);
+    line-height: 1.1;
+    color: var(--text-heading);
+  }
+
+  /*
+    The honest placeholder, at the size the user asked for. It is deliberately
+    the loudest thing in the panel: the recipes do not exist yet, and a large
+    cheerful "not written yet" is better than a small apologetic one.
+  */
+  .result__pending {
+    margin-top: 1.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 12vw, 5rem);
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--color-clay);
+  }
+
+  .result__body {
+    margin-top: 0.75rem;
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+
+  .result__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .result__alt,
+  .result__close {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .result__alt {
+    background-color: var(--color-garden);
+    color: var(--color-ink-inverse);
+    border: 1px solid var(--color-garden);
+  }
+
+  .result__alt:hover {
+    background-color: var(--color-garden-deep);
+  }
+
+  .result__close {
+    background-color: transparent;
+    color: var(--color-ink);
+    border: 1px solid var(--color-line-strong);
+  }
+
+  .result__close:hover {
+    border-color: var(--color-clay);
+    color: var(--color-clay);
+  }
+
+  /* ================= CONFETTI ========================================== */
+  .confetti {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .confetti :global(span) {
+    position: absolute;
+    display: block;
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 40% 60% 55% 45%;
+    will-change: transform, opacity;
+    animation: confetti-fall var(--dur) cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+  }
+
+  @keyframes confetti-fall {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(var(--dx), var(--dy), 0) rotate(var(--rot));
+      opacity: 0;
+    }
+  }
+
+  /*
+    Reduced motion switches every part of this off — the hop, the confetti, and
+    the button's bounce. The feature still works: you press it, cards stop, a
+    result opens. Only the movement goes.
+  */
+  @media (prefers-reduced-motion: reduce) {
+    .shuffle.is-spinning .scard {
+      animation: none;
+    }
+    .scard,
+    .shuffle__go {
+      transition: none;
+    }
+    .shuffle__go:hover,
+    .shuffle__go:active {
+      transform: none;
+    }
+    .confetti {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Shuffle, stop, celebrate, reveal.
+   *
+   * The whole thing is one setInterval swapping card contents, a click to stop
+   * it, and a <dialog>. No framework and no state machine — there are exactly
+   * two states and the class name carries them.
+   */
+  interface Crop {
+    id: string;
+    icon: string;
+    name: string;
+  }
+
+  function initShuffle() {
+    document.querySelectorAll<HTMLElement>('[data-shuffle]').forEach((root) => {
+      if (root.dataset.shuffleBound === 'true') return;
+      root.dataset.shuffleBound = 'true';
+
+      const deckEl = root.querySelector<HTMLElement>('[data-deck]');
+      const go = root.querySelector<HTMLButtonElement>('[data-shuffle-go]');
+      const dialog = root.querySelector<HTMLDialogElement>('[data-result]');
+      const cropOut = root.querySelector<HTMLElement>('[data-result-crop]');
+      const closeBtn = root.querySelector<HTMLButtonElement>('[data-result-close]');
+      const confetti = root.querySelector<HTMLElement>('[data-confetti]');
+      const json = root.querySelector<HTMLScriptElement>('[data-deck-json]');
+      if (!deckEl || !go || !dialog || !json) return;
+
+      const deck: Crop[] = JSON.parse(json.textContent || '[]');
+      if (deck.length === 0) return;
+
+      const cards = [...deckEl.querySelectorAll<HTMLElement>('.scard')];
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      let timer: number | null = null;
+      let spinning = false;
+
+      const paint = (card: HTMLElement, crop: Crop) => {
+        const name = card.querySelector('.scard__name');
+        if (name) name.textContent = crop.name;
+        card.dataset.cropId = crop.id;
+      };
+
+      // Seed each card's id so a stop before the first tick still resolves.
+      cards.forEach((c, i) => paint(c, deck[i % deck.length]));
+
+      const tick = () => {
+        cards.forEach((card) => {
+          paint(card, deck[Math.floor(Math.random() * deck.length)]);
+        });
+      };
+
+      /** A burst of small produce-coloured shapes from the button. */
+      const celebrate = () => {
+        if (!confetti || reduced.matches) return;
+
+        const rect = go.getBoundingClientRect();
+        const originX = rect.left + rect.width / 2;
+        const originY = rect.top + rect.height / 2;
+        // Brand tints only — this should look like the site, not like a party
+        // supply shop.
+        const colors = ['#2f6b4f', '#8a5a12', '#9a3412', '#6a8659', '#c2703f'];
+
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < 28; i++) {
+          const bit = document.createElement('span');
+          const angle = Math.random() * Math.PI * 2;
+          const dist = 90 + Math.random() * 190;
+          bit.style.left = `${originX}px`;
+          bit.style.top = `${originY}px`;
+          bit.style.backgroundColor = colors[i % colors.length];
+          bit.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+          // Biased downward, so it falls rather than floating away.
+          bit.style.setProperty('--dy', `${Math.sin(angle) * dist + 220}px`);
+          bit.style.setProperty('--rot', `${Math.random() * 720 - 360}deg`);
+          bit.style.setProperty('--dur', `${900 + Math.random() * 700}ms`);
+          frag.appendChild(bit);
+        }
+        confetti.appendChild(frag);
+
+        // Clear the burst once it has finished, so the DOM does not grow.
+        window.setTimeout(() => {
+          confetti.replaceChildren();
+        }, 1800);
+      };
+
+      const stop = () => {
+        if (timer !== null) window.clearInterval(timer);
+        timer = null;
+        spinning = false;
+        root.classList.remove('is-spinning');
+
+        // Land on the middle card, so the eye has somewhere to be.
+        const landed = cards[Math.floor(cards.length / 2)];
+        cards.forEach((c) => c.classList.remove('is-picked'));
+        landed.classList.add('is-picked');
+
+        const crop = deck.find((d) => d.id === landed.dataset.cropId) ?? deck[0];
+        if (cropOut) cropOut.textContent = crop.name;
+
+        celebrate();
+
+        go.textContent = go.dataset.again ?? 'Again';
+
+        // Let the confetti read for a beat before the dialog covers it.
+        window.setTimeout(() => {
+          if (typeof dialog.showModal === 'function') dialog.showModal();
+          else dialog.setAttribute('open', '');
+        }, reduced.matches ? 0 : 420);
+      };
+
+      const start = () => {
+        spinning = true;
+        root.classList.add('is-spinning');
+        go.textContent = go.dataset.stop ?? 'Stop';
+        cards.forEach((c) => c.classList.remove('is-picked'));
+        timer = window.setInterval(tick, reduced.matches ? 220 : 110);
+      };
+
+      go.addEventListener('click', () => (spinning ? stop() : start()));
+
+      closeBtn?.addEventListener('click', () => dialog.close());
+
+      // Click outside the panel closes it. The dialog element itself is the
+      // backdrop's hit area, so a click landing on it is a click outside.
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+    });
+  }
+
+  initShuffle();
+  document.addEventListener('astro:page-load', initShuffle);
+</script>

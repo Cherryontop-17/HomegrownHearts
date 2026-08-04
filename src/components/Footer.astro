@@ -21,7 +21,6 @@
  */
 
 import { getLocale, localizePath, useTranslations } from '../i18n/utils';
-import { PRIMARY_NAV } from '../nav';
 import { ORG, CONTACT, ADVISOR, SOCIAL, has } from '../config';
 import Logo from './Logo.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
@@ -30,9 +29,49 @@ import Icon from './Icon.astro';
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
-const items = PRIMARY_NAV.map((item) => ({
-  href: localizePath(item.path, locale),
-  label: t(item.labelKey),
+/*
+  Three named columns rather than one long list.
+
+  The footer used to map PRIMARY_NAV, which left every subpage unlinked; then it
+  mapped a flattened list, which linked everything but produced a single column
+  fifteen items tall. Grouping is what makes a footer scannable — a reader looks
+  for the heading first and the link second.
+
+  Written out here rather than derived from the nav tree, because the useful
+  footer grouping is not the same shape as the useful header grouping: "For
+  clinics" belongs beside "Our partners" down here, and under "Contact" up
+  there.
+*/
+const columns = [
+  {
+    headingKey: 'footer.explore' as const,
+    links: [
+      { path: '/#about', labelKey: 'nav.aboutUs' as const },
+      { path: '/#how', labelKey: 'nav.how' as const },
+      { path: '/#impact', labelKey: 'nav.impact' as const },
+      { path: '/garden', labelKey: 'nav.garden' as const },
+    ],
+  },
+  {
+    headingKey: 'footer.help' as const,
+    links: [
+      { path: '/get-involved/volunteer', labelKey: 'nav.volunteer' as const },
+      { path: '/get-involved/donate', labelKey: 'nav.donate' as const },
+      { path: '/get-involved/drop-off', labelKey: 'nav.dropOff' as const },
+    ],
+  },
+  {
+    headingKey: 'footer.more' as const,
+    links: [
+      { path: '/recipe-ai', labelKey: 'nav.recipeAi' as const },
+      { path: '/our-partners', labelKey: 'nav.ourPartners' as const },
+      { path: '/partners', labelKey: 'nav.partners' as const },
+      { path: '/contact', labelKey: 'nav.getInTouch' as const },
+    ],
+  },
+].map((col) => ({
+  heading: t(col.headingKey),
+  links: col.links.map((l) => ({ href: localizePath(l.path, locale), label: t(l.labelKey) })),
 }));
 
 const year = new Date().getFullYear();
@@ -55,20 +94,30 @@ const year = new Date().getFullYear();
       <p class="footer__blurb">{t('footer.blurb')}</p>
     </div>
 
-    <nav class="footer__col" aria-label={t('a11y.mainNav')}>
-      <h2 class="footer__heading">{ORG.name}</h2>
-      <ul class="footer__list">
-        {
-          items.map((item) => (
-            <li>
-              <a class="footer__link" href={item.href}>
-                {item.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+    {/*
+      Every column is a direct child of one grid.
+
+      The three link columns used to live in a nested grid inside a single
+      track, which meant they had one column's width to share and auto-fit
+      collapsed them into a stack — the footer rendered as one long ladder with
+      an empty half. Flat is the only thing that reliably lines them up.
+    */}
+    {
+      columns.map((col) => (
+        <nav class="footer__col" aria-label={col.heading}>
+          <h2 class="footer__heading">{col.heading}</h2>
+          <ul class="footer__list">
+            {col.links.map((link) => (
+              <li>
+                <a class="footer__link" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      ))
+    }
 
     <div class="footer__col">
       <h2 class="footer__heading">{t('nav.contact')}</h2>
@@ -116,11 +165,6 @@ const year = new Date().getFullYear();
         }
       </p>
     </div>
-
-    <div class="footer__col">
-      <h2 class="footer__heading">{t('a11y.langSwitch')}</h2>
-      <LanguageSwitcher layout="stacked" />
-    </div>
   </div>
 
   <div class="footer__legal">
@@ -130,6 +174,7 @@ const year = new Date().getFullYear();
 
   <div class="footer__base">
     <p class="footer__copy">{`© ${year} ${ORG.name}. ${t('footer.rights')}`}</p>
+    <LanguageSwitcher label={t('a11y.langSwitchFooter')} />
   </div>
 </footer>
 
@@ -137,6 +182,16 @@ const year = new Date().getFullYear();
   .footer {
     background-color: var(--color-ink-deep);
     color: var(--color-ink-inverse);
+    /*
+      The footer is a <footer>, not a <Section>, so it never picked up the
+      inverted text roles that `.section--ink` sets — and the language switcher
+      inside it kept rendering at ink-muted, which measures 2.5:1 here. Any
+      component placed on a dark surface needs these, so the surface declares
+      them rather than each component guessing.
+    */
+    --text-heading: var(--color-ink-inverse);
+    --text-muted: var(--color-line);
+    --rule-color: color-mix(in oklab, var(--color-line) 22%, transparent);
     padding-block: clamp(3.5rem, 8vh, 5.5rem) 2rem;
     padding-inline: var(--spacing-gutter);
   }
@@ -144,25 +199,45 @@ const year = new Date().getFullYear();
   .footer__inner,
   .footer__legal,
   .footer__base {
-    max-width: var(--container-page);
-    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule-color);
   }
 
   .footer__inner {
     display: grid;
-    gap: 2.75rem;
+    gap: clamp(2rem, 4vw, 3rem);
   }
 
-  @media (min-width: 40rem) {
+  /* Two columns of links once there is room for them. */
+  @media (min-width: 34rem) {
     .footer__inner {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 64rem) {
+  @media (min-width: 60rem) {
     .footer__inner {
-      grid-template-columns: 1.6fr repeat(3, 1fr);
-      gap: 2.5rem;
+      /*
+        Brand, then one track per column, all siblings in the same grid.
+        The brand gets the wider track because it carries a paragraph; the four
+        link columns are equal so their headings align on one baseline.
+      */
+      grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr));
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      /* Without this the columns stretch to the tallest and their headings
+         drift off a shared baseline. */
+      align-items: start;
+    }
+
+    /* The brand column spans the full height rather than leaving the dead
+       space under it that the stacked version had. */
+    .footer__brand {
+      grid-row: 1;
     }
   }
 
@@ -210,6 +285,10 @@ const year = new Date().getFullYear();
   }
 
   .footer__link {
+    /* The shared inbox is 26 characters with no spaces, and in a 1fr track it
+       pushed against the page edge. Breaking it is better than widening the
+       column for one string. */
+    overflow-wrap: anywhere;
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;

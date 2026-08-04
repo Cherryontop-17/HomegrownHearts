@@ -1,0 +1,216 @@
+---
+/**
+ * Season goals, each shown against the live actual.
+ *
+ * ── Why this component exists at all ──────────────────────────────────────
+ * COMPLIANCE Rule 5 says numbers on this site are true, including the small
+ * ones. A bare "250+ lbs of produce" on a site whose garden is not yet planted
+ * is not true, and it is the kind of claim that costs a partnership when a
+ * clinic checks it.
+ *
+ * The fix is not to drop the ambition — it is to show both numbers. This
+ * component makes the pairing structural rather than editorial: a goal cannot
+ * be rendered here WITHOUT its actual, because both come from the same required
+ * prop and the progress bar is computed from the two. There is no way to use
+ * this component to display a goal on its own.
+ *
+ * So the section reads "our target is 250 lbs; we have delivered 0 so far,
+ * planting begins August 9". That is a stronger claim to a partner than an
+ * unverifiable number, and it stays correct on its own as the actuals rise.
+ *
+ * ── Motion ───────────────────────────────────────────────────────────────
+ * The numerals reuse the page-wide `[data-count-up]` observer in StatCard.astro
+ * rather than shipping a second one. The suffix ("+", "%") sits in its own
+ * element because that script replaces the whole text node of what it counts.
+ */
+
+import Icon from './Icon.astro';
+import Reveal from './Reveal.astro';
+import type { IconName } from '../icons';
+
+interface Goal {
+  icon: IconName;
+  /** The target. Counted up to. */
+  target: number;
+  /** Rendered after the numeral and not counted — "+", "%", " lbs". */
+  suffix?: string;
+  label: string;
+  /** Where we actually are. Required — see the note above. */
+  actual: number;
+  /** e.g. "0 of 250 lbs delivered so far". Pre-composed by the caller so the
+      sentence can be ordered naturally in each language. */
+  actualLabel: string;
+}
+
+interface Props {
+  goals: Goal[];
+  /** Small caption above the grid, e.g. "First season, Aug-Nov 2026". */
+  caption?: string;
+  class?: string;
+}
+
+const { goals, caption, class: className, ...rest }: Props = Astro.props;
+
+/** Clamped so a data-entry slip cannot render a bar wider than its track. */
+const pct = (actual: number, target: number) =>
+  target <= 0 ? 0 : Math.min(100, Math.round((actual / target) * 100));
+---
+
+<div class:list={['goals', className]} {...rest}>
+  {caption && <p class="goals__caption">{caption}</p>}
+
+  <Reveal stagger={100} class="goals__grid">
+    {
+      goals.map((g) => (
+        <article class="goal">
+          <span class="goal__icon">
+            <Icon name={g.icon} size={22} />
+          </span>
+
+          <p class="goal__value">
+            <span data-count-up={String(g.target)}>{g.target}</span>
+            {g.suffix && <span class="goal__suffix">{g.suffix}</span>}
+          </p>
+
+          <p class="goal__label">{g.label}</p>
+
+          {/*
+            The honest half. `role="img"` with a full-sentence label rather than
+            a progressbar role: a screen reader should hear "0 of 250 lbs
+            delivered so far", not "progress bar, 0 percent", which drops the
+            unit and the meaning.
+          */}
+          <div class="goal__track" role="img" aria-label={g.actualLabel}>
+            <span class="goal__fill" style={`--pct:${pct(g.actual, g.target)}%`} />
+          </div>
+
+          <p class="goal__actual" aria-hidden="true">
+            {g.actualLabel}
+          </p>
+        </article>
+      ))
+    }
+  </Reveal>
+</div>
+
+<style>
+  .goals__caption {
+    margin-top: var(--spacing-block);
+    text-align: center;
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .goals__grid {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .goals__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .goal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-card);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .goal__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-md);
+    background-color: color-mix(in oklab, var(--accent, var(--color-clay)) 12%, transparent);
+    color: var(--accent, var(--color-clay));
+  }
+
+  .goal__value {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    line-height: 1;
+    font-weight: 600;
+    color: var(--accent, var(--color-clay));
+    /* Stops the row from reflowing as the digits change width mid-count. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .goal__suffix {
+    font-size: 0.62em;
+  }
+
+  .goal__label {
+    margin-top: 0.5rem;
+    font-size: var(--text-small);
+    font-weight: 600;
+    line-height: 1.45;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  .goal__track {
+    width: 100%;
+    height: 0.375rem;
+    margin-top: 1.25rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-line);
+    overflow: hidden;
+  }
+
+  .goal__fill {
+    display: block;
+    height: 100%;
+    width: var(--pct, 0%);
+    border-radius: inherit;
+    background-color: var(--accent, var(--color-clay));
+    /*
+      A zero-width fill is invisible, which reads as "broken bar" rather than
+      "nothing yet". A minimum sliver makes the empty state legible as a real
+      value. It is decorative — the true number is in the label beneath.
+    */
+    min-width: 0.375rem;
+  }
+
+  .goal__actual {
+    margin-top: 0.6rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Card surfaces must invert on the dark bands, or cream text lands on white. */
+  :global(.section--ink) .goal,
+  :global(.section--garden) .goal {
+    background-color: color-mix(in oklab, var(--color-ink-deep) 22%, transparent);
+    border-color: color-mix(in oklab, var(--color-ink-inverse) 20%, transparent);
+    box-shadow: none;
+  }
+
+  :global(.section--ink) .goal__label,
+  :global(.section--garden) .goal__label {
+    color: var(--color-ink-inverse);
+  }
+
+  :global(.section--ink) .goal__track,
+  :global(.section--garden) .goal__track {
+    background-color: color-mix(in oklab, var(--color-ink-inverse) 22%, transparent);
+  }
+</style>

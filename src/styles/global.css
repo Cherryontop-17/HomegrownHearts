@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './fonts.css';
 @import './motion.css';
+@import './print.css';
 
 /* ============================================================================
    Homegrown Hearts — design tokens
@@ -122,8 +123,29 @@
   /* --- Space ---------------------------------------------------------------
      Tailwind's 0.25rem step is already an 8px-compatible scale.
      These are the section rhythms — premium sites breathe, cheap ones cram. */
-  --spacing-section: clamp(5rem, 12vh, 9rem);
-  --spacing-section-tight: clamp(3.5rem, 8vh, 6rem);
+  /* Was clamp(5rem, 12vh, 9rem). On a tall screen that is 144px top AND bottom
+     between every band — nearly 300px of nothing — and on the sparser pages
+     (/impact, /contact) it read as a page that had failed to load rather than
+     as breathing room. Still generous, just not cavernous. */
+  --spacing-section: clamp(4rem, 9vh, 7rem);
+  --spacing-section-tight: clamp(3rem, 6.5vh, 5rem);
+
+  /*
+    The gap between a section's text (eyebrow, heading, lead) and the block of
+    cards, tiles or grid beneath it.
+
+    This is a token rather than a per-component number because it was NOT
+    consistent and the inconsistency was invisible in code review: ContentPage
+    set `.page-cards { margin-top: 2.5rem }`, Cards.astro set `.cards
+    { margin: 0 }`, both selectors had identical specificity, and whichever
+    stylesheet Astro emitted last won. The result was headings sitting almost on
+    top of their own cards on some pages and not others.
+
+    Anything that puts a content block under section text uses this. Never
+    hard-code the value again — and never set `margin: 0` shorthand on a block
+    that consumes it, which is what broke it the first time.
+  */
+  --spacing-block: clamp(2.5rem, 4.5vh, 3.5rem);
   --spacing-gutter: clamp(1.25rem, 5vw, 3rem);
   --container-content: 68ch; /* long-form measure */
   --container-page: 78rem;
@@ -140,7 +162,7 @@
   --radius-pill: 100vmax;
 
   /* --- Elevation -----------------------------------------------------------
-     Warm-tinted shadows. Grey shadows on a cream page look like dirt. */
+     Warm-tinted shadows. Gray shadows on a cream page look like dirt. */
   /* Multi-stop rather than one blur. A single large shadow reads as a drop
      shadow; three stacked stops read as an object resting on a surface. */
   --shadow-soft:
@@ -273,11 +295,37 @@
 }
 
 /* ============================================================================
+   Screen-reader-only text
+
+   Text that must exist for assistive tech but must not be seen. The calendar
+   in <Roadmap> is the reason this is a shared utility rather than a fourth
+   hand-rolled copy: its cells show a bare numeral, and "17" alone is useless
+   without "August 17, 2026 — First micro-harvest" behind it.
+
+   `clip-path: inset(50%)` rather than `display: none` or `visibility: hidden`,
+   both of which remove the element from the accessibility tree — the exact
+   opposite of the intent. The 1px box plus `overflow: hidden` is what keeps a
+   long string from creating a scrollbar.
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ============================================================================
    Paper grain
 
    A single fixed noise layer over the whole page at very low opacity. Flat
-   colour is what makes a warm palette read as a template; a trace of grain
-   makes the same colour read as paper, and it costs one inline SVG with no
+   color is what makes a warm palette read as a template; a trace of grain
+   makes the same color read as paper, and it costs one inline SVG with no
    network request.
 
    Generated with feTurbulence rather than shipped as a PNG so it is a few

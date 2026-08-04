@@ -1,0 +1,97 @@
+# HELP Pregnancy Center, Monroe — our delivery partner.
+#
+# ⚠️ COMPLIANCE Rule 4. This page names them, which is permitted because
+# PARTNER_CLINIC.approvedToDisplay is true on the basis of written permission
+# (see src/config.ts). If that is ever withdrawn, this page comes down.
+#
+# ⚠️ Rule 3 governs every sentence about the families they serve. We do not
+# know who receives a bundle, and nothing here may imply otherwise.
+#
+# ⚠️ Rule 1: describe the food and the process. Never what either does to a
+# person, and never anything that reads as the clinic endorsing a health claim
+# on our behalf.
+
+title: HELP Pregnancy Center
+description: How Homegrown Hearts works with HELP Pregnancy Center in Monroe, North Carolina, who decides which families receive a bundle, and what the clinic approved.
+
+hero:
+  eyebrow: Our delivery partner
+  title: HELP Pregnancy Center, Monroe.
+  lead: >-
+    Every bundle we pack goes to one place. This is what that partnership
+    actually involves, written out so nobody has to guess.
+
+sections:
+  - id: role
+    eyebrow: What they do
+    title: They make every decision that touches a family.
+    body:
+      - >-
+        We grow vegetables and drive them to the clinic. From the moment a
+        bundle is handed over, it is theirs. That division is the whole design
+        of this project, not a detail of it.
+    items:
+      - icon: file-check
+        title: They approved the produce list
+        body: >-
+          Before we planted anything, the clinic reviewed every item we wanted
+          to grow and pack. Nothing goes into a bundle that is not on that list.
+      - icon: truck
+        title: They receive the delivery
+        body: >-
+          Bundles arrive washed, packed, and labelled, on a day and time the
+          clinic sets. We deliver to them, never to a home.
+      - icon: users
+        title: They decide who receives
+        body: >-
+          The clinic chooses which of the families it already serves gets a
+          bundle. We are not involved in that and we do not want to be.
+      - icon: shield-check
+        title: They can stop it at any point
+        body: >-
+          If anything about the produce, the timing, or the handling does not
+          work for them, it changes or it stops. No notice period, no argument.
+
+  - id: privacy
+    eyebrow: What we never see
+    title: We do not know who receives a bundle.
+    body:
+      - >-
+        We hold no names, no contact details, and no notes about any family. The
+        clinic reports back a count and nothing else, which is all we publish
+        and all we ever want to hold.
+      - >-
+        No mother is named, photographed, or described anywhere on this site.
+        Bundles are photographed alone, before delivery.
+
+  - id: safety
+    eyebrow: How produce is handled
+    title: Washed in plain water, packed the morning it leaves.
+    body:
+      - >-
+        Everything is whole and raw. We do not cut, cook, or preserve anything.
+        Produce is picked in the cool of the morning, washed in plain running
+        water, packed into clean bags with a card listing the contents, and
+        driven over the same day.
+      - >-
+        Our written food-safety protocol follows FDA guidance for selecting,
+        washing, and storing fresh produce. The clinic has a copy, and any
+        prospective partner gets one before a first delivery.
+    ctas:
+      - label: Read what a partnership involves
+        href: /partners
+        primary: true
+
+  - id: contact
+    eyebrow: Questions
+    title: If you work at the clinic.
+    body:
+      - >-
+        Kreeshma handles everything clinic-side. Use the shared inbox and it
+        reaches her.
+    ctas:
+      - label: Email us
+        href: /contact
+        primary: true
+      - label: See what we are growing
+        href: /garden
