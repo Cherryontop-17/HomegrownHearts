@@ -81,7 +81,16 @@ jobs:
       #   hiding content then showing it, so a broken path leaves a
       #   reduced-motion reader with a blank page, and a developer without the
       #   OS setting on never sees it.
-      - name: Browser QA (overflow + motion)
+      #   Accessibility — axe on every route, plus the things axe cannot see:
+      #   44px target sizes, alt text, and the keyboard path through the skip
+      #   link and the mobile drawer. This gate has caught real serious-level
+      #   contrast failures that the palette check could not, because it
+      #   measures composited pixels rather than token pairs.
+      #
+      #   Headers — the CSP is the one header that can break the site silently.
+      #   It loads every route in a real browser and fails on any violation,
+      #   which is the only way to know a policy nobody tested actually works.
+      - name: Browser QA (overflow, motion, hero, a11y, headers)
         run: |
           node scripts/serve-dist.mjs 4399 &
           SERVER_PID=$!
@@ -93,3 +102,5 @@ jobs:
           npm run check:overflow -- http://localhost:4399
           npm run check:motion -- http://localhost:4399
           npm run check:hero -- http://localhost:4399
+          npm run check:a11y -- http://localhost:4399
+          npm run check:headers -- http://localhost:4399
