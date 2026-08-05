@@ -90,6 +90,27 @@ jobs:
       #   Headers — the CSP is the one header that can break the site silently.
       #   It loads every route in a real browser and fails on any violation,
       #   which is the only way to know a policy nobody tested actually works.
+      # Every browser gate below drives Chrome over CDP. The runner image is
+      # expected to ship it, but "expected to" is how a whole step fails with a
+      # message about a socket rather than about a missing browser. This states
+      # it plainly and exports the path scripts/lib/cdp.mjs looks for first.
+      - name: Locate Chrome
+        run: |
+          for candidate in \
+            /usr/bin/google-chrome \
+            /usr/bin/google-chrome-stable \
+            /usr/bin/chromium-browser \
+            /usr/bin/chromium; do
+            if [ -x "$candidate" ]; then
+              echo "CHROME_PATH=$candidate" >> "$GITHUB_ENV"
+              echo "Using $candidate"
+              "$candidate" --version || true
+              exit 0
+            fi
+          done
+          echo "::error::No Chrome or Chromium on this runner. The browser gates cannot run."
+          exit 1
+
       - name: Browser QA (overflow, motion, hero, a11y, headers)
         run: |
           node scripts/serve-dist.mjs 4399 &
