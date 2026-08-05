@@ -94,14 +94,16 @@ const year = new Date().getFullYear();
       <p class="footer__blurb">{t('footer.blurb')}</p>
     </div>
 
-    {/*
+    {
+      /*
       Every column is a direct child of one grid.
 
       The three link columns used to live in a nested grid inside a single
       track, which meant they had one column's width to share and auto-fit
       collapsed them into a stack — the footer rendered as one long ladder with
       an empty half. Flat is the only thing that reliably lines them up.
-    */}
+    */
+    }
     {
       columns.map((col) => (
         <nav class="footer__col" aria-label={col.heading}>

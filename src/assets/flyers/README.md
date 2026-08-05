@@ -41,7 +41,7 @@ No PDF, no button. Nothing breaks.
 
 **1. Alt text.** The caption derived from the filename is what a screen reader
 reads. A flyer is an image of text, and all of that text is invisible to
-assistive tech, so whatever the flyer *says* must also exist as real text
+assistive tech, so whatever the flyer _says_ must also exist as real text
 somewhere on the site. If a flyer announces something not written on a page,
 tell me and I will add it as text alongside.
 

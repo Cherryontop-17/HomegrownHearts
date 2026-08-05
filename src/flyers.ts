@@ -35,9 +35,7 @@ const files = import.meta.glob<{ default: ImageMetadata }>(
   served as-is, so the download link is a plain path.
 */
 const pdfs = import.meta.glob('../public/flyers/*.pdf');
-const pdfBaseNames = new Set(
-  Object.keys(pdfs).map((p) => stripExtension(basename(p))),
-);
+const pdfBaseNames = new Set(Object.keys(pdfs).map((p) => stripExtension(basename(p))));
 
 function basename(path: string): string {
   return path.split('/').pop() ?? path;

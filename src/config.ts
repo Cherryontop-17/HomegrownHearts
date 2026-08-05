@@ -182,8 +182,7 @@ export const FORMS = {
    */
   volunteer:
     'https://docs.google.com/forms/d/e/1FAIpQLSf8DmFapaGpnzXK8adQdAC5NO4gOmVcP0ATy8LZFPkwwvd8sw/viewform' as
-      | string
-      | null,
+      string | null,
   supplies: null as string | null, // TODO(founders): paste Google Form URL
 } as const;
 

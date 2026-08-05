@@ -50,15 +50,15 @@ chart could be built. They are plausible, not sourced. **Do not show this
 calendar to HELP Pregnancy Center as sourced data until this table is filled
 in.**
 
-| `sourceKey`     | Crop           | Claim in `crops.ts`             | Status     | Verified against |
-| --------------- | -------------- | ------------------------------- | ---------- | ---------------- |
-| `ncsu-basil`    | Genovese basil | 21–30 days **from transplant**  | unverified |                  |
-| `ncsu-kale`     | Kale           | 25–65 days from seed            | unverified |                  |
-| `ncsu-lettuce`  | Lettuce mix    | 21–45 days from seed            | unverified |                  |
-| `ncsu-spinach`  | Spinach        | 40–50 days from seed            | unverified |                  |
-| `ncsu-tomato`   | Cherry tomato  | 55–70 days **from transplant**  | unverified |                  |
-| `ncsu-carrot`   | Carrots        | 60–80 days from seed            | unverified |                  |
-| `ncsu-cucumber` | Cucumbers      | 50–70 days from seed            | unverified |                  |
+| `sourceKey`     | Crop           | Claim in `crops.ts`            | Status     | Verified against |
+| --------------- | -------------- | ------------------------------ | ---------- | ---------------- |
+| `ncsu-basil`    | Genovese basil | 21–30 days **from transplant** | unverified |                  |
+| `ncsu-kale`     | Kale           | 25–65 days from seed           | unverified |                  |
+| `ncsu-lettuce`  | Lettuce mix    | 21–45 days from seed           | unverified |                  |
+| `ncsu-spinach`  | Spinach        | 40–50 days from seed           | unverified |                  |
+| `ncsu-tomato`   | Cherry tomato  | 55–70 days **from transplant** | unverified |                  |
+| `ncsu-carrot`   | Carrots        | 60–80 days from seed           | unverified |                  |
+| `ncsu-cucumber` | Cucumbers      | 50–70 days from seed           | unverified |                  |
 
 **How to verify one row:** open the Plant Toolbox page for the crop, find the
 days-to-harvest figure, paste that URL into the last column, change the status

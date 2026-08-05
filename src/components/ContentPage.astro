@@ -97,10 +97,9 @@ const cropsSection = copy.sections.find((s) => s.id === 'crops');
   locally. Only the donate page needs them, so the fetch is conditional.
 */
 const needsCropNames = page === 'get-involved/donate' || page === 'recipe-ai';
-const gameCrops =
-  needsCropNames
-    ? ((await getCopy('garden', locale)).sections.find((s) => s.id === 'crops')?.items ?? [])
-    : [];
+const gameCrops = needsCropNames
+  ? ((await getCopy('garden', locale)).sections.find((s) => s.id === 'crops')?.items ?? [])
+  : [];
 
 /** Season targets paired with actuals. See the warning in src/goals.ts. */
 const goalMeters = seasonGoals(t);
@@ -229,9 +228,7 @@ const formLinks = [
               <article class="location">
                 <div class="location__head">
                   <h3 class="location__name">{loc.name}</h3>
-                  {!loc.confirmed && (
-                    <span class="location__pending">{t('dropoff.pending')}</span>
-                  )}
+                  {!loc.confirmed && <span class="location__pending">{t('dropoff.pending')}</span>}
                 </div>
 
                 <address class="location__address">{loc.full}</address>

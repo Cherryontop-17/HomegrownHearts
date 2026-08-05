@@ -82,10 +82,12 @@ const cards = [
 ];
 ---
 
-{/*
+{
+  /*
   <details> carries the open/closed state with no JS, so the panel is reachable
   even if the game script never loads — the board would simply not shuffle.
-*/}
+*/
+}
 <details class:list={['game', className]} data-game {...rest}>
   <summary class="game__summary">
     <span class="game__spark"><Icon name="sparkles" size={16} /></span>
@@ -131,8 +133,15 @@ const cards = [
       }
     </div>
 
-    <p class="sr-only" role="status" aria-live="polite" data-game-status
-      data-won={wonLabel} data-match={matchLabel}></p>
+    <p
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      data-game-status
+      data-won={wonLabel}
+      data-match={matchLabel}
+    >
+    </p>
   </div>
 </details>
 
@@ -472,8 +481,7 @@ const cards = [
           // A pair is two cards of the same crop showing DIFFERENT faces —
           // the icon and the name. Two icons of the same crop is not a match,
           // which is what makes it a naming game rather than a shape game.
-          const isPair =
-            a.dataset.pair === b.dataset.pair && a.dataset.face !== b.dataset.face;
+          const isPair = a.dataset.pair === b.dataset.pair && a.dataset.face !== b.dataset.face;
 
           if (isPair) {
             a.classList.add('is-done');

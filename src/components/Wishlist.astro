@@ -54,14 +54,7 @@ interface Props {
   class?: string;
 }
 
-const {
-  items,
-  allLabel,
-  filterLabel,
-  countLabel,
-  class: className,
-  ...rest
-}: Props = Astro.props;
+const { items, allLabel, filterLabel, countLabel, class: className, ...rest }: Props = Astro.props;
 
 /*
   Groups in first-appearance order rather than alphabetical, so the YAML
@@ -118,10 +111,12 @@ const slug = (s: string) =>
     }
   </Reveal>
 
-  {/*
+  {
+    /*
     Announces the result of a filter click. Without this a keyboard or screen
     reader user presses "Tools" and gets no feedback that anything changed.
-  */}
+  */
+  }
   <p
     class="sr-only"
     role="status"

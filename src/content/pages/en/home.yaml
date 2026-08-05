@@ -178,8 +178,6 @@ sections:
         We would rather show you the plan with the real number next to it than
         a figure you have no way to check.
 
-
-
   # ── Supply wishlist ────────────────────────────────────────────────────────
   # `group` drives the filter chips and is translated. Order here is the order
   # of the chips, so keep produce first — it is the list most donors want.

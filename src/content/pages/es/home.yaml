@@ -184,8 +184,6 @@ sections:
         están en cero. Preferimos mostrarle el plan con el número real al lado
         antes que una cifra que usted no pueda verificar.
 
-
-
   # ── Lista de insumos ───────────────────────────────────────────────────────
   # `group` genera los filtros y sí se traduce. El orden aquí es el orden de los
   # filtros: las semillas van primero porque son lo que más se dona.

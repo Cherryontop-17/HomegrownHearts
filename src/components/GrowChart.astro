@@ -174,9 +174,7 @@ const rows = SCHEDULE.map((s) => {
 
             {/* The bar. Percentages come straight from the schedule. */}
             <span class="crop__track">
-              {todayLeft !== null && (
-                <span class="crop__today" style={`--left:${todayLeft}%`} />
-              )}
+              {todayLeft !== null && <span class="crop__today" style={`--left:${todayLeft}%`} />}
               <span
                 class="crop__bar crop__bar--grow"
                 style={`--left:${r.growLeft}%; --width:${r.growWidth}%`}
@@ -340,9 +338,9 @@ const rows = SCHEDULE.map((s) => {
 
   .crop__summary {
     display: grid;
-    grid-template-columns: 1.5rem minmax(0, calc(var(--label-col) - 1.5rem)) minmax(0, 1fr) var(
-        --days-col
-      ) 1.5rem;
+    grid-template-columns:
+      1.5rem minmax(0, calc(var(--label-col) - 1.5rem)) minmax(0, 1fr) var(--days-col)
+      1.5rem;
     align-items: center;
     gap: 0.35rem;
     padding: 0.55rem 0;

@@ -102,7 +102,8 @@ const facts = [
 ---
 
 <Base title={copy.title} description={copy.description} vine={false}>
-  {/* ================= HERO =============================================
+  {
+    /* ================= HERO =============================================
       An editorial split, not type-over-photo.
 
       The previous version laid cream type across a full-bleed photograph. That
@@ -113,7 +114,8 @@ const facts = [
 
       The photo stack is three overlapping cards at slight angles. Overlap and
       rotation are what make a set of rectangles read as arranged rather than
-      placed, and they show three photographs where a banner shows one. */}
+      placed, and they show three photographs where a banner shows one. */
+  }
   <section class="hero">
     <div class="hero__inner">
       <div class="hero__copy">
@@ -139,9 +141,11 @@ const facts = [
         </Reveal>
       </div>
 
-      {/* `hero` is a decorative slot and takes no alt; the other two are
+      {
+        /* `hero` is a decorative slot and takes no alt; the other two are
           declared meaningful in src/photos.ts and carry theirs. <Photo> fails
-          the build either way round, which is how this stayed honest. */}
+          the build either way round, which is how this stayed honest. */
+      }
       <Reveal delay={200} class="hero__stack">
         <span class="hero__plate" aria-hidden="true">
           <Botanical plate="sprig" size={340} weight={1} />
@@ -177,12 +181,14 @@ const facts = [
     </Reveal>
   </div>
 
-  {/* ================= ABOUT ===========================================
+  {
+    /* ================= ABOUT ===========================================
       The first thing after the hero, because a homepage has to say what this
       IS before it says anything else. It also carries the one placement of the
       full painted logo: the artwork is a raster badge whose ribbon text is
       illegible at the 28-36px the header uses, so the header and footer keep
-      the drawn SVG mark and the badge appears here at size. */}
+      the drawn SVG mark and the badge appears here at size. */
+  }
   <Section accent="care" surface="cream" id={about.id} ornament="leafpair" ornamentSide="right">
     <Reveal class="brandmark">
       <Image
@@ -241,10 +247,12 @@ const facts = [
     </Reveal>
     <p class="note note--center">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
 
-    {/* Delivery notes, newest first. The `updates` content collection and this
+    {
+      /* Delivery notes, newest first. The `updates` content collection and this
         component were both orphaned when /impact folded into the homepage —
         the collection is the one part of the site expected to change monthly,
-        so it belongs here rather than nowhere. Renders its own empty state. */}
+        so it belongs here rather than nowhere. Renders its own empty state. */
+    }
     <UpdatesLog locale={locale} />
   </Section>
 
@@ -332,10 +340,12 @@ const facts = [
     </div>
   </Section>
 
-  {/* ================= SMART RECIPE — the QR pipeline ===================
+  {
+    /* ================= SMART RECIPE — the QR pipeline ===================
       On the ink band. This is the one section that is about the operation
       rather than about the food, and the surface change is what marks the
-      shift — the dark band reads as a different chapter. */}
+      shift — the dark band reads as a different chapter. */
+  }
   <Section accent="harvest" surface="ink" id={smart.id} ornament="vine" ornamentSide="left">
     <Reveal class="head">
       {smart.eyebrow && <Eyebrow align="center">{smart.eyebrow}</Eyebrow>}
@@ -361,9 +371,11 @@ const facts = [
 
     <GoalMeter goals={goalMeters} caption={t('goals.caption')} />
 
-    {/* The homepage's route into the detail. The calendar is the single most
+    {
+      /* The homepage's route into the detail. The calendar is the single most
         substantial thing on this site and it now lives on its own page, so
-        every path to it matters. */}
+        every path to it matters. */
+    }
     <Reveal class="actions actions--center">
       <Button href={localizePath('/garden', locale)} variant="primary" size="lg">
         {t('nav.calendar')}
@@ -371,10 +383,12 @@ const facts = [
     </Reveal>
   </Section>
 
-  {/* The calendar and the grow chart used to sit here. They now live on
+  {
+    /* The calendar and the grow chart used to sit here. They now live on
       /garden/, because stacking every detail on one route made the homepage
       17,000px long and buried the calendar seven sections down where nobody
-      found it. The goals section above links there. */}
+      found it. The goals section above links there. */
+  }
 
   {/* ================= SUPPLY WISHLIST ================================== */}
   <Section accent="harvest" surface="sand" id={wishlist.id} ornament="sprig" ornamentSide="left">
@@ -413,10 +427,12 @@ const facts = [
     </div>
   </Section>
 
-  {/* ================= FLYERS ==========================================
+  {
+    /* ================= FLYERS ==========================================
       Whole band is skipped when src/assets/flyers/ is empty. A heading with
       nothing under it reads as broken, so the check is on the section rather
-      than inside the component. */}
+      than inside the component. */
+  }
   {
     hasFlyers && (
       <Section accent="care" surface="parchment" id={flyers.id}>
@@ -460,10 +476,12 @@ const facts = [
     </div>
   </Section>
 
-  {/* ================= SAFETY GATE =====================================
+  {
+    /* ================= SAFETY GATE =====================================
       Placed immediately after the fact strip on purpose: a clinic reader is
       looking for "who is accountable here" before anything else, and this is
-      the section that answers it. */}
+      the section that answers it. */
+  }
   <Section accent="care" surface="cream" id={safety.id} ornament="leafpair" ornamentSide="right">
     <Reveal class="head">
       {safety.eyebrow && <Eyebrow align="center">{safety.eyebrow}</Eyebrow>}

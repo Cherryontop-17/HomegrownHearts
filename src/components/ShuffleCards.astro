@@ -101,15 +101,24 @@ const SLOTS = 5;
   </div>
 
   <div class="shuffle__actions">
-    <button type="button" class="shuffle__go" data-shuffle-go data-spin={spinLabel} data-stop={stopLabel} data-again={againLabel}>
+    <button
+      type="button"
+      class="shuffle__go"
+      data-shuffle-go
+      data-spin={spinLabel}
+      data-stop={stopLabel}
+      data-again={againLabel}
+    >
       {spinLabel}
     </button>
   </div>
 
-  {/*
+  {
+    /*
     The result. A real <dialog> — Escape closes it, clicking the backdrop
     closes it, and focus is handled by the platform rather than by us.
-  */}
+  */
+  }
   <dialog class="result" data-result aria-labelledby="shuffle-result-title">
     <div class="result__inner">
       <p class="result__eyebrow">{resultEyebrow}</p>
@@ -539,10 +548,13 @@ const SLOTS = 5;
         go.textContent = go.dataset.again ?? 'Again';
 
         // Let the confetti read for a beat before the dialog covers it.
-        window.setTimeout(() => {
-          if (typeof dialog.showModal === 'function') dialog.showModal();
-          else dialog.setAttribute('open', '');
-        }, reduced.matches ? 0 : 420);
+        window.setTimeout(
+          () => {
+            if (typeof dialog.showModal === 'function') dialog.showModal();
+            else dialog.setAttribute('open', '');
+          },
+          reduced.matches ? 0 : 420,
+        );
       };
 
       const start = () => {

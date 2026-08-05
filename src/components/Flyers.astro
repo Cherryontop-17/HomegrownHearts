@@ -48,12 +48,7 @@ const { downloadLabel, viewLabel, class: className, ...rest }: Props = Astro.pro
     <Reveal stagger={100} class:list={['flyers', className]} {...rest}>
       {flyers.map((f) => (
         <figure class="flyer">
-          <a
-            class="flyer__link"
-            href={f.src.src}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a class="flyer__link" href={f.src.src} target="_blank" rel="noopener noreferrer">
             <Image
               src={f.src}
               alt=""

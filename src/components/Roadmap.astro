@@ -272,7 +272,10 @@ const months = monthKeys.map((key) => {
  * ornaments on the homepage — the point is that the calendar feels like it
  * belongs to the month, not that anyone notices a picture.
  */
-const MONTH_PLATE: Record<number, 'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair' | 'gourd'> = {
+const MONTH_PLATE: Record<
+  number,
+  'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair' | 'gourd'
+> = {
   7: 'leafpair', // August
   8: 'sprig', // September
   9: 'gourd', // October
@@ -286,19 +289,10 @@ const statusIcon: Record<Status, IconName> = {
 };
 ---
 
-<div
-  class:list={['roadmap', className]}
-  data-roadmap
-  {...rest}
->
+<div class:list={['roadmap', className]} data-roadmap {...rest}>
   {
     months.map((m, mi) => (
-      <section
-        class="month"
-        data-month={m.key}
-        data-month-index={String(mi)}
-        aria-label={m.label}
-      >
+      <section class="month" data-month={m.key} data-month-index={String(mi)} aria-label={m.label}>
         {/* ── Calendar ───────────────────────────────────────────────── */}
         <div class="cal">
           <span class="cal__season" aria-hidden="true">
@@ -413,15 +407,15 @@ const statusIcon: Record<Status, IconName> = {
               dots are decoration a reader has to guess at. */}
           <ul class="key">
             <li class="key__item">
-              <span class="key__dot" aria-hidden="true"></span>
+              <span class="key__dot" aria-hidden="true" />
               {phaseDayLabel}
             </li>
             <li class="key__item">
-              <span class="key__dot key__dot--sow" aria-hidden="true"></span>
+              <span class="key__dot key__dot--sow" aria-hidden="true" />
               {sowingDayLabel}
             </li>
             <li class="key__item">
-              <span class="key__dot key__dot--today" aria-hidden="true"></span>
+              <span class="key__dot key__dot--today" aria-hidden="true" />
               {todayLabel}
             </li>
           </ul>
@@ -530,7 +524,6 @@ const statusIcon: Record<Status, IconName> = {
       gap: clamp(2rem, 4vw, 3.5rem);
       align-items: start;
     }
-
   }
 
   /* ================= CALENDAR ========================================== */
