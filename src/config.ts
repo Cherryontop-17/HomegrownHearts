@@ -161,23 +161,30 @@ export const PARTNER_CLINIC = {
  */
 export const FORMS = {
   /**
-   * Volunteer sign-up.
+   * Volunteer sign-up. Reviewed 2026-08-05.
    *
-   * ⚠️ THREE THINGS ON THIS FORM CONTRADICT THE SITE. Linking to it publishes
-   * it, so these are not cosmetic — see the notes below and in docs/FORMS.md.
+   * FIXED since the first review:
+   *   - The description no longer calls us a "nonprofit" (Rule 2).
+   *   - "Nutrition speeches/talks" is gone from the roles list. That was the
+   *     highest-risk item — volunteers giving nutrition talks to pregnant and
+   *     postpartum mothers is unlicensed dietary advice.
    *
-   *   1. Its description calls us a "nonprofit". COMPLIANCE Rule 2: we are an
-   *      unincorporated student initiative. The word is banned in page copy and
-   *      the CI check would fail the build over it; a linked form is no
-   *      different to a reader.
-   *   2. "Nutrition speeches/talks" is offered as a volunteer role. Rule 1:
-   *      volunteers giving nutrition talks to pregnant and postpartum mothers
-   *      is unlicensed dietary advice. This is the highest-risk item.
-   *   3. "Distribution and giving bundles" implies volunteers hand bundles to
-   *      recipients. Rule 3, and /get-involved/volunteer/ promises the exact
-   *      opposite: the clinic decides who receives, and we never meet them.
+   * ⚠️ STILL OUTSTANDING. Linking to this form publishes it, so these are not
+   * cosmetic.
    *
-   * It also collects the ages of minors without asking for a parent or
+   *   1. The description ends "We support healthy pregnancies and recoveries."
+   *      `healthy pregnanc\w*` is a NAMED banned phrase in
+   *      scripts/check-compliance.mjs, and `support` is a banned claim verb.
+   *      This exact sentence in page copy would fail the build. It is the most
+   *      explicitly prohibited string in the whole ruleset, and it is the first
+   *      thing a reader of the form sees.
+   *   2. "Helping on distribution days and giving out the bundles to mothers"
+   *      says volunteers hand bundles to recipients. Rule 3, and
+   *      /get-involved/volunteer/ promises the exact opposite: the clinic
+   *      decides who receives, and volunteers never meet them. This wording is
+   *      more explicit than the version it replaced.
+   *
+   * It also still collects the ages of minors without asking for a parent or
    * guardian's contact, while the site promises under-18s need sign-off.
    */
   volunteer:
