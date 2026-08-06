@@ -40,6 +40,13 @@ mkdirSync(OUT, { recursive: true });
  *
  * `dim` darkens for type overlay. `warmth` and `sat` fine-tune per image so
  * they land on the same look despite different source white balance.
+ *
+ * `cool` scales the BLUE slope down, and it exists because `warmth` alone
+ * cannot fix a cold picture. Warmth only lifts red, which warms the midtones
+ * and leaves a light, cold highlight exactly as blue as it was — so a shot on
+ * gray concrete stayed gray no matter how far warmth was pushed. Pulling blue
+ * down is what neutralises the highlight. Defaults to 1, so every photo that
+ * does not set it grades byte-identically to before.
  */
 const RECIPES = {
   hero: {
@@ -72,12 +79,27 @@ const RECIPES = {
     sat: 1.02,
   },
   bundle: { width: 1800, height: 1350, position: sharp.strategy.attention, warmth: 1.05, sat: 1.0 },
+  /*
+    The one photo that needed its own treatment.
+
+    Source is a scoop of potting soil on a gray concrete slab in cold shade —
+    dark, near-neutral, and the odd one out in a set of warm produce shots. At
+    the standard recipe its mean channels were R62 G65 B61: literally gray. It
+    is the widest image on the homepage, so being the coldest thing on the page
+    was very visible.
+
+    Pushed harder than anything else here, and `cool` does most of the work:
+    the soil now reads warm brown and the concrete neutral rather than blue.
+    R-B goes from -1 (blue-biased) to +9.
+  */
   'break-produce': {
     width: 2600,
     height: 1114, // 21:9
     position: sharp.strategy.attention,
-    warmth: 1.05,
-    sat: 1.02,
+    warmth: 1.1,
+    sat: 1.32,
+    dim: 1.12,
+    cool: 0.9,
   },
 };
 
@@ -139,7 +161,17 @@ for (const file of sources) {
     continue;
   }
 
-  const { width, height, position, warmth, sat, dim = 1, vignette = 0, typeGuard = false } = recipe;
+  const {
+    width,
+    height,
+    position,
+    warmth,
+    sat,
+    dim = 1,
+    cool = 1,
+    vignette = 0,
+    typeGuard = false,
+  } = recipe;
 
   let img = sharp(join(SRC, file)).rotate().resize(width, height, { fit: 'cover', position });
 
@@ -166,7 +198,7 @@ for (const file of sources) {
   // the site read as flat. This is still a long way from over-processed — the
   // point is produce that looks worth eating, not a filter.
   img = img
-    .linear([1.13 * warmth, 1.09, 0.995], [-11, -10, -6])
+    .linear([1.13 * warmth, 1.09, 0.995 * cool], [-11, -10, -6])
     .modulate({ saturation: sat * 1.22, brightness: dim * 1.02 });
 
   const overlays = [];

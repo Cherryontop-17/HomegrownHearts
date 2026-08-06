@@ -194,6 +194,17 @@ const en = {
   'gallery.garden': 'Young vegetable plants growing in the garden.',
   'gallery.harvest': 'Freshly harvested vegetables at a market stall.',
   'gallery.produce': 'A spread of mixed seasonal vegetables.',
+  /*
+    For the wide gallery photo, which borrowed `gallery.produce` — a string
+    saying "mixed seasonal vegetables" for a picture of soil and hand tools.
+
+    Nothing was broken by that: `break-produce` is a DECORATIVE slot, and
+    <Photo> discards alt for decorative images and renders alt="", which is the
+    right output. This exists so the string in the source is true anyway. If
+    the slot's role is ever flipped to 'meaningful' in photos.ts, the alt that
+    starts being used should describe the photograph that is actually there.
+  */
+  'gallery.potting': 'Potting soil, a hand scoop, and pruners on a work surface.',
 
   // Forms
   'form.comingSoon': 'Sign-up opens soon. Email us in the meantime.',
@@ -392,6 +403,7 @@ const es: Record<UIKey, string> = {
   'gallery.garden': 'Plantas jóvenes de hortalizas creciendo en el huerto.',
   'gallery.harvest': 'Verduras recién cosechadas en un puesto de mercado.',
   'gallery.produce': 'Una variedad de verduras de temporada.',
+  'gallery.potting': 'Tierra para macetas, una pala de mano y tijeras de podar sobre una mesa.',
 
   // Formularios
   'form.comingSoon': 'La inscripción abre pronto. Mientras tanto, escríbanos.',
