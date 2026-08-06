@@ -12,7 +12,27 @@ export const LOCALES = ['en', 'es'] as const;
 export type Locale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
-/** Production origin. Update once the custom domain is bound to the Worker. */
+/**
+ * Production origin. THE one place the live URL is written down.
+ *
+ * Everything canonical derives from this: <link rel="canonical">, the hreflang
+ * pair joining /en and /es, og:url, og:image, the sitemap, and robots.txt. Get
+ * it wrong and all 25 pages tell Google the real copy lives somewhere else,
+ * which drops them from results and breaks the language pairing — the failure
+ * is silent, so `npm run check:i18n` gates it.
+ *
+ * ⚠️ NO trailing slash. `trailingSlash: 'always'` in astro.config.mjs adds one
+ * per route; a slash here would produce `//` in every canonical URL.
+ *
+ * This is the custom domain, NOT the workers.dev subdomain, because it is the
+ * address the public is given and the one search engines should index. The
+ * workers.dev URL keeps working as a fallback either way.
+ *
+ * ⚠️ This must stay in step with the Custom Domain bound in Workers & Pages ->
+ * homegrownhearts -> Settings -> Domains & Routes. If the binding is ever
+ * removed, every canonical URL points at a host that answers nothing. After
+ * changing it: rebuild and run `npm run check:i18n`.
+ */
 export const SITE_URL = 'https://homegrownhearts.org';
 
 export const ORG = {
