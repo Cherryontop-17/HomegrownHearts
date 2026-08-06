@@ -1,9 +1,25 @@
 name: CI
 
+# ── PAUSED 2026-08-06 ──────────────────────────────────────────────────────
+# Runs on request only. Every push was reporting a failure we could not
+# diagnose (the job died in 11-23s, before `npm ci` — which takes 37s — could
+# even finish), and a permanently red repository is worse than no signal: you
+# stop reading it, and then a real failure goes unnoticed too.
+#
+# Nothing here is deleted and nothing is weakened. To run it: Actions tab ->
+# CI -> "Run workflow". To restore automatic runs, delete the `#` from the six
+# lines below.
+#
+# ⚠️ While this is paused, NOTHING checks a commit automatically. Run
+# `npm run check:all` locally before deploying — same twelve gates.
+#
+# This does NOT affect publishing: Cloudflare Workers Builds pulls from GitHub
+# and builds on its own, so the site deploys whatever the workflow says.
 on:
-  push:
-    branches: [main]
-  pull_request:
+  workflow_dispatch:
+  # push:
+  #   branches: [main]
+  # pull_request:
 
 # Cancel superseded runs on the same branch.
 concurrency:
