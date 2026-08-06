@@ -28,8 +28,9 @@ hero:
     - label: Partner with us
       href: /partners
       primary: true
+    # Straight to the form. Every "volunteer" link on the site ends there.
     - label: Volunteer with us
-      href: /get-involved
+      href: /get-involved/volunteer#signup
 
 sections:
   # ── Safety gate ────────────────────────────────────────────────────────────

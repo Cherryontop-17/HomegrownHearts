@@ -87,6 +87,23 @@ const {
     border-color: color-mix(in oklab, var(--accent, var(--color-clay)) 38%, transparent);
   }
 
+  /*
+    Same failure the CTA cards shipped with once, in a different component.
+
+    On the green band `--accent` inverts to cream, and the pill rule above mixes
+    the accent into --color-card (#ffffff). Cream into white is white, and the
+    label is ALSO the accent — so "Get involved" rendered as cream on white at
+    1.02:1: a blank badge on the CTA band. Mixing over the band instead keeps it
+    in the green family and puts the label at ~6:1.
+
+    Any surface that inverts the text roles needs its own rule here. Mixing over
+    --color-card is only safe while the label is dark.
+  */
+  :global(.section--garden) .eyebrow--pill {
+    background-color: color-mix(in oklab, var(--color-ink-inverse) 16%, transparent);
+    border-color: color-mix(in oklab, var(--color-ink-inverse) 40%, transparent);
+  }
+
   .eyebrow--center {
     align-self: center;
     margin-inline: auto;

@@ -55,7 +55,8 @@ const columns = [
   {
     headingKey: 'footer.help' as const,
     links: [
-      { path: '/get-involved/volunteer', labelKey: 'nav.volunteer' as const },
+      // #signup, to match the header. See the note in src/nav.ts.
+      { path: '/get-involved/volunteer#signup', labelKey: 'nav.volunteer' as const },
       { path: '/get-involved/donate', labelKey: 'nav.donate' as const },
       { path: '/get-involved/drop-off', labelKey: 'nav.dropOff' as const },
     ],

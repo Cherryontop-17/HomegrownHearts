@@ -30,11 +30,13 @@ export interface NavItem {
  * Ordered by the audience ranking in docs/BRIEF.md: clinic staff first, so
  * "For Clinics" sits at the front where the highest-value reader will find it.
  *
- * ── Only ONE dropdown, on purpose ─────────────────────────────────────────
- * "The Garden" is a plain link to /garden/, which carries the calendar and the
- * crop chart as sections of one page. It had a dropdown briefly and it was
- * removed: a menu whose three items all land on the same route is noise, and
- * the header should stay scannable in one pass.
+ * ── Why "The Garden" has a dropdown again ─────────────────────────────────
+ * It had one early on and it was removed, because at the time all three items
+ * landed on the same route — a menu whose entries go to one place is noise.
+ * That is no longer true: the parent goes to the homepage band and the child
+ * goes to /garden/, which are genuinely different destinations. Without it the
+ * calendar — the most substantial page on the site — would have no route in
+ * from the header at all.
  *
  * "Get Involved" keeps its dropdown because its children really are separate
  * routes with separate jobs — a donor and a volunteer want different pages.
@@ -58,7 +60,26 @@ export const PRIMARY_NAV: readonly NavItem[] = [
     ],
   },
   { path: '/#impact', labelKey: 'nav.impact' },
-  { path: '/garden', labelKey: 'nav.garden' },
+  {
+    /*
+      The parent is the homepage band headed "The garden", not the /garden/
+      page. The two carry the same name, and a reader clicking a header item
+      labelled "The Garden" expects the thing on screen called that.
+
+      The dropdown is what keeps /garden/ — the calendar and the grow chart —
+      one click from the header.
+
+      ⚠️ ONE child, deliberately. The other groups here repeat the parent as
+      their first child; this one must NOT. A child reading "The Garden" under a
+      parent reading "The Garden", both going to /#garden, is a menu entry that
+      does nothing — and it was on the site briefly and read as a mistake. The
+      parent link is how you reach the homepage band; the child is the only
+      thing the menu needs to add.
+    */
+    path: '/#garden',
+    labelKey: 'nav.garden',
+    children: [{ path: '/garden', labelKey: 'nav.calendar', descriptionKey: 'nav.calendarDesc' }],
+  },
   {
     /*
       Lands on the sign-up block rather than the top of the overview page.
@@ -69,7 +90,14 @@ export const PRIMARY_NAV: readonly NavItem[] = [
     labelKey: 'nav.getInvolved',
     children: [
       {
-        path: '/get-involved/volunteer',
+        /*
+          Also lands on the sign-up block, for the same reason the parent does.
+          It pointed at the top of the page and the two links behaved
+          differently: "Get Involved" reached the form and "Volunteer" — the
+          more specific of the two — did not. Every link on this site labelled
+          "Volunteer" now ends at the form.
+        */
+        path: '/get-involved/volunteer#signup',
         labelKey: 'nav.volunteer',
         descriptionKey: 'nav.volunteerDesc',
       },

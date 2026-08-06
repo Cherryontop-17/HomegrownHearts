@@ -26,8 +26,9 @@ hero:
     - label: Colabore con nosotras
       href: /partners
       primary: true
+    # Directo al formulario. Todos los enlaces de voluntariado terminan ahí.
     - label: Sea voluntario
-      href: /get-involved
+      href: /get-involved/volunteer#signup
 
 sections:
   # ── Garantías ──────────────────────────────────────────────────────────────

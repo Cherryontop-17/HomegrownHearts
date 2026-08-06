@@ -408,8 +408,14 @@ const facts = [
     {wishlist.note && <p class="note note--center">{wishlist.note}</p>}
   </Section>
 
-  {/* ================= GALLERY ========================================== */}
-  <Section accent="harvest" surface="sand" rhythm="tight">
+  {
+    /* ================= GALLERY =========================================
+      `id="garden"` because this is the section headed "The garden", and the
+      header's Garden item points here. The standalone /garden/ page still
+      exists and still carries the calendar — it is reached from the button in
+      the goals section above and from the footer. */
+  }
+  <Section accent="harvest" surface="sand" rhythm="tight" id="garden">
     <Reveal class="head">
       <Eyebrow align="center">{t('gallery.eyebrow')}</Eyebrow>
       <h2 class="head__title">{t('gallery.title')}</h2>
