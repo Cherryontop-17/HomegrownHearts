@@ -50,6 +50,28 @@ interface Props {
   wipe?: false | 'up' | 'in';
   /** Crop override. Defaults to the slot's declared aspect. */
   aspect?: string;
+  /**
+   * Delivered image format. Defaults to WebP, which is right nearly always —
+   * roughly 30% smaller than JPEG at matching quality, and this site is built
+   * for people who may be on a phone with limited data.
+   *
+   * ⚠️ Set this to 'jpg' ONLY for a large image, and only for the reason
+   * below. It is not a quality or a taste control.
+   *
+   * WebP carries colour as a luma plane plus two chroma planes. Chromium hands
+   * large images to the GPU still in that form, and on a machine whose driver
+   * mishandles the chroma upload the picture arrives as luma alone — which
+   * renders as a mathematically perfect greyscale, not as a washed-out photo.
+   * It only affects images past a size threshold, so a page can show a grey
+   * hero above two perfectly colourful thumbnails, which is what makes it look
+   * like a broken file rather than a broken driver.
+   *
+   * Diagnosed on a real machine: greyscale in Chrome AND Edge AND a guest
+   * profile (so not cache, not an extension), colourful in the Windows Photos
+   * app and in headless Chrome run with --disable-gpu (so not the file).
+   * JPEG's decode path is far older and more exercised, and it sidesteps this.
+   */
+  format?: 'webp' | 'jpg';
   class?: string;
 }
 
@@ -62,6 +84,7 @@ const {
   scrim = false,
   wipe = false,
   aspect,
+  format = 'webp',
   class: className,
   ...rest
 } = Astro.props;
@@ -121,6 +144,8 @@ const tone = TONES[slot.tone];
         src={source}
         alt={altText}
         width={width}
+        format={format}
+        quality={format === 'jpg' ? 82 : undefined}
         densities={[1, 2]}
         loading={eager ? 'eager' : 'lazy'}
         fetchpriority={eager ? 'high' : undefined}

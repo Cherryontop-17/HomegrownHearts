@@ -152,7 +152,12 @@ const facts = [
         </span>
 
         <div class="shot shot--main">
-          <Photo photo="hero" eager kenBurns aspect="4 / 5" />
+          {
+            /* JPEG, not WebP — see the `format` prop in Photo.astro. This is
+              the largest image on the site and the one that went grey on a
+              machine with a GPU driver that mishandles WebP chroma planes. */
+          }
+          <Photo photo="hero" eager kenBurns aspect="4 / 5" format="jpg" />
         </div>
         <div class="shot shot--top">
           <Photo photo="harvest" alt={t('gallery.harvest')} eager aspect="1 / 1" />
@@ -428,6 +433,7 @@ const facts = [
         alt={t('gallery.potting')}
         aspect="16 / 9"
         wipe="up"
+        format="jpg"
         class="gallery__wide"
       />
     </div>
