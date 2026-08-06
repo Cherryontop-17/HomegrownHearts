@@ -47,6 +47,9 @@
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "^6.0.3",
-    "zod": "^4.4.3"
-  }
+    "zod": "^4.4.3",
+    "@emnapi/core": "^1.11.1",
+    "@emnapi/runtime": "^1.11.1"
+  },
+  "//emnapi": "Neither @emnapi package is imported by our code. They exist to work around npm/cli#4828: package-lock.json is generated on Windows, where npm skips the wasm32 fallback packages (@img/sharp-wasm32, @tailwindcss/oxide-wasm32-wasi, @napi-rs/wasm-runtime) as optional and so never records their hoisted deps. On a Linux CI box npm DOES evaluate them, finds @emnapi/core and @emnapi/runtime absent from the lockfile, and `npm ci` aborts in about two seconds with EUSAGE. That failure broke every GitHub Actions run and every Cloudflare build. Declaring them here forces them into the lockfile on any platform. Remove only if the lockfile is regenerated on Linux, and re-check a Cloudflare build afterwards."
 }

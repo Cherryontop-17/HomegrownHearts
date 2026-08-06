@@ -1,25 +1,17 @@
 name: CI
 
-# ── PAUSED 2026-08-06 ──────────────────────────────────────────────────────
-# Runs on request only. Every push was reporting a failure we could not
-# diagnose (the job died in 11-23s, before `npm ci` — which takes 37s — could
-# even finish), and a permanently red repository is worse than no signal: you
-# stop reading it, and then a real failure goes unnoticed too.
-#
-# Nothing here is deleted and nothing is weakened. To run it: Actions tab ->
-# CI -> "Run workflow". To restore automatic runs, delete the `#` from the six
-# lines below.
-#
-# ⚠️ While this is paused, NOTHING checks a commit automatically. Run
-# `npm run check:all` locally before deploying — same twelve gates.
-#
-# This does NOT affect publishing: Cloudflare Workers Builds pulls from GitHub
-# and builds on its own, so the site deploys whatever the workflow says.
+# Paused for a few hours on 2026-08-06 and restored the same day, once the
+# cause was finally visible in a Cloudflare build log: `npm ci` was aborting in
+# ~2s with EUSAGE because @emnapi/core and @emnapi/runtime were absent from
+# package-lock.json. That is why runs kept dying in 11-23s without reaching a
+# step whose name meant anything — and why it was invisible locally, where
+# `npm ci` on Windows passes. See the "//emnapi" note in package.json.
 on:
+  push:
+    branches: [main]
+  pull_request:
+  # Kept so the suite can be run by hand from the Actions tab.
   workflow_dispatch:
-  # push:
-  #   branches: [main]
-  # pull_request:
 
 # Cancel superseded runs on the same branch.
 concurrency:
