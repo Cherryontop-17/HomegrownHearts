@@ -84,8 +84,20 @@ const CHECKS = [
   {
     id: 'implies-nonprofit-status',
     rule: 'Rule 2',
+    /*
+      `NGO` and `NonprofitType` are here because this rule used to check prose
+      only, and a status claim does not have to be prose. The JSON-LD in
+      Schema.astro carried `"@type": "NGO"` — schema.org's Non-governmental
+      Organization, which Google reads as a charitable-organization signal —
+      and it passed every run, because the list named `nonprofit` and `charity`
+      and never NGO. A machine-readable claim is still a claim, and it is
+      harder to spot precisely because nobody reads it.
+
+      Case-insensitive like the rest of the list. The \b boundaries mean `NGO`
+      only matches as a standalone word — never inside `mango` or `Congo`.
+    */
     pattern:
-      /\b(501\s*\(?c\)?\s*\(?3\)?|non-?profit|charity|charitable|tax[- ]exempt|sin fines de lucro|sin [aá]nimo de lucro|organizaci[oó]n ben[eé]fica)\b/gi,
+      /\b(501\s*\(?c\)?\s*\(?3\)?|non-?profit|NonprofitType|NGO|charity|charitable|tax[- ]exempt|sin fines de lucro|sin [aá]nimo de lucro|organizaci[oó]n ben[eé]fica)\b/gi,
     // Stating that we are NOT one is the entire point of the required status
     // line, so a negated mention is compliant — the same exemption
     // `tax-deductible` needs.

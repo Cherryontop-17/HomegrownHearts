@@ -34,7 +34,8 @@
       "Bash(rm public/robots.txt)",
       "Bash(sed -i \"s/content: 'homegrownhearts.org';/content: 'homegrownhearts.yarramsmail.workers.dev';/\" src/styles/print.css)",
       "Bash(timeout 300 npm install --package-lock-only --os=linux --cpu=x64)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(timeout 180 npx wrangler deploy --dry-run --outdir=.wrangler/dryrun)"
     ]
   }
 }

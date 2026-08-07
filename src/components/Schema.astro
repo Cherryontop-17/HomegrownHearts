@@ -3,14 +3,25 @@
  * JSON-LD structured data (task 6.2).
  *
  * Two graphs, linked by `@id`:
- *   - an `NGO` describing the organization, and
- *   - a `WebSite` describing this site, pointing back at the NGO as publisher.
+ *   - an `Organization` describing the group, and
+ *   - a `WebSite` describing this site, pointing back at it as publisher.
  *
- * `NGO` rather than `Organization`: it is the precise type, and search engines
- * treat the specific subtype as a stronger signal. It is **not** `NonprofitType`
- * or any of the 501(c) enumerations — those assert a registered tax status this
- * project does not hold, and putting one here would be the machine-readable
- * version of the claim COMPLIANCE.md Rule 2 forbids in prose.
+ * ⚠️ `Organization`, and nothing more specific. This was `NGO` on the reasoning
+ * that a narrower type is a stronger signal to search engines. That reasoning
+ * ruled out `NonprofitType` and the 501(c) enumerations as machine-readable
+ * versions of a claim COMPLIANCE.md Rule 2 forbids in prose — and then stopped
+ * one step short. schema.org defines NGO as "Non-governmental Organization",
+ * which Google reads as a charitable-organization signal. Homegrown Hearts is
+ * an unincorporated student initiative with no entity, no EIN and no tax
+ * status, so NGO is the same claim Rule 2 exists to prevent, just quieter for
+ * being machine-readable rather than on the page.
+ *
+ * The gate could not catch it: check-compliance.mjs scans this file, but its
+ * banned pattern listed `nonprofit`, `charity` and `501(c)(3)` and never the
+ * word NGO. It does now.
+ *
+ * Do not narrow this type. `Organization` is accurate, and Google accepts it
+ * for entity understanding exactly the same way.
  *
  * Everything is read from `src/config.ts`, and anything the founders have not
  * filled in is omitted rather than guessed. A structured-data field with a
@@ -41,7 +52,7 @@ const sameAs = [has.instagram() ? `https://instagram.com/${SOCIAL.instagram}` : 
 ) as string[];
 
 const organization: Record<string, unknown> = {
-  '@type': 'NGO',
+  '@type': 'Organization',
   '@id': orgId,
   name: ORG.name,
   url: SITE_URL,
