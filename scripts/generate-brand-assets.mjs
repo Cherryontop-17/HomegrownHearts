@@ -164,7 +164,7 @@ const OG_COPY = {
   },
   es: {
     title: 'Alimentos frescos, cultivados aquí cerca.',
-    body: 'Paquetes gratuitos de verduras para madres embarazadas y recién dadas a luz, a través de una clínica asociada.',
+    body: 'Paquetes gratuitos de hierbas aromáticas para madres embarazadas y recién dadas a luz, a través de una clínica asociada.',
     place: 'Condado de Union, Carolina del Norte',
   },
 };

@@ -1,9 +1,10 @@
 # Our partners — the index.
 #
 # ⚠️ COMPLIANCE Rule 4. An organisation appears on this page by name ONLY once
-# it has agreed in writing. HELP Pregnancy Center has; the library has not, and
-# its entry says so plainly rather than being quietly omitted or quietly
-# implied. See PARTNER_CLINIC and GARDEN_SITES in src/config.ts.
+# it has agreed in writing. HELP Pregnancy Center has. Nobody else does, and an
+# organisation that was asked and said no is simply not mentioned — declining
+# is not a thing to publish about somebody. See PARTNER_CLINIC and GARDEN_SITES
+# in src/config.ts.
 #
 # "For clinics" (/partners) is the pitch to organisations who might join. This
 # page is the record of who already has.
@@ -15,7 +16,7 @@ hero:
   eyebrow: Our partners
   title: We do not do any of this alone.
   lead: >-
-    Two students can grow vegetables. Getting them to the families who want
+    Two students can grow herbs. Getting them to the families who want
     them takes people who were already there.
 
 sections:
@@ -24,26 +25,19 @@ sections:
     title: Where things stand today.
     body:
       - >-
-        One confirmed partner and one conversation in progress. We list both,
-        and we say which is which, because a partner list that quietly includes
-        people who have not agreed is worth nothing to anybody.
+        One confirmed partner. Only organisations that have agreed in writing
+        appear here, because a partner list that quietly includes people who
+        have not agreed is worth nothing to anybody.
     items:
       - icon: heart
         title: HELP Pregnancy Center, Monroe
         body: >-
-          Our delivery partner. They approved the produce list, they receive
+          Our delivery partner. They sign off the produce list, they receive
           every bundle, and they decide which families receive one.
-      - icon: clipboard-list
-        title: Union County Public Library, Main
-        body: >-
-          In discussion about becoming a supply drop-off point. Nothing is
-          agreed yet, so please do not take donations there.
     ctas:
       - label: About HELP Pregnancy Center
         href: /our-partners/help-pregnancy-center
         primary: true
-      - label: About the library
-        href: /our-partners/union-county-library
 
   - id: join
     eyebrow: For organisations

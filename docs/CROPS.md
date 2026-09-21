@@ -50,15 +50,30 @@ chart could be built. They are plausible, not sourced. **Do not show this
 calendar to HELP Pregnancy Center as sourced data until this table is filled
 in.**
 
-| `sourceKey`     | Crop           | Claim in `crops.ts`            | Status     | Verified against |
-| --------------- | -------------- | ------------------------------ | ---------- | ---------------- |
-| `ncsu-basil`    | Genovese basil | 21–30 days **from transplant** | unverified |                  |
-| `ncsu-kale`     | Kale           | 25–65 days from seed           | unverified |                  |
-| `ncsu-lettuce`  | Lettuce mix    | 21–45 days from seed           | unverified |                  |
-| `ncsu-spinach`  | Spinach        | 40–50 days from seed           | unverified |                  |
-| `ncsu-tomato`   | Cherry tomato  | 55–70 days **from transplant** | unverified |                  |
-| `ncsu-carrot`   | Carrots        | 60–80 days from seed           | unverified |                  |
-| `ncsu-cucumber` | Cucumbers      | 50–70 days from seed           | unverified |                  |
+The first seven crops all went in on **2026-08-12**. The list changed on
+2026-09-21 from basil, kale, lettuce, spinach, tomato, carrot and cucumber to
+the seven below; lettuce, tomato, carrot and cucumber were dropped.
+
+The **seed or transplant** column matters as much as the day count — it is
+what the count is measured from. Peppermint has to be a plant (it does not
+come true from seed). The others were entered as the usual method for each
+crop, not confirmed with the founders; correct them if the beds were planted
+differently, and the day count with them.
+
+| `sourceKey`       | Crop        | Claim in `crops.ts`            | Status     | Verified against |
+| ----------------- | ----------- | ------------------------------ | ---------- | ---------------- |
+| `ncsu-basil`      | Sweet basil | 21–30 days **from transplant** | unverified |                  |
+| `ncsu-kale`       | Kale        | 25–65 days from seed           | unverified |                  |
+| `ncsu-peppermint` | Peppermint  | 30–60 days **from transplant** | unverified |                  |
+| `ncsu-cilantro`   | Cilantro    | 30–55 days from seed           | unverified |                  |
+| `ncsu-spinach`    | Spinach     | 40–50 days from seed           | unverified |                  |
+| `ncsu-dill`       | Dill        | 40–60 days from seed (leaf)    | unverified |                  |
+| `ncsu-oregano`    | Oregano     | 45–60 days **from transplant** | unverified |                  |
+
+The calendar's winter and spring phases (first frost in early November, row
+cover through winter, perennials returning in March, basil replanted after the
+mid-April last frost) are typical for Union County and are equally
+**unverified**. Check them against the Union County Extension frost dates.
 
 **How to verify one row:** open the Plant Toolbox page for the crop, find the
 days-to-harvest figure, paste that URL into the last column, change the status

@@ -12,7 +12,7 @@
 # on our behalf.
 
 title: HELP Pregnancy Center
-description: How Homegrown Hearts works with HELP Pregnancy Center in Monroe, North Carolina, who decides which families receive a bundle, and what the clinic approved.
+description: How Homegrown Hearts works with HELP Pregnancy Center in Monroe, North Carolina - who decides which families receive a bundle, and what the clinic signs off.
 
 hero:
   eyebrow: Our delivery partner
@@ -27,15 +27,15 @@ sections:
     title: They make every decision that touches a family.
     body:
       - >-
-        We grow vegetables and drive them to the clinic. From the moment a
+        We grow herbs and drive them to the clinic. From the moment a
         bundle is handed over, it is theirs. That division is the whole design
         of this project, not a detail of it.
     items:
       - icon: file-check
-        title: They approved the produce list
+        title: They sign off the produce list
         body: >-
-          Before we planted anything, the clinic reviewed every item we wanted
-          to grow and pack. Nothing goes into a bundle that is not on that list.
+          Before we plant anything, the clinic reviews every item we want to
+          grow and pack. Nothing goes into a bundle that is not on that list.
       - icon: truck
         title: They receive the delivery
         body: >-

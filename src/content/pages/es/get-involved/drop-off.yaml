@@ -12,8 +12,8 @@ hero:
   eyebrow: Done materiales
   title: Dónde llevar todo lo bueno.
   lead: >-
-    Aceptamos únicamente materiales donados, nunca dinero. Aquí le decimos dónde
-    llevarlos.
+    Aceptamos únicamente materiales donados, nunca dinero. Escríbanos y
+    coordinamos la entrega.
 
 sections:
   - id: locations
@@ -26,14 +26,22 @@ sections:
         la puerta.
 
   - id: pending
-    eyebrow: Próximamente
-    title: Más puntos, cuando estén confirmados.
+    eyebrow: Cómo funciona por ahora
+    title: Escríbanos y nos vemos.
     body:
+      # ⚠️ No hay punto de entrega público. DROP_OFF en src/config.ts está
+      # vacío, así que la banda "locations" de arriba desaparece por completo
+      # en vez de mostrar una cuadrícula vacía.
+      #
+      # No nombre aquí ningún lugar que no haya aceptado por escrito — Regla 4
+      # de COMPLIANCE. A quien se le preguntó y dijo que no, no se le menciona.
       - >-
-        Estamos conversando con una biblioteca pública y con dos huertos
-        comunitarios del condado de Union para que sean puntos de entrega.
-        Ninguno ha confirmado todavía, así que no los listamos como si usted
-        pudiera presentarse: agregaremos cada uno el día en que se acuerde.
+        Todavía no tenemos una caja de donaciones en un lugar público. Mientras
+        tanto, escríbanos y acordamos un punto cómodo para recoger: el condado
+        es pequeño y casi siempre podemos ir hasta usted.
+      - >-
+        Anunciaremos un punto de entrega aquí el día en que se acuerde, y ni un
+        día antes. Mandarle a un lugar por si acaso le hace perder el viaje.
     note: >-
       Si usted tiene un negocio, una iglesia o un espacio comunitario en Monroe
       o cerca, y estaría dispuesto a guardarnos una caja, nos gustaría saberlo.
@@ -70,7 +78,7 @@ sections:
         tone: 'no'
         title: Alimentos, o cualquier cosa abierta
         body: >-
-          Nada de verduras, nada de despensa y nada con el empaque abierto. Todo
+          Nada de alimentos frescos, nada de despensa y nada con el empaque abierto. Todo
           lo que va en un paquete lo cultivamos nosotras.
       - icon: x
         tone: 'no'

@@ -15,7 +15,7 @@
  * this component to display a goal on its own.
  *
  * So the section reads "our target is 250 lbs; we have delivered 0 so far,
- * planting begins August 9". That is a stronger claim to a partner than an
+ * planted August 12, nothing weighed yet". That is a stronger claim to a partner than an
  * unverifiable number, and it stays correct on its own as the actuals rise.
  *
  * ── Motion ───────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ interface Goal {
 
 interface Props {
   goals: Goal[];
-  /** Small caption above the grid, e.g. "First season, Aug-Nov 2026". */
+  /** Small caption above the grid, e.g. "First season, Aug 2026 - Jun 2027". */
   caption?: string;
   class?: string;
 }

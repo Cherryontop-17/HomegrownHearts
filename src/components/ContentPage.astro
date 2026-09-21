@@ -31,7 +31,7 @@ import ShuffleCards from './ShuffleCards.astro';
 
 import { getCopy, type PageId } from '../copy';
 import { localizePath, useTranslations } from '../i18n/utils';
-import { CONTACT, IMPACT, FORMS, DROP_OFF, has } from '../config';
+import { CONTACT, IMPACT, FORMS, DROP_OFF, GARDEN_SITES, has } from '../config';
 import { seasonGoals } from '../goals';
 import type { Locale } from '../config';
 
@@ -76,6 +76,45 @@ const ACCENTS = ['grow', 'harvest', 'care'] as const;
  * the calendar that already showed them.
  */
 const SECTIONS_WITH_OWN_RENDERER = new Set(['numbers', 'roadmap', 'crops', 'goals']);
+
+/**
+ * Garden sites that have actually agreed to be named.
+ *
+ * ⚠️ COMPLIANCE Rule 4 by analogy — see the note on GARDEN_SITES in config.ts.
+ * A location is not ours to announce until the people who own it have said yes,
+ * so this filters on `confirmed` and the copy never names a candidate. As of
+ * 2026-08-08 both entries are `false` and this is empty, which is the honest
+ * state while the conversations are still open.
+ *
+ * To publish one: set `confirmed: true` in config.ts. Nothing else. The section
+ * appears, and the wording in garden.yaml already reads correctly for one site
+ * or several.
+ */
+const confirmedGardenSites = GARDEN_SITES.filter((site) => site.confirmed);
+
+/**
+ * Sections whose whole band depends on data that may not exist yet.
+ *
+ * A heading with nothing underneath it reads as broken — the homepage skips
+ * the entire flyers band for the same reason rather than rendering an empty
+ * one. Filtering here rather than inside the switch means the <Section>, its
+ * heading and its padding all disappear together.
+ *
+ * A section id with no entry here always renders, so this stays opt-in.
+ */
+const SECTION_GATES: Record<string, boolean> = {
+  'garden-sites': confirmedGardenSites.length > 0,
+  // DROP_OFF is empty until somewhere agrees to hold a box. "Our locations"
+  // over an empty grid is worse than no band at all.
+  locations: DROP_OFF.length > 0,
+};
+
+/*
+  Surface alternation runs over what actually renders. Indexing into the
+  unfiltered list would leave two identical bands adjacent wherever a gated
+  section dropped out.
+*/
+const sections = copy.sections.filter((s) => SECTION_GATES[s.id] ?? true);
 
 const impactStats = [
   { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
@@ -137,7 +176,7 @@ const formLinks = [
   </Section>
 
   {
-    copy.sections.map((s, i) => (
+    sections.map((s, i) => (
       <Section
         id={s.id}
         surface={SURFACES[i % SURFACES.length]}
@@ -240,6 +279,22 @@ const formLinks = [
                   openLabel={t('dropoff.openInMaps')}
                   privacyNote={t('dropoff.mapPrivacy')}
                 />
+              </article>
+            ))}
+          </Reveal>
+        )}
+
+        {/* Only ever the sites that agreed to be named — the section itself is
+            filtered out above when none have. No street address: these are
+            partner grounds, and the drop-off page is the one place addresses
+            belong. */}
+        {s.id === 'garden-sites' && (
+          <Reveal stagger={110} class="locations">
+            {confirmedGardenSites.map((site) => (
+              <article class="location">
+                <div class="location__head">
+                  <h3 class="location__name">{site.name}</h3>
+                </div>
               </article>
             ))}
           </Reveal>

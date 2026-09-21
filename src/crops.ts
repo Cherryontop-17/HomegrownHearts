@@ -52,9 +52,9 @@ export interface Crop {
   /** Seed or seedling. Set by what is on the supply wishlist. */
   method: PlantingMethod;
   /**
-   * ISO date this crop goes in, inside the Aug 10-16 planting week.
-   * Spread across the week so the calendar shows a real planting schedule
-   * rather than everything landing on one day.
+   * ISO date this crop went in. Every one of the first seven was planted on
+   * 2026-08-12, in a single session, so they all carry the same date — the
+   * calendar shows one planting day rather than a spread-out schedule.
    */
   sownOn: string;
   /**
@@ -70,8 +70,18 @@ export interface Crop {
 /**
  * Growing data.
  *
- * Ordered by sowing date, which is the order the calendar and the chart both
- * render them in.
+ * The first seven all went in on 2026-08-12, so sowing date no longer
+ * separates them. Ordered by how soon each one can first be cut instead, which
+ * is the order the grow chart reads best in: the fast herbs at the top, the
+ * slow perennials at the bottom.
+ *
+ * Two leafy greens sit in this list alongside five culinary herbs. Kale and
+ * spinach are not herbs and the crop panels do not call them that — they are
+ * what carries the weight of a bundle while the herbs carry the flavour.
+ *
+ * ⚠️ Every icon here is DISTINCT. The matching game on /get-involved/donate/
+ * pairs an icon card with a name card, so two crops sharing a glyph would make
+ * the board unwinnable by anything but memory of which duplicate was which.
  */
 export const CROPS = [
   {
@@ -82,7 +92,7 @@ export const CROPS = [
     // plants rather than a seed packet.
     daysToHarvest: [21, 30],
     method: 'transplant',
-    sownOn: '2026-08-10',
+    sownOn: '2026-08-12',
     pace: 'fast',
     sourceKey: 'ncsu-basil',
   },
@@ -93,57 +103,65 @@ export const CROPS = [
     // stage for the first harvest and let the plant keep producing.
     daysToHarvest: [25, 65],
     method: 'seed',
-    sownOn: '2026-08-10',
+    sownOn: '2026-08-12',
     pace: 'fast',
     sourceKey: 'ncsu-kale',
   },
   {
-    id: 'lettuce',
-    icon: 'salad',
-    // Cut-and-come-again mesclun. The fastest thing in the ground.
-    daysToHarvest: [21, 45],
+    id: 'peppermint',
+    icon: 'leaf',
+    // A plant, not a seed packet, and not by choice: peppermint is a sterile
+    // hybrid that does not come true from seed. Anything sold as peppermint
+    // seed grows up as something else.
+    daysToHarvest: [30, 60],
+    method: 'transplant',
+    sownOn: '2026-08-12',
+    pace: 'medium',
+    sourceKey: 'ncsu-peppermint',
+  },
+  {
+    id: 'cilantro',
+    icon: 'clover',
+    // Direct-sown, because it resents transplanting — it sends down a taproot
+    // and bolts if that is disturbed. Baby leaf at the low end.
+    daysToHarvest: [30, 55],
     method: 'seed',
-    sownOn: '2026-08-11',
-    pace: 'fast',
-    sourceKey: 'ncsu-lettuce',
+    sownOn: '2026-08-12',
+    pace: 'medium',
+    sourceKey: 'ncsu-cilantro',
   },
   {
     id: 'spinach',
-    icon: 'leafy-green',
+    icon: 'salad',
     // Cool-season. An August sowing in the Piedmont is at the hot edge of its
-    // range; the reliable window is the fall succession round.
+    // range; it comes into its own once the nights cool off.
     daysToHarvest: [40, 50],
     method: 'seed',
-    sownOn: '2026-08-11',
-    pace: 'medium',
+    sownOn: '2026-08-12',
+    pace: 'slow',
     sourceKey: 'ncsu-spinach',
   },
   {
-    id: 'tomato',
-    icon: 'sprout',
-    method: 'transplant',
-    daysToHarvest: [55, 70],
+    id: 'dill',
+    icon: 'wheat',
+    // Direct-sown for the same taproot reason as cilantro. These counts are
+    // for the feathery leaf, not for the seed head, which is months later.
+    daysToHarvest: [40, 60],
+    method: 'seed',
     sownOn: '2026-08-12',
     pace: 'slow',
-    sourceKey: 'ncsu-tomato',
+    sourceKey: 'ncsu-dill',
   },
   {
-    id: 'carrot',
-    icon: 'carrot',
-    daysToHarvest: [60, 80],
-    method: 'seed',
-    sownOn: '2026-08-13',
+    id: 'oregano',
+    icon: 'shrub',
+    // The slowest to establish and the longest-lived: a perennial that dies
+    // back in winter and comes up again from the same roots in spring.
+    daysToHarvest: [45, 60],
+    method: 'transplant',
+    sownOn: '2026-08-12',
     pace: 'slow',
-    sourceKey: 'ncsu-carrot',
-  },
-  {
-    id: 'cucumber',
-    icon: 'sprout',
-    daysToHarvest: [50, 70],
-    method: 'seed',
-    sownOn: '2026-08-14',
-    pace: 'medium',
-    sourceKey: 'ncsu-cucumber',
+    sourceKey: 'ncsu-oregano',
   },
 ] as const satisfies readonly Crop[];
 

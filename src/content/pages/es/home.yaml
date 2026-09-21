@@ -13,13 +13,13 @@
 # inglés. src/copy.ts detiene la compilación si falta uno o si sobra otro.
 
 title: Alimentos frescos para nuevas madres
-description: Cultivamos verduras en el condado de Union, Carolina del Norte, y entregamos paquetes gratuitos de temporada a madres embarazadas y recién dadas a luz.
+description: Cultivamos hierbas aromáticas en el condado de Union, Carolina del Norte, y entregamos paquetes gratuitos de temporada a madres embarazadas y recién dadas a luz.
 
 hero:
   eyebrow: Condado de Union, Carolina del Norte
   title: Alimentos frescos, cultivados aquí cerca.
   lead: >-
-    Cultivamos verduras en un huerto pequeño en el condado de Union, Carolina del Norte, y
+    Cultivamos hierbas aromáticas en un huerto pequeño en el condado de Union, Carolina del Norte, y
     armamos paquetes gratuitos para madres embarazadas y recién dadas a luz. Una
     clínica asociada los entrega a las familias que atiende.
   ctas:
@@ -39,16 +39,22 @@ sections:
     title: Las decisiones importantes no nos corresponden a nosotras.
     body:
       - >-
-        Somos dos estudiantes de secundaria. Cultivamos verduras y las llevamos a
+        Somos dos estudiantes de secundaria. Cultivamos hierbas y las llevamos a
         una clínica. Todo lo que va más allá de eso queda en manos de personas
         con la formación para decidirlo, y el programa está armado para que siga
         siendo así.
     items:
+      # ⚠️ Redactado para ser cierto ANTES de la aprobación de la clínica y
+      # seguir siéndolo después. Antes decía que la clínica ya había revisado y
+      # aprobado la lista, cuando el correo de las fundadoras pedía justamente
+      # esa aprobación. El personal de la clínica lee este sitio. No volver al
+      # pasado hasta tener la aprobación por escrito.
       - icon: file-check
-        title: Una lista de verduras aprobada por la clínica
+        title: La clínica decide qué podemos cultivar
         body: >-
-          Nuestra clínica asociada revisó y aprobó cada producto que podemos
-          cultivar y empacar. No entra al paquete nada que no esté en esa lista.
+          Nuestra clínica asociada revisa la lista de todo lo que proponemos
+          cultivar y empacar, y no sembramos nada hasta que la apruebe. No entra
+          al paquete nada que no esté en esa lista.
       - icon: user-check
         title: Una persona adulta responsable
         body: >-
@@ -69,13 +75,14 @@ sections:
       durante el embarazo, consulte a su profesional clínico.
 
   - id: why
-    eyebrow: Por qué verduras
-    title: Las verduras frescas son lo primero que se deja de comprar.
+    eyebrow: Por qué hierbas
+    title: Las hierbas frescas son lo primero que se deja de comprar.
     body:
       - >-
-        Cuestan caro, se echan a perder pronto y toman tiempo de preparar. Cuando
-        el dinero no alcanza, son lo primero que se deja de comprar. Por eso una
-        bolsa gratuita, ya lavada, vale más de lo que parece.
+        Cuestan mucho para lo poco que traen, y un manojo se marchita en el
+        refrigerador en pocos días. Cuando el dinero no alcanza, son lo primero
+        que se deja de comprar, y la comida se hace sin ellas. Por eso una bolsa
+        gratuita, ya lavada, vale más de lo que parece.
     items:
       - value: '1 de cada 10'
         title: adultos come la cantidad de verduras recomendada
@@ -115,7 +122,7 @@ sections:
       - icon: sprout
         title: Cosechar
         body: >-
-          Recogemos las verduras temprano, la misma mañana en que salen.
+          Cortamos las hierbas temprano, la misma mañana en que salen.
       - icon: basket
         title: Empacar
         body: >-
@@ -133,16 +140,17 @@ sections:
     body:
       - >-
         El paquete no es una caja fija. Trae lo que el huerto dio esa semana:
-        verduras de hoja y rábanos en primavera; tomates y calabacitas en verano;
-        berzas y camotes en otoño, todo cultivado aquí cerca.
+        albahaca, menta piperita, cilantro, orégano y eneldo, con col rizada y
+        espinaca al lado, todo cultivado aquí cerca. Lo que se está cortando
+        cambia con el mes.
       - >-
         Todo va entero y crudo. No cortamos, no cocinamos y no conservamos nada.
     note: >-
-      Todo lo que cultivamos sale de la lista de verduras que nuestra clínica
-      asociada revisó y aprobó.
+      Todo lo que cultivamos sale de la lista de cultivos que nuestra clínica
+      asociada aprueba antes de que sembremos.
 
   # ── El código QR ───────────────────────────────────────────────────────────
-  # ⚠️ Regla 1 de COMPLIANCE. La herramienta responde a las verduras de la
+  # ⚠️ Regla 1 de COMPLIANCE. La herramienta responde a las hierbas de la
   # etiqueta y a nada sobre la persona que recibe la bolsa. Cualquier redacción
   # que haga sonar las recetas como personalizadas la convierte en asesoría
   # dietética.
@@ -151,9 +159,9 @@ sections:
     title: Una etiqueta que le dice qué hacer con lo que recibió.
     body:
       - >-
-        Una bolsa de verduras desconocidas es una bolsa que se queda en el
+        Una bolsa de hierbas desconocidas es una bolsa que se queda en el
         cajón. Cada paquete lleva una etiqueta con lo que se empacó esa mañana, y
-        al escanearla aparecen formas sencillas de cocinar esas verduras.
+        al escanearla aparecen formas sencillas de cocinar esas hierbas.
       - >-
         La etiqueta sabe qué hay en la bolsa. Eso es todo lo que sabe y todo lo
         que necesita saber.
@@ -166,7 +174,7 @@ sections:
         body: No hay que instalar nada. Se abre en el navegador.
       - icon: sparkles
         title: Se lee esa lista
-        body: Las verduras de la etiqueta son el único dato de entrada.
+        body: Las hierbas de la etiqueta son el único dato de entrada.
       - icon: leafy-green
         title: Aparecen formas de cocinarlas
         body: >-
@@ -181,9 +189,10 @@ sections:
     title: Nuestras metas para la primera temporada.
     body:
       - >-
-        Los canteros se siembran el 9 de agosto, así que hoy todas estas cifras
-        están en cero. Preferimos mostrarle el plan con el número real al lado
-        antes que una cifra que usted no pueda verificar.
+        Los canteros se sembraron el 12 de agosto y todavía no se ha pesado ni
+        entregado nada, así que hoy todas estas cifras están en cero. Preferimos
+        mostrarle el plan con el número real al lado antes que una cifra que
+        usted no pueda verificar.
 
   # ── Lista de insumos ───────────────────────────────────────────────────────
   # `group` genera los filtros y sí se traduce. El orden aquí es el orden de los
@@ -196,41 +205,44 @@ sections:
         Solo materiales, nunca dinero. Si está en un vivero o en una ferretería y
         quiere apoyar, esta es la lista completa.
     items:
+      # ⚠️ Las cantidades de menta, cilantro, orégano y eneldo son provisionales
+      # (cambio de lista del 2026-09-21). Corríjalas según lo que de verdad
+      # necesiten los canteros, igual que en el archivo en inglés.
       - group: Semillas y plántulas
         icon: flower-2
-        title: Albahaca genovesa
+        title: Albahaca
         value: 6 plantas
-        body: Ciclo corto. Lo primero que se cosecha.
-      - group: Semillas y plántulas
-        icon: sprout
-        title: Tomates cherry
-        value: 4 plantas
-        body: Cultivo de verano. Temporada larga y buen rendimiento.
+        body: Ciclo corto. Lo primero que se cosecha, y se vuelve a plantar cada primavera.
       - group: Semillas y plántulas
         icon: leafy-green
         title: Col rizada
         value: 1 sobre
         body: Ciclo corto y sigue produciendo después del corte.
       - group: Semillas y plántulas
-        icon: leafy-green
-        title: Espinaca
+        icon: leaf
+        title: Menta piperita
+        value: 2 plantas
+        body: Solo plantas. La menta piperita no sale fiel de semilla.
+      - group: Semillas y plántulas
+        icon: clover
+        title: Cilantro
         value: 1 sobre
-        body: Cultivo de clima fresco. Entra en la tanda de otoño.
+        body: Se siembra directo en el cantero, en otoño y otra vez en primavera.
       - group: Semillas y plántulas
         icon: salad
-        title: Mezcla de lechugas
+        title: Espinaca
         value: 1 sobre
-        body: Se corta y vuelve a crecer, así una siembra rinde semanas.
+        body: Cultivo de clima fresco. Pasa el invierno bajo manta.
       - group: Semillas y plántulas
-        icon: carrot
-        title: Zanahorias
+        icon: wheat
+        title: Eneldo
         value: 1 sobre
-        body: Cultivo de raíz. Lento, y vale la espera.
+        body: Se siembra directo en el cantero, como el cilantro.
       - group: Semillas y plántulas
-        icon: sprout
-        title: Pepinos
+        icon: shrub
+        title: Orégano
         value: 2 plantas
-        body: Necesitan un enrejado, que también nos hace falta.
+        body: Es perenne. Se planta una vez y vuelve cada primavera.
       - group: Herramientas
         icon: shovel
         title: Palas de mano y tijeras de podar
@@ -285,7 +297,7 @@ sections:
     title: Un huerto estudiantil con una clínica al final.
     body:
       - >-
-        Homegrown Hearts cultiva verduras en el condado de Union, Carolina del
+        Homegrown Hearts cultiva hierbas aromáticas en el condado de Union, Carolina del
         Norte, y las regala. Todo lo que cosechamos va a una clínica asociada,
         que lo entrega a las familias que ya atiende. Nunca cobramos nada y nunca
         decidimos quién recibe.
@@ -298,7 +310,7 @@ sections:
         title: Comenzó en 2026
         body: >-
           Dos estudiantes de secundaria, una temporada de cultivo y una lista de
-          verduras que nuestra clínica asociada aprobó antes de sembrar nada.
+          cultivos que nuestra clínica asociada aprueba antes de sembrar nada.
       - icon: map-pin
         title: Condado de Union, Carolina del Norte
         body: >-
@@ -319,7 +331,7 @@ sections:
       - title: Kreeshma Vasikarla
         body: >-
           Responsable de misión y enlace médico. Coordina el contacto con
-          clínicas, la lista de verduras y el protocolo de inocuidad.
+          clínicas, la lista de cultivos y el protocolo de inocuidad.
       - title: Charishya Yarram
         body: >-
           Responsable de operaciones y tecnología. Coordina los calendarios de

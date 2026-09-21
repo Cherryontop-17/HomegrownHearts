@@ -6,11 +6,11 @@
 # fallo que inflar una cifra de impacto.
 #
 # ⚠️ La Regla 1 manda en cada palabra sobre lo que devuelve la herramienta.
-# Responde a las verduras de la bolsa y a nada sobre quien la recibe. Sin
+# Responde a las hierbas de la bolsa y a nada sobre quien la recibe. Sin
 # nutrientes, sin «bueno para», sin personalizar por embarazo.
 
 title: Recetas con IA
-description: La herramienta detrás del código QR de cada paquete de Homegrown Hearts. Sugiere formas de cocinar las verduras de la bolsa. Todavía en desarrollo.
+description: La herramienta detrás del código QR de cada paquete de Homegrown Hearts. Sugiere formas de cocinar las hierbas de la bolsa. Todavía en desarrollo.
 
 hero:
   eyebrow: En desarrollo
@@ -28,7 +28,7 @@ sections:
       - >-
         Estamos construyendo esto después del huerto, no antes. Las primeras
         entregas importan más que el software que las acompaña, así que el
-        sistema de etiquetas sale cuando ya haya verduras a las que pegarlas.
+        sistema de etiquetas sale cuando ya haya cosecha a la que pegarlas.
       - >-
         Nada de esta página está activo. Todavía no hay ningún código que
         escanear, y la vista previa de la página principal es una ilustración,
@@ -57,26 +57,26 @@ sections:
       - icon: sparkles
         title: Se lee esa lista
         body: >-
-          Las verduras de la etiqueta son el único dato de entrada. A la
+          Las hierbas de la etiqueta son el único dato de entrada. A la
           herramienta se le dice qué hay en la bolsa y absolutamente nada sobre
           quién la recibe.
       - icon: leafy-green
         title: Aparecen formas de cocinarlas
         body: >-
-          Métodos sencillos para esas verduras concretas, con lo que ya hay en
+          Métodos sencillos para esas hierbas concretas, con lo que ya hay en
           una cocina de casa.
     note: >-
-      Ideas para cocinar las verduras del paquete. No es asesoría dietética ni
+      Ideas para cocinar las hierbas del paquete. No es asesoría dietética ni
       médica. Para orientación sobre la alimentación durante el embarazo,
       consulte a su profesional clínico.
 
   - id: why
     eyebrow: Por qué importa
-    title: Una verdura desconocida es una verdura desperdiciada.
+    title: Una hierba desconocida es una hierba desperdiciada.
     body:
       - >-
-        La razón más común por la que una bolsa gratuita de verduras no se come
-        no es que nadie la quisiera. Es que apareció una verdura que nadie en la
+        La razón más común por la que una bolsa gratuita de hierbas no se come
+        no es que nadie la quisiera. Es que apareció una hierba que nadie en la
         casa había cocinado antes, y se quedó en el cajón hasta pasarse.
       - >-
         Una etiqueta en la bolsa es la respuesta más barata posible a eso, y es

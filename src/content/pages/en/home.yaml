@@ -15,13 +15,13 @@
 # places.
 
 title: Fresh food for new mothers
-description: Homegrown Hearts grows vegetables in Union County, North Carolina and delivers free seasonal bundles to pregnant and postpartum mothers through a partner clinic.
+description: Homegrown Hearts grows herbs in Union County, North Carolina and delivers free seasonal bundles to pregnant and postpartum mothers through a partner clinic.
 
 hero:
   eyebrow: Union County, North Carolina
   title: Fresh food, grown close to home.
   lead: >-
-    We grow vegetables in a small garden in Union County, North Carolina and pack them
+    We grow herbs in a small garden in Union County, North Carolina and pack them
     into free bundles for pregnant and postpartum mothers. A partner clinic hands
     them to the families it serves.
   ctas:
@@ -42,15 +42,22 @@ sections:
     title: The decisions that matter are not ours to make.
     body:
       - >-
-        We are two high school students. We grow vegetables and we drive them to
+        We are two high school students. We grow herbs and we drive them to
         a clinic. Everything past that point belongs to people qualified to
         decide it, and the program is built so it stays that way.
     items:
+      # ⚠️ Written so it is true BEFORE the clinic signs off and still true
+      # after. It previously read "A clinic-approved produce list / Our partner
+      # clinic reviewed and approved every item", which was a claim about a
+      # thing that had not happened — while the founders' own email to the
+      # clinic asked for exactly that approval. Clinic staff read this site.
+      # Do not restore the past tense until the sign-off is actually in hand.
       - icon: file-check
-        title: A clinic-approved produce list
+        title: The clinic decides what we may grow
         body: >-
-          Our partner clinic reviewed and approved every item we are allowed to
-          grow and pack. Nothing goes into a bundle that is not on that list.
+          Our partner clinic reviews the list of everything we propose to grow
+          and pack, and nothing goes in the ground until they have signed it
+          off. Nothing goes into a bundle that is not on that list.
       - icon: user-check
         title: An adult advisor
         body: >-
@@ -71,13 +78,14 @@ sections:
       pregnancy, ask your clinician.
 
   - id: why
-    eyebrow: Why vegetables
-    title: Fresh vegetables are the first thing a tight budget gives up.
+    eyebrow: Why herbs
+    title: Fresh herbs are the first thing a tight budget gives up.
     body:
       - >-
-        They are expensive, they spoil, and they take time to cook. When money
-        is short they are the first thing to go. That is why a free bag of them,
-        already washed, is worth more than it looks.
+        They cost a lot for how little you get, and a bunch wilts in the fridge
+        within days. When money is short they are the first thing to go, and a
+        meal made without them is the meal that gets made. That is why a free
+        bag of them, already washed, is worth more than it looks.
     items:
       - value: '1 in 10'
         title: adults eat the recommended amount of vegetables
@@ -108,7 +116,7 @@ sections:
           growing season.
       - icon: sprout
         title: Harvest
-        body: Vegetables are picked in the cool of the morning they go out.
+        body: Herbs are cut in the cool of the morning they go out.
       - icon: basket
         title: Pack
         body: >-
@@ -126,17 +134,18 @@ sections:
     body:
       - >-
         A bundle is not a fixed box. It holds what the garden actually produced
-        that week: spring greens and radishes, summer tomatoes and squash, fall
-        collards and sweet potatoes, all grown locally.
+        that week: sweet basil, peppermint, cilantro, oregano and dill, with
+        kale and spinach alongside them, all grown locally. What is cutting
+        changes with the month.
       - >-
         Everything is whole and raw. We do not cut, cook, or preserve anything.
     note: >-
-      Every item we grow comes from the produce list our partner clinic
-      reviewed and approved.
+      Every item we grow comes from the produce list our partner clinic signs
+      off before we plant.
 
   # ── The QR pipeline ────────────────────────────────────────────────────────
   # ⚠️ COMPLIANCE Rule 1. Read the header of src/components/SmartRecipe.astro
-  # before editing a word of this. The tool responds to the vegetables on the
+  # before editing a word of this. The tool responds to the herbs on the
   # tag and to nothing about the person holding the bag. Any rewrite that makes
   # the recipes sound tailored to a reader turns this into dietary advice.
   - id: smart
@@ -144,9 +153,9 @@ sections:
     title: A tag that tells you what to do with it.
     body:
       - >-
-        A bag of unfamiliar vegetables is a bag that sits in the drawer. Every
+        A bag of unfamiliar herbs is a bag that sits in the drawer. Every
         bundle carries a tag listing what went in that morning, and scanning it
-        opens plain ways to cook those specific vegetables.
+        opens plain ways to cook those specific herbs.
       - >-
         The tag knows what is in the bag. That is all it knows, and all it needs
         to know.
@@ -159,7 +168,7 @@ sections:
         body: Nothing to install. It opens in a browser.
       - icon: sparkles
         title: It reads that list
-        body: The vegetables on the tag are the only input.
+        body: The herbs on the tag are the only input.
       - icon: leafy-green
         title: You get ways to cook them
         body: >-
@@ -175,9 +184,10 @@ sections:
     title: Our targets for the first season.
     body:
       - >-
-        The beds go in on August 9, so today every one of these sits at zero.
-        We would rather show you the plan with the real number next to it than
-        a figure you have no way to check.
+        The beds went in on August 12 and nothing has been weighed or delivered
+        yet, so today every one of these sits at zero. We would rather show you
+        the plan with the real number next to it than a figure you have no way
+        to check.
 
   # ── Supply wishlist ────────────────────────────────────────────────────────
   # `group` drives the filter chips and is translated. Order here is the order
@@ -190,41 +200,44 @@ sections:
         Supplies only, never money. If you are standing in a garden center or a
         hardware store and want to help, this is the whole list.
     items:
+      # ⚠️ Quantities for peppermint, cilantro, oregano and dill are placeholders
+      # added when the crop list changed on 2026-09-21. Correct them to what the
+      # beds actually need.
       - group: Seeds and seedlings
         icon: flower-2
-        title: Genovese basil
+        title: Sweet basil
         value: 6 plants
-        body: Fast-cycle. First thing ready to harvest.
-      - group: Seeds and seedlings
-        icon: sprout
-        title: Cherry tomatoes
-        value: 4 plants
-        body: Summer heat crop. Long season, heavy yield.
+        body: Fast-cycle. First thing ready to harvest, and replanted every spring.
       - group: Seeds and seedlings
         icon: leafy-green
         title: Kale
         value: 1 packet
         body: Fast-cycle and keeps producing after cutting.
       - group: Seeds and seedlings
-        icon: leafy-green
-        title: Spinach
+        icon: leaf
+        title: Peppermint
+        value: 2 plants
+        body: Plants only. Peppermint does not come true from seed.
+      - group: Seeds and seedlings
+        icon: clover
+        title: Cilantro
         value: 1 packet
-        body: Cool-season. Goes in for the fall round.
+        body: Sown straight into the bed, in autumn and again in spring.
       - group: Seeds and seedlings
         icon: salad
-        title: Lettuce mix
+        title: Spinach
         value: 1 packet
-        body: Cut-and-come-again, so one sowing runs for weeks.
+        body: Cool-season. Overwinters under cover.
       - group: Seeds and seedlings
-        icon: carrot
-        title: Carrots
+        icon: wheat
+        title: Dill
         value: 1 packet
-        body: Root crop. Slow, and worth the wait.
+        body: Sown straight into the bed, like the cilantro.
       - group: Seeds and seedlings
-        icon: sprout
-        title: Cucumbers
+        icon: shrub
+        title: Oregano
         value: 2 plants
-        body: Needs a trellis, which we also need.
+        body: A perennial. Plant it once and it comes back every spring.
       - group: Tools
         icon: shovel
         title: Hand trowels and pruners
@@ -282,7 +295,7 @@ sections:
     title: A student garden with a clinic at the end of it.
     body:
       - >-
-        Homegrown Hearts grows vegetables in Union County, North Carolina and
+        Homegrown Hearts grows herbs in Union County, North Carolina and
         gives them away. Everything we harvest goes to one partner clinic, which
         hands it to the families it already serves. We never charge anyone, and
         we never decide who receives.
@@ -295,7 +308,7 @@ sections:
         title: Started in 2026
         body: >-
           Two high school students, one growing season, and a produce list our
-          partner clinic approved before we planted anything.
+          partner clinic signs off before anything goes in the ground.
       - icon: map-pin
         title: Union County, North Carolina
         body: >-

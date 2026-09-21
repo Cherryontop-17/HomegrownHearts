@@ -8,13 +8,13 @@
 # Registro «usted». Ni una palabra sobre lo que la comida le hace al cuerpo.
 
 title: Para clínicas
-description: 'Qué implica colaborar con Homegrown Hearts para su clínica en el condado de Union, Carolina del Norte: verduras gratuitas y un protocolo de inocuidad.'
+description: 'Qué implica colaborar con Homegrown Hearts para su clínica en el condado de Union, Carolina del Norte: hierbas aromáticas gratuitas y un protocolo de inocuidad.'
 
 hero:
   eyebrow: Para clínicas y centros de embarazo
-  title: Verduras gratuitas para las familias que ya atiende.
+  title: Hierbas frescas gratuitas para las familias que ya atiende.
   lead: >-
-    Cultivamos verduras en el condado de Union, Carolina del Norte, y se las
+    Cultivamos hierbas aromáticas en el condado de Union, Carolina del Norte, y se las
     llevamos lavadas y empacadas hasta su clínica. Usted las reparte como ya le
     funcione. No tiene ningún costo, no genera papeleo y no hay nada que
     almacenar por mucho tiempo.
@@ -31,11 +31,12 @@ sections:
     title: Una entrega, en el horario que usted defina.
     items:
       - icon: basket
-        title: Paquetes de verduras de temporada
+        title: Paquetes de temporada
         body: >-
-          Verduras enteras y crudas, cosechadas la misma mañana en que llegan a
-          usted. El contenido cambia con la temporada: verduras de hoja en
-          primavera; tomates y calabacitas en verano; berzas y camotes en otoño.
+          Hierbas enteras y crudas, cortadas la misma mañana en que llegan a
+          usted, con col rizada y espinaca al lado. El contenido cambia con el
+          mes: albahaca y menta al principio, las hojas durante el invierno y
+          otra vez hierbas en primavera.
       - icon: calendar
         title: Un día y una hora fijos
         body: >-
@@ -78,11 +79,11 @@ sections:
 
   - id: safety
     eyebrow: Inocuidad de los alimentos
-    title: Cómo manejamos las verduras.
+    title: Cómo manejamos lo que cosechamos.
     body:
       - >-
         Nuestro protocolo sigue las recomendaciones de la FDA para seleccionar,
-        lavar y guardar verduras frescas. Le entregamos la versión escrita
+        lavar y guardar productos frescos. Le entregamos la versión escrita
         completa antes de cualquier primera entrega y la repasamos con usted.
     items:
       - icon: shield-check
@@ -93,8 +94,8 @@ sections:
       - icon: shield-check
         title: Lavadas solo con agua corriente
         body: >-
-          Nunca con jabón, detergente ni productos para lavar verduras. La FDA es
-          explícita: esos productos pueden quedar absorbidos en la verdura.
+          Nunca con jabón, detergente ni productos de lavado. La FDA es
+          explícita: esos productos pueden quedar absorbidos en el alimento.
       - icon: shield-check
         title: Enteras y crudas, nunca cortadas ni cocidas
         body: >-
@@ -107,7 +108,7 @@ sections:
           enfermo en las últimas 48 horas se acerca a un paquete. Los envases
           nunca se reutilizan entre entregas.
     note: >-
-      Nuestra lista de verduras y nuestro protocolo están pendientes de revisión
+      Nuestra lista de cultivos y nuestro protocolo están pendientes de revisión
       por parte de la clínica asociada. No los describiremos como aprobados hasta
       que lo estén.
 

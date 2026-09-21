@@ -107,13 +107,16 @@ const en = {
   // Season targets. These are GOALS, not achievements — COMPLIANCE Rule 5.
   // They are rendered only by <GoalMeter>, which forces the live actual from
   // config.ts to appear beside each one. Never surface these without that pair.
-  'goals.caption': 'First season targets, August to November 2026',
+  'goals.caption': 'First season targets, August 2026 to June 2027',
   'goals.produce': 'Pounds of produce grown and delivered',
   'goals.bags': 'Bundles handed to our partner clinic',
   'goals.local': 'Grown at our own garden site',
   // `{actual}` and `{target}` are substituted in HomePage.astro.
   'goals.soFar': '{actual} of {target} so far',
-  'goals.notStarted': 'Planting begins August 9',
+  // Sits under a 0% meter. It used to say planting had not started; the beds
+  // went in on 2026-08-12, so the honest reason for the zero is now that
+  // nothing has been weighed, not that nothing has been planted.
+  'goals.notStarted': 'Planted August 12. Nothing weighed yet.',
 
   // Roadmap status labels.
   'roadmap.done': 'Done',
@@ -163,7 +166,7 @@ const en = {
   'smart.status': 'In development',
   'smart.qrCaption': 'A preview of the bag tag. Not a working code yet.',
   'smart.disclaimer':
-    'Cooking ideas for the vegetables in the bundle. This is not dietary or medical advice. For guidance on eating during pregnancy, ask your clinician.',
+    'Cooking ideas for the herbs in the bundle. This is not dietary or medical advice. For guidance on eating during pregnancy, ask your clinician.',
 
   // Drop-off locations and their maps.
   'dropoff.pending': 'Not confirmed yet',
@@ -212,7 +215,7 @@ const en = {
   // The crop-matching easter egg on /get-involved/donate/.
   'game.open': 'Take a break. Can you name the crop?',
   'game.title': 'Name the crop',
-  'game.intro': 'Match each vegetable to its name. Everything here is growing in our beds.',
+  'game.intro': 'Match each crop to its name. Everything here is growing in our beds.',
   'game.reset': 'Shuffle',
   'game.moves': 'Moves: {n}',
   'game.match': 'Matched:',
@@ -304,7 +307,7 @@ const es: Record<UIKey, string> = {
   // Pie de página
   'org.place': 'Condado de Union, Carolina del Norte',
   'footer.blurb':
-    'Iniciativa estudiantil que cultiva paquetes gratuitos de verduras para madres embarazadas y recién dadas a luz.',
+    'Iniciativa estudiantil que cultiva paquetes gratuitos de hierbas aromáticas para madres embarazadas y recién dadas a luz.',
 
   'footer.explore': 'Explorar',
   'footer.help': 'Colabore',
@@ -329,12 +332,12 @@ const es: Record<UIKey, string> = {
     'Apenas estamos comenzando. Estos números se actualizan después de cada entrega.',
 
   // Metas de temporada. Son METAS, no logros — Regla 5 de COMPLIANCE.
-  'goals.caption': 'Metas de la primera temporada, de agosto a noviembre de 2026',
-  'goals.produce': 'Libras de verduras cultivadas y entregadas',
+  'goals.caption': 'Metas de la primera temporada, de agosto de 2026 a junio de 2027',
+  'goals.produce': 'Libras cultivadas y entregadas',
   'goals.bags': 'Paquetes entregados a nuestra clínica aliada',
   'goals.local': 'Cultivado en nuestro propio huerto',
   'goals.soFar': '{actual} de {target} hasta ahora',
-  'goals.notStarted': 'La siembra comienza el 9 de agosto',
+  'goals.notStarted': 'Sembrado el 12 de agosto. Todavía nada pesado.',
 
   // Etapas del plan.
   'roadmap.done': 'Listo',
@@ -377,7 +380,7 @@ const es: Record<UIKey, string> = {
   'smart.status': 'En desarrollo',
   'smart.qrCaption': 'Una vista previa de la etiqueta. Todavía no es un código funcional.',
   'smart.disclaimer':
-    'Ideas para cocinar las verduras del paquete. No es asesoría dietética ni médica. Para orientación sobre la alimentación durante el embarazo, consulte a su profesional clínico.',
+    'Ideas para cocinar las hierbas del paquete. No es asesoría dietética ni médica. Para orientación sobre la alimentación durante el embarazo, consulte a su profesional clínico.',
 
   // Puntos de entrega y sus mapas.
   'dropoff.pending': 'Sin confirmar',
@@ -411,7 +414,7 @@ const es: Record<UIKey, string> = {
   // El juego de emparejar cultivos en /get-involved/donate/.
   'game.open': 'Tómese un descanso. ¿Adivina el cultivo?',
   'game.title': 'Adivine el cultivo',
-  'game.intro': 'Empareje cada verdura con su nombre. Todas están creciendo en nuestros canteros.',
+  'game.intro': 'Empareje cada cultivo con su nombre. Todos están creciendo en nuestros canteros.',
   'game.reset': 'Barajar',
   'game.moves': 'Movimientos: {n}',
   'game.match': 'Emparejado:',

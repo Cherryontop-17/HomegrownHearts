@@ -65,19 +65,40 @@ export const ORG = {
  * A donor turning up at an unconfirmed address is a real failure, so the copy
  * around a pending entry must say "email first".
  */
-export const DROP_OFF = [
-  {
-    id: 'windsor',
-    name: 'Monroe drop-off',
-    street: '316 E Windsor St',
-    city: 'Monroe',
-    state: 'NC',
-    postalCode: '28112',
-    full: '316 E Windsor St, Monroe, NC 28112',
-    mapUrl: 'https://www.google.com/maps/search/?api=1&query=316+E+Windsor+St+Monroe+NC+28112',
-    confirmed: true,
-  },
-] as const;
+/*
+  Deliberately EMPTY as of 2026-08-09.
+
+  It held one entry, 316 E Windsor St in Monroe, marked `confirmed: true`. That
+  is the public library, which was asked to hold a donation box and said no —
+  they have no lobby space. So the site was sending donors to a building that
+  had declined, which is precisely the failure described above.
+
+  Empty is the honest state. `/get-involved/drop-off/` drops its locations band
+  entirely while this is empty (see SECTION_GATES in ContentPage.astro) and
+  asks people to email instead, which is better than an address nobody agreed
+  to. Add an entry only when somewhere has actually said yes.
+
+  Typed explicitly rather than with `as const`: on an empty array that infers
+  `readonly []`, giving every element the type `never`, so every component that
+  maps over this stops compiling the moment the list is emptied. The interface
+  keeps them compiling and documents what a real entry has to carry.
+*/
+export interface DropOffPoint {
+  id: string;
+  /** Public label, e.g. "Monroe drop-off" — not necessarily the venue's name. */
+  name: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  /** Single-line address, rendered as written. */
+  full: string;
+  mapUrl: string;
+  /** False renders it as pending. Read the warning above before adding one. */
+  confirmed: boolean;
+}
+
+export const DROP_OFF: readonly DropOffPoint[] = [];
 
 /**
  * Candidate garden sites.
@@ -96,8 +117,17 @@ export const DROP_OFF = [
  * here AND update the phase copy in both locales.
  */
 export const GARDEN_SITES = [
-  { id: 'wingate', name: 'Wingate Community Garden', confirmed: false },
+  /*
+    Status as of the founders' email of 2026-08-08. None has answered, so none
+    is named on the site — `confirmed` stays false and ContentPage.astro drops
+    the "Where we grow" band entirely while that is true.
+  */
+  // Contacted by phone, email and web form, repeatedly. No response.
   { id: 'cause-for-tea', name: 'A Cause For Tea Community Garden', confirmed: false },
+  // Contacted 2026-08-06. No response; to be retried during business hours.
+  { id: 'wingate', name: 'Wingate Community Garden', confirmed: false },
+  // Added 2026-08-08. To be called about spare bed space.
+  { id: 'dickerson', name: 'Dickerson Community Garden', confirmed: false },
 ] as const;
 
 /**
@@ -171,8 +201,24 @@ export const PARTNER_CLINIC = {
   city: 'Monroe',
   logo: null as string | null,
   approvedToDisplay: true,
-  /** Gates the phrase "clinic-approved" on the produce list. */
-  produceListApproved: true,
+  /**
+   * Whether the clinic has signed off the list of what we may grow and pack.
+   *
+   * ⚠️ FALSE as of 2026-08-08. The founders' email to the clinic that day asked
+   * for exactly this — "our first priority, before we start planting, is your
+   * professional approval on what plants we are allowed to grow" — so it has
+   * not happened. Set it true only when the sign-off is in hand, in writing.
+   *
+   * ⚠️ And know what this flag does NOT do. It is documented as gating the
+   * phrase "clinic-approved", and it gates nothing: `has.approvedProduce()` is
+   * exported and never called. The claim lived in prose in home.yaml, in both
+   * languages, saying the clinic "reviewed and approved every item" — past
+   * tense, unguarded, and readable by the very people being asked to approve
+   * it. That copy is now written to be true before sign-off and after, so it
+   * needs no edit when this flips. Wire a real gate before adding any wording
+   * that depends on this being true.
+   */
+  produceListApproved: false,
 } as const;
 
 /**
@@ -239,7 +285,7 @@ export const IMPACT = {
  * beside it, so a reader can never mistake the ambition for the record. The
  * <GoalMeter> component enforces that pairing; do not render a goal without it.
  *
- * The garden is planted on 2026-08-09, so at launch every actual is 0. That is
+ * The garden was planted on 2026-08-12, so at launch every actual is 0. That is
  * the honest state and it is fine — "here is the plan, here is where we are"
  * reads stronger to a clinic than a number nobody can check.
  */
@@ -250,8 +296,12 @@ export const GOALS = {
   clinicBags: 100,
   /** Share of produce grown at our own garden site rather than bought in. */
   localPercent: 100,
-  /** The window these targets cover. */
-  seasonLabel: 'First season, Aug–Nov 2026',
+  /**
+   * The window these targets cover. The first season runs from the August 2026
+   * planting through to the review with the clinic in June 2027 — the herbs and
+   * the two greens overwinter, so it does not stop at the first frost.
+   */
+  seasonLabel: 'First season, Aug 2026 – Jun 2027',
 } as const;
 
 /**
@@ -272,27 +322,43 @@ export const GOALS = {
  * planning actual garden work thinks about it.
  */
 export const ROADMAP = [
-  // ── August: stand it up ──────────────────────────────────────────────
+  // ── August 2026: stand it up ─────────────────────────────────────────
   { key: 'digital', start: '2026-08-07', end: '2026-08-08' },
-  { key: 'garden', start: '2026-08-09', end: '2026-08-09' },
-  { key: 'planting', start: '2026-08-10', end: '2026-08-16' },
-  { key: 'harvest', start: '2026-08-17', end: '2026-08-23' },
-  { key: 'delivery', start: '2026-08-24', end: '2026-08-31' },
+  { key: 'garden', start: '2026-08-09', end: '2026-08-11' },
+  // Planting day. Everything went in at once, which is why this is a single
+  // date and why every crop in src/crops.ts carries it as `sownOn`.
+  { key: 'planting', start: '2026-08-12', end: '2026-08-12' },
+  { key: 'establish', start: '2026-08-13', end: '2026-08-31' },
 
-  // ── September: the first real cycle ──────────────────────────────────
-  { key: 'sep-cycle', start: '2026-09-01', end: '2026-09-13' },
-  { key: 'sep-fall-sow', start: '2026-09-14', end: '2026-09-20' },
-  { key: 'sep-weekly', start: '2026-09-21', end: '2026-09-30' },
+  // ── September 2026: the first cuts ───────────────────────────────────
+  { key: 'sep-first', start: '2026-09-01', end: '2026-09-10' },
+  { key: 'sep-herbs', start: '2026-09-11', end: '2026-09-20' },
+  { key: 'sep-delivery', start: '2026-09-21', end: '2026-09-30' },
 
-  // ── October: peak ────────────────────────────────────────────────────
-  { key: 'oct-summer', start: '2026-10-01', end: '2026-10-11' },
-  { key: 'oct-roots', start: '2026-10-12', end: '2026-10-20' },
-  { key: 'oct-greens', start: '2026-10-21', end: '2026-10-31' },
+  // ── October 2026: peak ───────────────────────────────────────────────
+  { key: 'oct-peak', start: '2026-10-01', end: '2026-10-18' },
+  { key: 'oct-basil', start: '2026-10-19', end: '2026-10-31' },
 
-  // ── November: close the season ───────────────────────────────────────
-  { key: 'nov-last', start: '2026-11-01', end: '2026-11-14' },
-  { key: 'nov-beds', start: '2026-11-15', end: '2026-11-23' },
-  { key: 'nov-review', start: '2026-11-24', end: '2026-11-30' },
+  // ── November 2026: the frost line ────────────────────────────────────
+  { key: 'nov-frost', start: '2026-11-01', end: '2026-11-15' },
+  { key: 'nov-cover', start: '2026-11-16', end: '2026-11-30' },
+
+  // ── Winter: the beds keep going, slowly ──────────────────────────────
+  { key: 'dec-slow', start: '2026-12-01', end: '2026-12-31' },
+  { key: 'jan-plan', start: '2027-01-01', end: '2027-01-31' },
+  { key: 'feb-wake', start: '2027-02-01', end: '2027-02-28' },
+
+  // ── Spring 2027: second wind ─────────────────────────────────────────
+  { key: 'mar-sow', start: '2027-03-01', end: '2027-03-15' },
+  { key: 'mar-return', start: '2027-03-16', end: '2027-03-31' },
+  { key: 'apr-spring', start: '2027-04-01', end: '2027-04-15' },
+  { key: 'apr-basil', start: '2027-04-16', end: '2027-04-30' },
+  { key: 'may-bolt', start: '2027-05-01', end: '2027-05-15' },
+  { key: 'may-herbs', start: '2027-05-16', end: '2027-05-31' },
+
+  // ── June 2027: close the first season ────────────────────────────────
+  { key: 'jun-last', start: '2027-06-01', end: '2027-06-20' },
+  { key: 'jun-review', start: '2027-06-21', end: '2027-06-30' },
 ] as const;
 
 export type RoadmapKey = (typeof ROADMAP)[number]['key'];

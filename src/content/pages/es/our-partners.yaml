@@ -11,7 +11,7 @@ hero:
   eyebrow: Nuestras alianzas
   title: Nada de esto lo hacemos solas.
   lead: >-
-    Dos estudiantes pueden cultivar verduras. Llevarlas a las familias que las
+    Dos estudiantes pueden cultivar hierbas. Llevarlas a las familias que las
     quieren requiere gente que ya estaba ahí.
 
 sections:
@@ -20,26 +20,19 @@ sections:
     title: Cómo están las cosas hoy.
     body:
       - >-
-        Una alianza confirmada y una conversación en curso. Listamos las dos y
-        decimos cuál es cuál, porque una lista de aliados que incluye en
+        Una alianza confirmada. Aquí solo aparecen organizaciones que han
+        aceptado por escrito, porque una lista de aliados que incluye en
         silencio a quien no ha aceptado no le sirve a nadie.
     items:
       - icon: heart
         title: HELP Pregnancy Center, Monroe
         body: >-
-          Nuestra clínica aliada. Aprobó la lista de verduras, recibe cada
+          Nuestra clínica aliada. Aprueba la lista de cultivos, recibe cada
           paquete y decide qué familias lo reciben.
-      - icon: clipboard-list
-        title: Biblioteca Pública del Condado de Union, sede principal
-        body: >-
-          En conversaciones para ser punto de entrega de materiales. Todavía no
-          hay nada acordado, así que por favor no lleve donaciones allí.
     ctas:
       - label: Sobre HELP Pregnancy Center
         href: /our-partners/help-pregnancy-center
         primary: true
-      - label: Sobre la biblioteca
-        href: /our-partners/union-county-library
 
   - id: join
     eyebrow: Para organizaciones
@@ -48,7 +41,7 @@ sections:
       - >-
         Buscamos uno o dos lugares más dispuestos a tener una caja de
         donaciones, y hablaríamos con cualquier clínica del condado de Union o
-        de los alrededores sobre recibir verduras.
+        de los alrededores sobre recibir lo que cultivamos.
       - >-
         Lo que pedimos es poco y está escrito con detalle, para que nadie tenga
         que sentarse en una reunión solo para averiguarlo.

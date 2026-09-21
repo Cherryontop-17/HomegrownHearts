@@ -1,6 +1,7 @@
 ---
 /**
- * Operational roadmap — four calendar months wired to a phase rail.
+ * Operational roadmap — one calendar per month of the season, wired to a phase
+ * rail.
  *
  * ── Why a calendar and not a row of dots ──────────────────────────────────
  * A dotted timeline shows ORDER. A calendar shows DENSITY: that planting and
@@ -14,7 +15,7 @@
  * title swap which one is shown, and the phase rail swaps with it. The rail is
  * therefore always describing the month you are looking at.
  *
- * Without JavaScript all four months render stacked, which is a complete and
+ * Without JavaScript every month renders stacked, which is a complete and
  * readable page rather than a broken one. The `.js` gate in global.css is what
  * collapses them to one at a time, so the enhancement can never hide content
  * from a reader whose script failed to load.
@@ -266,7 +267,9 @@ const months = monthKeys.map((key) => {
  * Keyed by calendar month rather than by position, so extending the roadmap
  * into another month picks up the right drawing instead of the next one in a
  * list. August and September are still growing; October is the gourd; November
- * is a bare vine, which is what the beds actually look like by then.
+ * through January are a bare vine, which is what the beds look like under
+ * frost cloth; February to May are new growth again; June, at the end of the
+ * season, is the herbs going to seed.
  *
  * Same illustration set, same weight and same very low opacity as the section
  * ornaments on the homepage — the point is that the calendar feels like it
@@ -276,10 +279,17 @@ const MONTH_PLATE: Record<
   number,
   'sprig' | 'seedhead' | 'rootveg' | 'vine' | 'leafpair' | 'gourd'
 > = {
+  0: 'vine', // January
+  1: 'leafpair', // February
+  2: 'sprig', // March
+  3: 'leafpair', // April
+  4: 'sprig', // May
+  5: 'seedhead', // June
   7: 'leafpair', // August
   8: 'sprig', // September
   9: 'gourd', // October
   10: 'vine', // November
+  11: 'vine', // December
 };
 
 const statusIcon: Record<Status, IconName> = {
@@ -499,7 +509,7 @@ const statusIcon: Record<Status, IconName> = {
   }
 
   /*
-    All four months are on the page, stacked, and the arrows scroll between
+    Every month is on the page, stacked, and the arrows scroll between
     them.
 
     They used to swap in place with only one visible. That was rejected in use:

@@ -8,7 +8,7 @@
 # quién recibe un paquete y nada aquí puede sugerir lo contrario.
 
 title: HELP Pregnancy Center
-description: Cómo trabaja Homegrown Hearts con HELP Pregnancy Center en Monroe, Carolina del Norte, quién decide qué familias reciben un paquete y qué aprobó la clínica.
+description: Cómo trabaja Homegrown Hearts con HELP Pregnancy Center en Monroe - quién decide qué familias reciben un paquete y qué aprueba la clínica antes de sembrar.
 
 hero:
   eyebrow: Nuestra clínica aliada
@@ -23,14 +23,14 @@ sections:
     title: Toman todas las decisiones que tocan a una familia.
     body:
       - >-
-        Nosotras cultivamos verduras y las llevamos a la clínica. Desde que se
+        Nosotras cultivamos hierbas y las llevamos a la clínica. Desde que se
         entrega un paquete, es suyo. Esa división es el diseño completo de este
         proyecto, no un detalle.
     items:
       - icon: file-check
-        title: Aprobaron la lista de verduras
+        title: Aprueban la lista de cultivos
         body: >-
-          Antes de sembrar nada, la clínica revisó cada producto que queríamos
+          Antes de sembrar nada, la clínica revisa cada producto que queremos
           cultivar y empacar. No entra al paquete nada que no esté en esa lista.
       - icon: truck
         title: Reciben la entrega
@@ -45,7 +45,7 @@ sections:
       - icon: shield-check
         title: Pueden detenerlo cuando quieran
         body: >-
-          Si algo de las verduras, los horarios o el manejo no les funciona,
+          Si algo de lo que cultivamos, los horarios o el manejo no les funciona,
           cambia o se detiene. Sin plazos de aviso y sin discusión.
 
   - id: privacy
@@ -61,7 +61,7 @@ sections:
         paquetes se fotografían solos, antes de la entrega.
 
   - id: safety
-    eyebrow: Cómo se maneja la verdura
+    eyebrow: Cómo se maneja la cosecha
     title: Lavada con agua, empacada la mañana en que sale.
     body:
       - >-
@@ -70,7 +70,7 @@ sections:
         limpias con una tarjeta que indica el contenido y se lleva el mismo día.
       - >-
         Nuestro protocolo escrito de inocuidad sigue las guías de la FDA para
-        elegir, lavar y guardar verduras frescas. La clínica tiene una copia, y
+        elegir, lavar y guardar productos frescos. La clínica tiene una copia, y
         cualquier institución interesada la recibe antes de una primera entrega.
     ctas:
       - label: Lea en qué consiste una alianza

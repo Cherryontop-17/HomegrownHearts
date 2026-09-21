@@ -64,6 +64,15 @@ const ICONS = [
   'leafy-green',
   'salad',
   'flower-2', // herbs
+
+  // One glyph per crop, all distinct — see the warning above CROPS in
+  // src/crops.ts. basil/kale/spinach reuse the three above; these are the rest.
+  // peppermint uses 'leaf', listed under Content above
+  'clover', // cilantro
+  'wheat', // dill
+  'shrub', // oregano
+  'snowflake', // the winter phases of the calendar
+
   'shovel', // tools
   'package', // cardboard boxes
   'droplets',

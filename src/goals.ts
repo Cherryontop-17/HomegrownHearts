@@ -37,7 +37,7 @@ export function seasonGoals(t: (key: UIKey) => string): SeasonGoal[] {
       target: GOALS.produceLbs,
       suffix: '+',
       label: t('goals.produce'),
-      // Nothing is planted until 2026-08-09, so this is 0 by definition rather
+      // Planted 2026-08-12 and nothing weighed yet, so this is 0 by fact rather
       // than by omission. When the first harvest is weighed, add the running
       // total to IMPACT and read it here.
       actual: 0,

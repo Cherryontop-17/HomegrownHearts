@@ -6,12 +6,12 @@
 # the same failure as an inflated impact number.
 #
 # ⚠️ COMPLIANCE Rule 1 governs every word about what the tool returns. It is
-# keyed to the vegetables in the bag and to nothing about the person holding
+# keyed to the herbs in the bag and to nothing about the person holding
 # it. No nutrients, no "good for", no tailoring to pregnancy — read the header
 # of src/components/SmartRecipe.astro and docs/CROPS.md before editing.
 
 title: Recipe AI
-description: The tool behind the QR code on every Homegrown Hearts bundle. It suggests ways to cook the vegetables in the bag. Still in development.
+description: The tool behind the QR code on every Homegrown Hearts bundle. It suggests ways to cook the herbs in the bag. Still in development.
 
 hero:
   eyebrow: In development
@@ -57,25 +57,25 @@ sections:
       - icon: sparkles
         title: The list is read
         body: >-
-          The vegetables on the tag are the only input. The tool is told what is
+          The herbs on the tag are the only input. The tool is told what is
           in the bag and nothing whatsoever about who is holding it.
       - icon: leafy-green
         title: Ways to cook it come back
         body: >-
-          Plain methods for those specific vegetables, using what a home kitchen
+          Plain methods for those specific herbs, using what a home kitchen
           already has.
     note: >-
-      Cooking ideas for the vegetables in the bundle. This is not dietary or
+      Cooking ideas for the herbs in the bundle. This is not dietary or
       medical advice. For guidance on eating during pregnancy, ask your
       clinician.
 
   - id: why
     eyebrow: Why bother
-    title: An unfamiliar vegetable is a wasted one.
+    title: An unfamiliar herb is a wasted one.
     body:
       - >-
         The most common reason a free bag of produce goes uneaten is not that
-        somebody did not want it. It is that a vegetable turned up that nobody
+        somebody did not want it. It is that an herb turned up that nobody
         in the house had cooked before, and it sat in the drawer until it was
         past using.
       - >-

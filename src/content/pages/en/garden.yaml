@@ -14,30 +14,47 @@
 # languages cannot drift to different months.
 
 title: The garden calendar
-description: What Homegrown Hearts plants and harvests each month in Union County, North Carolina, from the August launch through the end of the season in November.
+description: What Homegrown Hearts plants and harvests each month in Union County, North Carolina, from August 2026 to June 2027.
 
 hero:
   eyebrow: The Garden
   title: What is in the ground, and when.
   lead: >-
-    Four months, seven crops, and one delivery schedule. Page through the
-    months to see what happens when.
+    Eleven months, seven crops, and one delivery schedule. Everything went in on
+    August 12. Page through the months to see what happens when.
 
 sections:
+  # ── Where we grow ──────────────────────────────────────────────────────────
+  # ⚠️ This whole section is hidden until a garden site sets `confirmed: true`
+  # in src/config.ts — COMPLIANCE Rule 4 by analogy: a location is not ours to
+  # announce until the people who own it have agreed. ContentPage.astro drops
+  # the band, heading and all, while none have.
+  #
+  # The wording must stay true for one site or for several, because which of
+  # them says yes first is not knowable from here. Nothing below counts them,
+  # and no candidate is named.
+  - id: garden-sites
+    eyebrow: Where we grow
+    title: A patch of ground, lent to us.
+    body:
+      - >-
+        We do not own land. Everything in the calendar above grows on ground a
+        community garden agreed to share with two students who asked. That is
+        the whole arrangement, and we are grateful for it.
   # ── Roadmap ────────────────────────────────────────────────────────────────
   # `key` on each item joins it to ROADMAP in src/config.ts, which holds the
   # real dates. `value` is the display label and is translated; the dates are
   # not, so English and Spanish cannot drift to different Augusts.
   - id: roadmap
     eyebrow: The plan
-    title: Launch to first delivery, inside one month.
+    title: One planting day, then eleven months of cutting.
     body:
       - >-
-        Fast-cycle crops and long-season crops go into the ground the same week
-        on different clocks, so there is something to harvest in week three
-        while the tomatoes are still coming on. Growers call it succession
-        planting, and it is what keeps our delivery schedule from having a hole
-        in the middle of it.
+        All seven went into the beds on August 12, on three different clocks.
+        The basil is cutting three weeks later, the oregano takes six weeks to
+        get going, and four of the seven are still in the ground the following
+        spring. That spread is what keeps the delivery schedule from having a
+        hole in the middle of it.
     items:
       - key: digital
         value: Aug 7-8
@@ -48,100 +65,164 @@ sections:
           anything is planted, so the tracking exists from the first harvest
           rather than being added later.
       - key: garden
-        value: Aug 9
+        value: Aug 9-11
         icon: shovel
         title: Garden site opens
         body: >-
           Beds go in. We are in discussion with community gardens in Union
           County and will name the site here once it is settled.
       - key: planting
-        value: Aug 10-16
+        value: Aug 12
         icon: sprout
-        title: Week 2, everything goes in
+        title: Planting day
         body: >-
-          Fast-cycle basil and kale, summer tomatoes, and root crops (carrots
-          and cucumbers) all planted in the same week.
-      - key: harvest
-        value: Aug 17-23
+          Kale, spinach, sweet basil, peppermint, cilantro, oregano and dill all
+          went in on the same day. The basil, peppermint and oregano as nursery
+          plants; the greens, cilantro and dill from seed.
+      - key: establish
+        value: Aug 13-31
+        icon: droplets
+        title: Rooting in
+        body: >-
+          Nothing to pick. The transplants put roots down and the seed comes up,
+          and the whole job for three weeks is water, in the heat, every day.
+      - key: sep-first
+        value: Sep 1-10
         icon: leafy-green
-        title: Week 3, first micro-harvest
+        title: First cuts
         body: >-
-          The fast-cycle crops come in while the tomatoes and roots keep
-          growing. First produce, two weeks after the beds went in.
-      - key: delivery
-        value: Aug 24-30
-        icon: truck
-        title: Week 4, succession planting and first delivery
+          Basil is ready about three weeks after planting and baby kale a few
+          days behind it. The first thing out of these beds is a handful of
+          herbs, not a full bundle.
+      - key: sep-herbs
+        value: Sep 11-20
+        icon: leaf
+        title: The herbs fill in
         body: >-
-          The next round goes into the cleared beds, and the first pilot bundle
-          goes to our partner clinic.
-      - key: sep-cycle
-        value: Sep 1-13
-        icon: basket
-        title: First full harvest cycle
-        body: >-
-          Basil, lettuce and kale are all producing at once. Deliveries move
-          from a single pilot bag to a steady run, and we find out what a
-          packing morning actually takes.
-      - key: sep-fall-sow
-        value: Sep 14-20
-        icon: sprout
-        title: Fall round goes in
-        body: >-
-          Spinach, a second lettuce sowing and more kale go into the beds the
-          fast crops have just cleared. This is the succession that keeps
-          October from being empty.
-      - key: sep-weekly
+          Peppermint and cilantro are big enough to cut from. Pinching the basil
+          tips keeps it bushing out instead of running to flower.
+      - key: sep-delivery
         value: Sep 21-30
         icon: truck
-        title: Weekly deliveries
+        title: First deliveries
         body: >-
-          A bundle a week, with the greens carrying it while the tomatoes and
-          root crops finish. First month where the schedule is routine rather
-          than an experiment.
-      - key: oct-summer
-        value: Oct 1-11
-        icon: sprout
-        title: Summer crops come in
+          Spinach and dill reach cutting size, which is the point where a bundle
+          holds enough to be worth the drive. The first bundles go to our
+          partner clinic.
+      - key: oct-peak
+        value: Oct 1-18
+        icon: basket
+        title: Everything producing at once
         body: >-
-          Cucumbers and the first cherry tomatoes are ready. Bundles get
-          heavier and more varied, which is the point of having planted three
-          different clocks in the same week.
-      - key: oct-roots
-        value: Oct 12-20
-        icon: carrot
-        title: Roots are ready
+          All seven are cutting, the oregano included. Peak month for variety,
+          and the first stretch where a bundle a week is routine rather than an
+          experiment.
+      - key: oct-basil
+        value: Oct 19-31
+        icon: flower-2
+        title: The last of the basil
         body: >-
-          Carrots come up sixty days after sowing. Roots keep far longer than
-          greens, so they make a bundle useful for more than three days.
-      - key: oct-greens
-        value: Oct 21-31
-        icon: leafy-green
-        title: Second greens harvest
+          Basil stops once the nights turn cold and blackens at the first frost,
+          so it is cut hard while it is still good. Everything else keeps going.
+      - key: nov-frost
+        value: Nov 1-15
+        icon: snowflake
+        title: First frost
         body: >-
-          The September sowing is ready, and the kale planted in August is
-          still cutting. Peak month for both weight and variety.
-      - key: nov-last
-        value: Nov 1-14
-        icon: leafy-green
-        title: Last outdoor harvest
-        body: >-
-          Kale and spinach take a light frost and keep going; everything else
-          is finished. Final deliveries of the season.
-      - key: nov-beds
-        value: Nov 15-23
+          The basil is finished. Kale, spinach, cilantro and dill take a light
+          frost without flinching, and kale tastes sweeter after one.
+      - key: nov-cover
+        value: Nov 16-30
         icon: shovel
-        title: Beds cleared and covered
+        title: Row cover goes on
         body: >-
-          Spent plants come out, and the beds are covered for winter so the
-          soil is not bare until spring.
-      - key: nov-review
-        value: Nov 24-30
+          Frost cloth over the greens so they keep producing through the cold.
+          The peppermint and oregano die back to the roots, which is what they
+          are supposed to do — they come back in March.
+      - key: dec-slow
+        value: December
+        icon: snowflake
+        title: Slow winter cutting
+        body: >-
+          Under cover, kale and spinach keep making leaves, just slowly. Bundles
+          get smaller and less frequent, and we say so rather than promising a
+          weekly delivery we cannot make in December.
+      - key: jan-plan
+        value: January
+        icon: clipboard-list
+        title: The cold weeks, and the spring plan
+        body: >-
+          Almost nothing grows. We sit down with our partner clinic, go through
+          what the autumn actually produced, and agree what may go in for spring
+          before we order a seed.
+      - key: feb-wake
+        value: February
+        icon: sun
+        title: The beds wake up
+        body: >-
+          Lengthening days restart the overwintered kale and spinach. Covers
+          come off on mild days and go back on at night.
+      - key: mar-sow
+        value: Mar 1-15
+        icon: sprout
+        title: Spring sowing
+        body: >-
+          Fresh cilantro, dill and spinach go into the ground. The overwintered
+          plants will run to flower as it warms, so the spring round is sown
+          before that happens rather than after.
+      - key: mar-return
+        value: Mar 16-31
+        icon: leaf
+        title: The perennials come back
+        body: >-
+          Peppermint and oregano push new shoots out of the roots they wintered
+          on. Nothing was replanted; they are the same plants that went in last
+          August.
+      - key: apr-spring
+        value: Apr 1-15
+        icon: leafy-green
+        title: Spring greens peak
+        body: >-
+          Kale and spinach are at their best of the whole season, and the March
+          sowing is coming up behind them. The heaviest bundles of the year.
+      - key: apr-basil
+        value: Apr 16-30
+        icon: flower-2
+        title: Basil goes back in
+        body: >-
+          Basil is the one thing that has to be replanted, and it cannot go in
+          until the last frost has passed. New plants in, three weeks to the
+          first cut.
+      - key: may-bolt
+        value: May 1-15
+        icon: sun
+        title: The greens bolt
+        body: >-
+          Heat and long days send the overwintered kale, spinach and cilantro to
+          flower. They come out of the beds, and the herbs carry the bundles
+          from here.
+      - key: may-herbs
+        value: May 16-31
+        icon: leaf
+        title: Herb season
+        body: >-
+          Basil, peppermint, oregano and the spring dill all cutting at once.
+          Lighter bundles than April, and the most aromatic of the year.
+      - key: jun-last
+        value: Jun 1-20
+        icon: truck
+        title: Final deliveries
+        body: >-
+          The last bundles of the first season. The perennials stay in the
+          ground — they are the head start the second season begins with.
+      - key: jun-review
+        value: Jun 21-30
         icon: clipboard-list
         title: Season review with the clinic
         body: >-
-          We sit down with our partner clinic, go through what worked, and
-          agree the produce list for next season before we order a seed.
+          We sit down with our partner clinic, go through what worked across the
+          whole year, and agree the list for the second season before we order a
+          seed.
 
   # ── Crop detail ────────────────────────────────────────────────────────────
   # Feeds the grow chart's expandable panels. `key` joins each entry to
@@ -155,7 +236,7 @@ sections:
   # describes the one legitimate route to publishing nutrition content.
   - id: crops
     eyebrow: What is in the ground
-    title: Seven crops, three different clocks.
+    title: Five herbs, two greens, one planting day.
     body:
       - >-
         Click any crop for how long it takes, when it is ready, and what to do
@@ -163,11 +244,11 @@ sections:
         you can see for yourself where the harvests actually land.
     items:
       - key: basil
-        title: Genovese basil
+        title: Sweet basil
         body: >-
-          Goes in as a nursery plant rather than seed, which is what makes an
-          August planting reach the first delivery. Pinch the growing tips and
-          it bushes out instead of bolting.
+          Went in as a nursery plant rather than seed, which is what let an
+          August planting reach a September delivery. Pinch the growing tips and
+          it bushes out instead of running to flower.
         details:
           - label: Ready when
             value: The plant has several sets of true leaves and stands about a hand tall.
@@ -176,12 +257,13 @@ sections:
           - label: Keeping it
             value: Stems in a glass of water on the counter. Never the fridge, which blackens it.
           - label: In the kitchen
-            value: Torn over anything hot at the last second. Heat destroys the aroma.
+            value: Torn over anything hot at the last second. Heat drives off the aroma.
       - key: kale
         title: Kale
         body: >-
-          The workhorse. Cut it at baby-leaf size for the first harvest and the
-          same plant keeps producing for months afterwards.
+          The workhorse, and one of the two things here that is not an herb. Cut
+          at baby-leaf size for the first harvest and the same plant keeps
+          producing straight through the winter.
         details:
           - label: Ready when
             value: Leaves are the size of your palm for baby leaf, a hand span for full size.
@@ -191,26 +273,41 @@ sections:
             value: Loosely bagged in the fridge, about a week.
           - label: In the kitchen
             value: Stems removed, leaves shredded. Holds up to long cooking better than spinach.
-      - key: lettuce
-        title: Lettuce mix
+      - key: peppermint
+        title: Peppermint
         body: >-
-          The fastest thing in the ground and the reason there is anything to
-          harvest in week three. Sown as a mix so one bed gives several colors
-          and textures.
+          A perennial that dies back in the cold and comes up from the same
+          roots in spring. It spreads by runners, so it is grown in its own
+          container sunk in the bed rather than loose among everything else.
         details:
           - label: Ready when
-            value: Leaves are about four inches. Earlier is better than later.
+            value: Stems are six inches or so and the leaves smell strongly when rubbed.
           - label: How to pick
-            value: Cut the whole patch an inch above the soil. It regrows two or three times.
+            value: Cut a stem above a leaf pair. It branches from the cut and comes back thicker.
           - label: Keeping it
-            value: Washed, spun dry, in a bag with a paper towel. Three to five days.
+            value: Stems in water on the counter, or loosely bagged in the fridge for a few days.
           - label: In the kitchen
-            value: Raw. Dress it right before it goes on the table or it wilts.
+            value: Torn into cold water, salads, yoghurt, or steeped in hot water on its own.
+      - key: cilantro
+        title: Cilantro
+        body: >-
+          Sown straight into the bed, because it puts down a taproot and runs to
+          flower if that gets disturbed. Cool weather is what keeps it in leaf.
+        details:
+          - label: Ready when
+            value: The plant is about six inches tall with broad, flat lower leaves.
+          - label: How to pick
+            value: Outer stems at the base, leaving the center. Cut the whole plant once it starts to flower.
+          - label: Keeping it
+            value: Stems in a jar of water, a bag over the top, in the fridge. About a week.
+          - label: In the kitchen
+            value: Raw and added at the end. Stems chopped fine are as good as the leaves.
       - key: spinach
         title: Spinach
         body: >-
           A cool-season crop, so an August sowing here is at the hot edge of its
-          range. The reliable planting is the fall succession round.
+          range. It comes into its own once the nights cool off, and carries on
+          under cover all winter.
         details:
           - label: Ready when
             value: Leaves are big enough to pick without tearing the crown.
@@ -220,45 +317,33 @@ sections:
             value: Dry, loosely bagged, in the fridge. Wilts faster than kale.
           - label: In the kitchen
             value: Raw when small, wilted in a hot pan when larger. Cooks down to almost nothing.
-      - key: tomato
-        title: Cherry tomatoes
+      - key: dill
+        title: Dill
         body: >-
-          The long game. Goes in as a transplant and produces steadily once it
-          starts, which is what carries the later deliveries.
+          Direct-sown for the same taproot reason as the cilantro. The feathery
+          leaf is what goes in a bundle; left alone the plant runs up to a
+          flower head and sets seed.
         details:
           - label: Ready when
-            value: Fully colored and it comes off the vine with a slight twist.
+            value: The plant has four or five feathery fronds and stands about a hand tall.
           - label: How to pick
-            value: Whole trusses if most are ripe, otherwise one at a time.
+            value: Snip whole fronds from the outside. Never strip a plant bare.
           - label: Keeping it
-            value: On the counter, stem up. The fridge ruins the texture.
+            value: Loosely bagged in the fridge. Two or three days at its best, so it goes out fresh.
           - label: In the kitchen
-            value: Raw, halved, or roasted whole until they split.
-      - key: carrot
-        title: Carrots
+            value: Raw over potatoes, eggs, cucumber or fish. Stirred in off the heat.
+      - key: oregano
+        title: Oregano
         body: >-
-          Slow and worth waiting for. Needs loose soil more than it needs
-          anything else, which is why the beds get worked over before sowing.
+          The slowest to get going and the longest-lived: six weeks before the
+          first cut, and then the same plant is still there the following
+          spring.
         details:
           - label: Ready when
-            value: The shoulder is about an inch across where it meets the leaves.
+            value: The plant is four or five inches across and woody at the base of the stems.
           - label: How to pick
-            value: Water first, then pull with a twist. Dry soil snaps them.
+            value: Cut stems back by a third, above a leaf pair. Never more than a third at once.
           - label: Keeping it
-            value: Tops cut off immediately, then in the fridge. Tops left on drain the root.
+            value: Fresh in a bag in the fridge for a week, or hung in a bunch somewhere dry.
           - label: In the kitchen
-            value: Scrubbed rather than peeled. Raw, roasted, or in anything slow.
-      - key: cucumber
-        title: Cucumbers
-        body: >-
-          Needs something to climb, which is why a trellis is on the supply
-          list. Vertical vines give straighter fruit and far less rot.
-        details:
-          - label: Ready when
-            value: Firm, even color, and the size you would buy. Check daily once they start.
-          - label: How to pick
-            value: Cut the stem. Pulling tears the vine.
-          - label: Keeping it
-            value: Fridge, about a week. Goes soft from the blossom end first.
-          - label: In the kitchen
-            value: Raw and cold. Salt sliced cucumber and drain it before dressing.
+            value: Goes in early rather than late. It is one of the few that takes long cooking.

@@ -16,7 +16,8 @@ hero:
   eyebrow: Donate supplies
   title: Where to bring the good stuff.
   lead: >-
-    We accept donated supplies only, never money. Here is where to bring them.
+    We accept donated supplies only, never money. Email us and we will arrange
+    a hand-off.
 
 sections:
   - id: locations
@@ -29,14 +30,22 @@ sections:
         leaving it on a step.
 
   - id: pending
-    eyebrow: Coming soon
-    title: More points, once they are confirmed.
+    eyebrow: How it works for now
+    title: Email first, and we will meet you.
     body:
+      # ⚠️ There is no public drop-off point. DROP_OFF in src/config.ts is
+      # empty, so the "locations" band above is dropped entirely rather than
+      # rendering an empty grid, and this section carries the whole answer.
+      #
+      # Name no venue here that has not agreed in writing — COMPLIANCE Rule 4.
+      # Somewhere that was asked and declined is simply not mentioned.
       - >-
-        We are talking to a public library and to two community gardens in Union
-        County about becoming drop-off points. None of them has confirmed yet,
-        so we are not listing them as though you can turn up — we will add each
-        one here the day it is agreed.
+        We do not have a public drop-off box yet. Until we do, send us an email
+        and we will sort out somewhere convenient to collect — it is a small
+        county and we are usually able to come to you.
+      - >-
+        We will list a proper drop-off point here the day one is agreed, and
+        not a day before. Sending you somewhere on a maybe wastes your trip.
     note: >-
       If you run a business, church, or community space in or near Monroe and
       would be willing to hold a box for us, we would like to hear from you.

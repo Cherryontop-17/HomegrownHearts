@@ -11,29 +11,44 @@
 # estan las fechas reales. `value` es la etiqueta visible y si se traduce.
 
 title: El calendario del huerto
-description: Que siembra y cosecha Homegrown Hearts cada mes en el condado de Union, Carolina del Norte, de agosto a noviembre de 2026.
+description: Qué siembra y cosecha Homegrown Hearts cada mes en el condado de Union, Carolina del Norte, de agosto de 2026 a junio de 2027.
 
 hero:
   eyebrow: El huerto
-  title: Que hay sembrado, y cuando.
+  title: Qué hay sembrado, y cuándo.
   lead: >-
-    Cuatro meses, siete cultivos y un calendario de entregas. Avance por los
-    meses para ver que pasa en cada uno.
+    Once meses, siete cultivos y un calendario de entregas. Todo se sembró el 12
+    de agosto. Avance por los meses para ver qué pasa en cada uno.
 
 sections:
+  # ── Dónde sembramos ────────────────────────────────────────────────────────
+  # ⚠️ Esta sección permanece oculta hasta que un huerto tenga `confirmed: true`
+  # en src/config.ts — Regla 4 de COMPLIANCE por analogía: un lugar no nos
+  # corresponde anunciarlo hasta que sus responsables digan que sí.
+  #
+  # El texto debe servir igual para un huerto o para varios: no se sabe desde
+  # aquí cuál aceptará primero. No se cuenta ninguno ni se nombra a nadie.
+  - id: garden-sites
+    eyebrow: Dónde sembramos
+    title: Un pedazo de tierra, prestado.
+    body:
+      - >-
+        No somos dueñas de ningún terreno. Todo lo que aparece en el calendario
+        crece en tierra que un huerto comunitario aceptó compartir con dos
+        estudiantes que lo pidieron. Ese es todo el acuerdo, y lo agradecemos.
   # ── Plan de trabajo ────────────────────────────────────────────────────────
   # `key` conecta cada etapa con ROADMAP en src/config.ts, donde están las
   # fechas reales. `value` es la etiqueta visible y sí se traduce; las fechas no.
   - id: roadmap
     eyebrow: El plan
-    title: Del lanzamiento a la primera entrega, en un mes.
+    title: Un solo día de siembra y once meses de cosecha.
     body:
       - >-
-        Los cultivos de ciclo corto y los de temporada larga se siembran la misma
-        semana con ritmos distintos, de modo que haya algo que cosechar en la
-        semana tres mientras los tomates siguen creciendo. Se llama siembra
-        escalonada, y es lo que evita que nuestro calendario de entregas quede con
-        un hueco en medio.
+        Los siete entraron a los canteros el 12 de agosto, con tres ritmos
+        distintos. La albahaca se corta tres semanas después, el orégano tarda
+        seis semanas en arrancar, y cuatro de los siete siguen en la tierra la
+        primavera siguiente. Ese escalonamiento es lo que evita que el
+        calendario de entregas quede con un hueco en medio.
     items:
       - key: digital
         value: 7 y 8 de agosto
@@ -44,7 +59,7 @@ sections:
           en funcionamiento antes de sembrar, para que el seguimiento exista
           desde la primera cosecha y no se agregue después.
       - key: garden
-        value: 9 de agosto
+        value: 9 al 11 de agosto
         icon: shovel
         title: Apertura del huerto
         body: >-
@@ -52,95 +67,164 @@ sections:
           comunitarios del condado de Union y publicaremos el lugar aquí en
           cuanto quede definido.
       - key: planting
-        value: 10 al 16 de agosto
+        value: 12 de agosto
         icon: sprout
-        title: Semana 2, se siembra todo
+        title: Día de siembra
         body: >-
-          Albahaca y col rizada de ciclo corto, tomates de verano y cultivos de
-          raíz (zanahorias y pepinos), todo en la misma semana.
-      - key: harvest
-        value: 17 al 23 de agosto
+          Col rizada, espinaca, albahaca, menta piperita, cilantro, orégano y
+          eneldo entraron todos el mismo día. La albahaca, la menta y el orégano
+          como plantas de vivero; las hojas, el cilantro y el eneldo de semilla.
+      - key: establish
+        value: 13 al 31 de agosto
+        icon: droplets
+        title: Echar raíz
+        body: >-
+          Nada que cosechar. Las plantas de vivero echan raíz y la semilla
+          germina, y durante tres semanas el trabajo entero es regar, con calor,
+          todos los días.
+      - key: sep-first
+        value: 1 al 10 de septiembre
         icon: leafy-green
-        title: Semana 3, primera cosecha pequeña
+        title: Primeros cortes
         body: >-
-          Salen los cultivos de ciclo corto mientras los tomates y las raíces
-          siguen creciendo. Primeras verduras, dos semanas después de sembrar.
-      - key: delivery
-        value: 24 al 30 de agosto
-        icon: truck
-        title: Semana 4, siembra escalonada y primera entrega
+          La albahaca está lista unas tres semanas después de sembrarla y la col
+          rizada pequeña unos días más tarde. Lo primero que sale de estos
+          canteros es un puñado de hierbas, no un paquete completo.
+      - key: sep-herbs
+        value: 11 al 20 de septiembre
+        icon: leaf
+        title: Las hierbas se llenan
         body: >-
-          La siguiente tanda entra en los canteros ya despejados, y el primer
-          paquete piloto sale hacia nuestra clínica asociada.
-      - key: sep-cycle
-        value: 1 al 13 de septiembre
-        icon: basket
-        title: Primer ciclo completo de cosecha
-        body: >-
-          La albahaca, la lechuga y la col rizada producen al mismo tiempo. Las
-          entregas pasan de una bolsa piloto a un ritmo constante, y descubrimos
-          cuanto toma de verdad una manana de empaque.
-      - key: sep-fall-sow
-        value: 14 al 20 de septiembre
-        icon: sprout
-        title: Entra la tanda de otono
-        body: >-
-          Espinaca, una segunda siembra de lechuga y mas col rizada entran en
-          los canteros que acaban de despejar los cultivos rapidos. Esta es la
-          siembra escalonada que evita que octubre quede vacio.
-      - key: sep-weekly
+          La menta piperita y el cilantro ya dan para cortar. Pellizcar las
+          puntas de la albahaca la hace ramificarse en lugar de espigarse.
+      - key: sep-delivery
         value: 21 al 30 de septiembre
         icon: truck
-        title: Entregas semanales
+        title: Primeras entregas
         body: >-
-          Un paquete por semana, sostenido por las verduras de hoja mientras los
-          tomates y las raices terminan. Primer mes en que el calendario es
-          rutina y no experimento.
-      - key: oct-summer
-        value: 1 al 11 de octubre
-        icon: sprout
-        title: Llegan los cultivos de verano
+          La espinaca y el eneldo alcanzan tamaño de corte, que es el punto en
+          que un paquete trae lo suficiente para que valga el viaje. Salen los
+          primeros paquetes hacia nuestra clínica asociada.
+      - key: oct-peak
+        value: 1 al 18 de octubre
+        icon: basket
+        title: Todo produciendo a la vez
         body: >-
-          Los pepinos y los primeros tomates cherry estan listos. Los paquetes
-          se vuelven mas pesados y variados, que es justamente el objetivo de
-          haber sembrado tres ritmos distintos la misma semana.
-      - key: oct-roots
-        value: 12 al 20 de octubre
-        icon: carrot
-        title: Las raices estan listas
+          Los siete se están cortando, el orégano incluido. El mes más variado, y
+          el primer tramo en que un paquete por semana es rutina y no
+          experimento.
+      - key: oct-basil
+        value: 19 al 31 de octubre
+        icon: flower-2
+        title: Lo último de la albahaca
         body: >-
-          Las zanahorias salen sesenta dias despues de sembrarlas. Las raices
-          duran mucho mas que las hojas, asi que hacen que un paquete sirva por
-          mas de tres dias.
-      - key: oct-greens
-        value: 21 al 31 de octubre
-        icon: leafy-green
-        title: Segunda cosecha de hojas
+          La albahaca se detiene cuando las noches enfrían y se ennegrece con la
+          primera helada, así que se corta a fondo mientras está buena. Todo lo
+          demás sigue.
+      - key: nov-frost
+        value: 1 al 15 de noviembre
+        icon: snowflake
+        title: Primera helada
         body: >-
-          La siembra de septiembre esta lista, y la col rizada de agosto todavia
-          se puede cortar. El mes mas fuerte en peso y en variedad.
-      - key: nov-last
-        value: 1 al 14 de noviembre
-        icon: leafy-green
-        title: Ultima cosecha al aire libre
-        body: >-
-          La col rizada y la espinaca aguantan una helada ligera y siguen; todo
-          lo demas ya termino. Ultimas entregas de la temporada.
-      - key: nov-beds
-        value: 15 al 23 de noviembre
+          La albahaca terminó. La col rizada, la espinaca, el cilantro y el
+          eneldo aguantan una helada ligera sin inmutarse, y la col rizada queda
+          más dulce después de una.
+      - key: nov-cover
+        value: 16 al 30 de noviembre
         icon: shovel
-        title: Canteros despejados y cubiertos
+        title: Se pone la manta térmica
         body: >-
-          Se sacan las plantas agotadas y se cubren los canteros para el
-          invierno, para que la tierra no quede desnuda hasta la primavera.
-      - key: nov-review
-        value: 24 al 30 de noviembre
+          Manta sobre las hojas para que sigan produciendo con el frío. La menta
+          y el orégano se secan hasta la raíz, que es lo que les toca hacer:
+          vuelven a salir en marzo.
+      - key: dec-slow
+        value: Diciembre
+        icon: snowflake
+        title: Cosecha lenta de invierno
+        body: >-
+          Bajo la manta, la col rizada y la espinaca siguen dando hoja, solo que
+          despacio. Los paquetes son más chicos y más espaciados, y lo decimos en
+          lugar de prometer una entrega semanal que en diciembre no podemos
+          cumplir.
+      - key: jan-plan
+        value: Enero
         icon: clipboard-list
-        title: Balance de temporada con la clinica
+        title: Las semanas frías y el plan de primavera
         body: >-
-          Nos sentamos con nuestra clinica asociada, repasamos que funciono y
-          acordamos la lista de verduras de la proxima temporada antes de
+          Casi nada crece. Nos sentamos con nuestra clínica asociada, repasamos
+          lo que dio el otoño y acordamos qué puede entrar en primavera antes de
           encargar una sola semilla.
+      - key: feb-wake
+        value: Febrero
+        icon: sun
+        title: Los canteros despiertan
+        body: >-
+          Los días más largos reactivan la col rizada y la espinaca que pasaron
+          el invierno. La manta se quita en los días templados y se vuelve a
+          poner de noche.
+      - key: mar-sow
+        value: 1 al 15 de marzo
+        icon: sprout
+        title: Siembra de primavera
+        body: >-
+          Entran cilantro, eneldo y espinaca nuevos. Las plantas que pasaron el
+          invierno se van a espigar en cuanto caliente, así que la tanda de
+          primavera se siembra antes de que eso pase, no después.
+      - key: mar-return
+        value: 16 al 31 de marzo
+        icon: leaf
+        title: Vuelven las perennes
+        body: >-
+          La menta piperita y el orégano sacan brotes nuevos de las mismas raíces
+          con que pasaron el invierno. No se resembró nada: son las mismas
+          plantas que entraron en agosto.
+      - key: apr-spring
+        value: 1 al 15 de abril
+        icon: leafy-green
+        title: Las hojas en su mejor momento
+        body: >-
+          La col rizada y la espinaca están en su mejor punto de toda la
+          temporada, y detrás viene la siembra de marzo. Los paquetes más pesados
+          del año.
+      - key: apr-basil
+        value: 16 al 30 de abril
+        icon: flower-2
+        title: La albahaca vuelve a entrar
+        body: >-
+          La albahaca es lo único que hay que volver a sembrar, y no puede entrar
+          hasta que pase la última helada. Plantas nuevas, y tres semanas hasta
+          el primer corte.
+      - key: may-bolt
+        value: 1 al 15 de mayo
+        icon: sun
+        title: Las hojas se espigan
+        body: >-
+          El calor y los días largos hacen florecer la col rizada, la espinaca y
+          el cilantro que pasaron el invierno. Salen de los canteros, y de aquí
+          en adelante las hierbas sostienen los paquetes.
+      - key: may-herbs
+        value: 16 al 31 de mayo
+        icon: leaf
+        title: Temporada de hierbas
+        body: >-
+          Albahaca, menta piperita, orégano y el eneldo de primavera, todo
+          cortándose a la vez. Paquetes más ligeros que en abril, y los más
+          aromáticos del año.
+      - key: jun-last
+        value: 1 al 20 de junio
+        icon: truck
+        title: Últimas entregas
+        body: >-
+          Los últimos paquetes de la primera temporada. Las perennes se quedan en
+          la tierra: son la ventaja con la que arranca la segunda.
+      - key: jun-review
+        value: 21 al 30 de junio
+        icon: clipboard-list
+        title: Balance de temporada con la clínica
+        body: >-
+          Nos sentamos con nuestra clínica asociada, repasamos cómo fue el año
+          completo y acordamos la lista de la segunda temporada antes de encargar
+          una sola semilla.
 
   # ── Detalle de cultivos ────────────────────────────────────────────────────
   # Alimenta los paneles desplegables del gráfico. `key` conecta cada entrada
@@ -153,7 +237,7 @@ sections:
   # convierte una afirmación de salud en algo permitido. Ver docs/CROPS.md.
   - id: crops
     eyebrow: Qué hay sembrado
-    title: Siete cultivos, tres ritmos distintos.
+    title: Cinco hierbas, dos hojas, un solo día de siembra.
     body:
       - >-
         Abra cualquier cultivo para ver cuánto tarda, cuándo está listo y qué
@@ -161,11 +245,11 @@ sections:
         cultivo, así que usted mismo puede ver dónde caen las cosechas.
     items:
       - key: basil
-        title: Albahaca genovesa
+        title: Albahaca
         body: >-
-          Entra como planta de vivero y no como semilla, que es lo que permite
-          que una siembra de agosto llegue a la primera entrega. Si se pellizcan
-          las puntas, se ramifica en lugar de espigarse.
+          Entró como planta de vivero y no como semilla, que es lo que permitió
+          que una siembra de agosto llegara a una entrega de septiembre. Si se
+          pellizcan las puntas, se ramifica en lugar de espigarse.
         details:
           - label: Lista cuando
             value: Tiene varios pares de hojas verdaderas y alcanza el alto de una mano.
@@ -178,8 +262,9 @@ sections:
       - key: kale
         title: Col rizada
         body: >-
-          La más resistente. Se corta pequeña para la primera cosecha y la misma
-          planta sigue produciendo durante meses.
+          La más resistente, y una de las dos cosas de esta lista que no es una
+          hierba. Se corta pequeña para la primera cosecha y la misma planta
+          sigue produciendo todo el invierno.
         details:
           - label: Lista cuando
             value: Las hojas son del tamaño de la palma, o de una mano abierta si se quiere grande.
@@ -189,26 +274,41 @@ sections:
             value: En bolsa floja en el refrigerador, cerca de una semana.
           - label: En la cocina
             value: Sin el tallo y en tiras. Aguanta la cocción larga mejor que la espinaca.
-      - key: lettuce
-        title: Mezcla de lechugas
+      - key: peppermint
+        title: Menta piperita
         body: >-
-          Lo más rápido del huerto y la razón por la que hay algo que cosechar
-          en la semana tres. Se siembra en mezcla para dar varios colores y
-          texturas de un solo cantero.
+          Es perenne: se seca con el frío y vuelve a salir de las mismas raíces
+          en primavera. Se extiende por rizomas, así que va en su propia maceta
+          enterrada en el cantero y no suelta entre lo demás.
         details:
           - label: Lista cuando
-            value: Las hojas miden unos diez centímetros. Mejor temprano que tarde.
+            value: Los tallos miden unos quince centímetros y las hojas huelen fuerte al frotarlas.
           - label: Cómo se corta
-            value: Todo el cantero, a dos centímetros del suelo. Rebrota dos o tres veces.
+            value: El tallo por encima de un par de hojas. Se ramifica desde el corte y vuelve más tupida.
           - label: Cómo se guarda
-            value: Lavada, bien seca, en bolsa con una servilleta. De tres a cinco días.
+            value: Con los tallos en agua, o en bolsa floja en el refrigerador unos días.
           - label: En la cocina
-            value: Cruda. Se aliña justo antes de servir o se marchita.
+            value: En agua fría, en ensaladas, con yogur, o en infusión de agua caliente.
+      - key: cilantro
+        title: Cilantro
+        body: >-
+          Se siembra directo en el cantero, porque echa una raíz principal y se
+          espiga si se le mueve. El clima fresco es lo que lo mantiene en hoja.
+        details:
+          - label: Listo cuando
+            value: La planta mide unos quince centímetros y tiene hojas anchas abajo.
+          - label: Cómo se corta
+            value: Los tallos de afuera desde la base, dejando el centro. Entera en cuanto empieza a florecer.
+          - label: Cómo se guarda
+            value: Con los tallos en un frasco con agua y una bolsa encima, en el refrigerador. Una semana.
+          - label: En la cocina
+            value: Crudo y al final. Los tallos picados finos sirven igual que la hoja.
       - key: spinach
         title: Espinaca
         body: >-
           Es de clima fresco, así que sembrarla en agosto aquí queda en el borde
-          caluroso de su rango. La siembra confiable es la tanda de otoño.
+          caluroso de su rango. Da lo mejor cuando refrescan las noches, y sigue
+          bajo manta todo el invierno.
         details:
           - label: Lista cuando
             value: Las hojas se pueden cortar sin desgarrar el centro de la planta.
@@ -218,47 +318,33 @@ sections:
             value: Seca y en bolsa floja en el refrigerador. Se marchita antes que la col.
           - label: En la cocina
             value: Cruda cuando es pequeña, salteada cuando es grande. Se reduce muchísimo.
-      - key: tomato
-        title: Tomates cherry
+      - key: dill
+        title: Eneldo
         body: >-
-          El cultivo de largo plazo. Entra como plántula y, una vez que arranca,
-          produce de forma constante, que es lo que sostiene las entregas
-          posteriores.
+          Se siembra directo por la misma razón que el cilantro. Lo que va al
+          paquete es la hoja, fina como pluma; si se le deja, la planta sube a
+          flor y da semilla.
         details:
-          - label: Listos cuando
-            value: Tienen color parejo y se desprenden con un giro suave.
-          - label: Cómo se cortan
-            value: El racimo entero si casi todos están maduros; si no, uno por uno.
-          - label: Cómo se guardan
-            value: Sobre la mesa, con el tallo hacia arriba. El refrigerador arruina la textura.
+          - label: Listo cuando
+            value: La planta tiene cuatro o cinco hojas plumosas y el alto de una mano.
+          - label: Cómo se corta
+            value: Hojas enteras desde afuera con tijera. Nunca se deja una planta pelada.
+          - label: Cómo se guarda
+            value: En bolsa floja en el refrigerador. Dos o tres días en su mejor punto, por eso sale fresco.
           - label: En la cocina
-            value: Crudos, partidos a la mitad, o asados enteros hasta que revientan.
-      - key: carrot
-        title: Zanahorias
+            value: Crudo sobre papas, huevo, pepino o pescado. Se agrega fuera del fuego.
+      - key: oregano
+        title: Orégano
         body: >-
-          Lentas y vale la pena esperarlas. Más que cualquier otra cosa
-          necesitan tierra suelta, por eso los canteros se trabajan bien antes
-          de sembrar.
+          El más lento en arrancar y el más duradero: seis semanas hasta el
+          primer corte, y después la misma planta sigue ahí la primavera
+          siguiente.
         details:
-          - label: Listas cuando
-            value: El hombro mide unos dos centímetros y medio donde nacen las hojas.
-          - label: Cómo se sacan
-            value: Se riega primero y se jala con un giro. En tierra seca se quiebran.
-          - label: Cómo se guardan
-            value: Sin las hojas, en el refrigerador. Las hojas puestas le quitan agua a la raíz.
+          - label: Listo cuando
+            value: La planta mide unos doce centímetros de ancho y los tallos se ven leñosos abajo.
+          - label: Cómo se corta
+            value: Los tallos a un tercio, por encima de un par de hojas. Nunca más de un tercio de una vez.
+          - label: Cómo se guarda
+            value: Fresco en bolsa en el refrigerador una semana, o colgado en manojo en un lugar seco.
           - label: En la cocina
-            value: Cepilladas, no peladas. Crudas, asadas o en cualquier guiso largo.
-      - key: cucumber
-        title: Pepinos
-        body: >-
-          Necesitan algo por donde trepar, por eso el enrejado está en la lista
-          de insumos. En vertical dan fruta más recta y se pudre mucho menos.
-        details:
-          - label: Listos cuando
-            value: Están firmes, de color parejo y del tamaño que usted compraría. Revisar a diario.
-          - label: Cómo se cortan
-            value: Se corta el tallo. Si se jalan, se desgarra la guía.
-          - label: Cómo se guardan
-            value: En el refrigerador, cerca de una semana. Se ablandan desde la punta de la flor.
-          - label: En la cocina
-            value: Crudos y fríos. Se salan las rodajas y se escurren antes de aliñar.
+            value: Entra temprano y no al final. Es de los pocos que aguanta la cocción larga.

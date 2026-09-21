@@ -26,7 +26,6 @@ const ROUTES = [
   '/partners/',
   '/our-partners/',
   '/our-partners/help-pregnancy-center/',
-  '/our-partners/union-county-library/',
   '/garden/',
   '/recipe-ai/',
   '/get-involved/',
