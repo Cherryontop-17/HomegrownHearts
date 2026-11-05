@@ -31,10 +31,10 @@ Every image here had to pass all four:
 
 | File                | Subject                      | Source   | Licence                                                                  |
 | ------------------- | ---------------------------- | -------- | ------------------------------------------------------------------------ |
-| `hero.jpg`          | Soil, trowel, potting bench  | Unsplash | [Unsplash Licence](https://unsplash.com/license) — free, no attribution  |
+| `hero.jpg`          | Our herb pots (real)         | Founders | Our own photograph, 2026-11-04 — no longer stock                         |
 | `garden.jpg`        | Seedlings in peat pots       | Pexels   | [Pexels Licence](https://www.pexels.com/license/) — free, no attribution |
-| `harvest.jpg`       | Market stall: carrots, beets | Pexels   | [Pexels Licence](https://www.pexels.com/license/)                        |
-| `bundle.jpg`        | Cucumbers, cabbage, tomatoes | Pexels   | [Pexels Licence](https://www.pexels.com/license/)                        |
+| `harvest.jpg`       | Seedlings close-up (real)    | Founders | Our own photograph, 2026-11-04 — no longer stock                         |
+| `bundle.jpg`        | Basil from our garden (real) | Founders | Our own photograph, 2026-11-04 — no longer stock                         |
 | `break-produce.jpg` | Mixed vegetables, full-bleed | Pexels   | [Pexels Licence](https://www.pexels.com/license/)                        |
 
 Both licences permit commercial use and modification without attribution. Both

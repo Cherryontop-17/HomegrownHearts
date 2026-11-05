@@ -335,6 +335,16 @@ sections:
           Operations and technology lead. Runs growing schedules, logistics, the
           bag-tag system, and this site.
 
+  - id: news
+    eyebrow: Big news!
+    title: Our first distribution is done!
+    body:
+      - >-
+        On November 4, eleven bundles went to our partner clinic, and on to
+        eleven mothers. We don't show the distribution itself, because the
+        mothers' privacy comes first. Instead, here is what went into it: kale
+        from our first harvest, and some of the finished bundles.
+
   - id: impact
     eyebrow: Our impact
     title: Where we are today.

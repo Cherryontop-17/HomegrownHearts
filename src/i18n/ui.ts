@@ -117,6 +117,12 @@ const en = {
   // went in on 2026-08-12, so the honest reason for the zero is now that
   // nothing has been weighed, not that nothing has been planted.
   'goals.notStarted': 'Planted August 12. Nothing weighed yet.',
+  // Under the produce meter once bundles have gone out unweighed.
+  'goals.notWeighed': 'First bundles delivered November 4. Not weighed yet.',
+  // Alt text for the "Big news" photos.
+  'news.photoHarvest': 'A bowl of freshly picked kale from our first harvest.',
+  'news.photoBundles':
+    'Finished bundles in sealed bags, each with a printed note and a QR code tag, before delivery.',
 
   // Roadmap status labels.
   'roadmap.done': 'Done',
@@ -195,8 +201,12 @@ const en = {
   'gallery.eyebrow': 'The garden',
   'gallery.title': 'What a season looks like.',
   'gallery.garden': 'Young vegetable plants growing in the garden.',
-  'gallery.harvest': 'Freshly harvested vegetables at a market stall.',
-  'gallery.produce': 'A spread of mixed seasonal vegetables.',
+  'gallery.growing': 'Young herb seedlings growing in two pots in our garden.',
+  'gallery.pots': 'Our row of herb pots, with a small bowl of just-picked basil.',
+  // harvest.jpg is now the founders' close-up of seedlings, not stock.
+  'gallery.harvest': 'Herb seedlings filling one of our pots, up close.',
+  // bundle.jpg is now the founders' own photo of picked basil, not stock.
+  'gallery.produce': 'A bowl of freshly picked basil from our garden.',
   /*
     For the wide gallery photo, which borrowed `gallery.produce` — a string
     saying "mixed seasonal vegetables" for a picture of soil and hand tools.
@@ -338,6 +348,10 @@ const es: Record<UIKey, string> = {
   'goals.local': 'Cultivado en nuestro propio huerto',
   'goals.soFar': '{actual} de {target} hasta ahora',
   'goals.notStarted': 'Sembrado el 12 de agosto. Todavía nada pesado.',
+  'goals.notWeighed': 'Primeros paquetes entregados el 4 de noviembre. Todavía sin pesar.',
+  'news.photoHarvest': 'Un tazón de col rizada recién cosechada de nuestra primera cosecha.',
+  'news.photoBundles':
+    'Paquetes terminados en bolsas selladas, cada uno con una nota impresa y una etiqueta con código QR, antes de la entrega.',
 
   // Etapas del plan.
   'roadmap.done': 'Listo',
@@ -404,8 +418,10 @@ const es: Record<UIKey, string> = {
   'gallery.eyebrow': 'El huerto',
   'gallery.title': 'Así se ve una temporada.',
   'gallery.garden': 'Plantas jóvenes de hortalizas creciendo en el huerto.',
-  'gallery.harvest': 'Verduras recién cosechadas en un puesto de mercado.',
-  'gallery.produce': 'Una variedad de verduras de temporada.',
+  'gallery.growing': 'Plántulas de hierbas creciendo en dos macetas de nuestro huerto.',
+  'gallery.pots': 'Nuestra fila de macetas de hierbas, con un tazón de albahaca recién cortada.',
+  'gallery.harvest': 'Plántulas de hierbas llenando una de nuestras macetas, de cerca.',
+  'gallery.produce': 'Un tazón de albahaca recién cortada de nuestro huerto.',
   'gallery.potting': 'Tierra para macetas, una pala de mano y tijeras de podar sobre una mesa.',
 
   // Formularios

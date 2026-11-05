@@ -43,6 +43,10 @@ const dateFormat = new Intl.DateTimeFormat(locale === 'es' ? 'es-US' : 'en-US', 
   year: 'numeric',
   month: 'long',
   day: 'numeric',
+  // Frontmatter dates are calendar days, parsed as midnight UTC. Formatting
+  // them in the machine's local zone shifted every entry back a day for anyone
+  // west of Greenwich (2026-11-04 showed as "November 3" in Eastern time).
+  timeZone: 'UTC',
 });
 
 const EMPTY = {

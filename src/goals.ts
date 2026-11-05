@@ -37,11 +37,13 @@ export function seasonGoals(t: (key: UIKey) => string): SeasonGoal[] {
       target: GOALS.produceLbs,
       suffix: '+',
       label: t('goals.produce'),
-      // Planted 2026-08-12 and nothing weighed yet, so this is 0 by fact rather
-      // than by omission. When the first harvest is weighed, add the running
-      // total to IMPACT and read it here.
+      // The first 11 bundles went out on 2026-11-04 without being weighed, so
+      // the bar stays at 0 — but "0 of 250 so far" beside a delivery count
+      // would read as "nothing grown", which is false. The label says why the
+      // number is missing instead. When a harvest is weighed, add the running
+      // total to IMPACT, read it here, and switch back to soFar().
       actual: 0,
-      actualLabel: soFar(0, GOALS.produceLbs),
+      actualLabel: t('goals.notWeighed'),
     },
     {
       icon: 'package',

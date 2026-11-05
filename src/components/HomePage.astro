@@ -65,8 +65,16 @@ const wishlist = section(copy, 'wishlist');
 const flyers = section(copy, 'flyers');
 const about = section(copy, 'about');
 const founders = section(copy, 'founders');
+const news = section(copy, 'news');
 const impact = section(copy, 'impact');
 const cta = section(copy, 'cta');
+
+/*
+  config.ts stores ISO (YYYY-MM-DD) so it sorts and parses cleanly; readers see
+  the order they write dates in — MM-DD-YYYY in English, DD-MM-YYYY in Spanish.
+*/
+const [isoY, isoM, isoD] = IMPACT.lastUpdated.split('-');
+const lastUpdated = locale === 'es' ? `${isoD}-${isoM}-${isoY}` : `${isoM}-${isoD}-${isoY}`;
 
 const impactStats = [
   { value: IMPACT.bundlesDelivered, label: t('impact.bundles') },
@@ -230,6 +238,23 @@ const facts = [
     {about.note && <p class="note note--center">{about.note}</p>}
   </Section>
 
+  {/* ================= NEWS — announcement band ========================= */}
+  {/* Sits directly above the impact numbers so the announcement and the
+      figures it refers to are read together. Bundles are shown, never the
+      handoff — COMPLIANCE Rule 3. */}
+  <Section accent="harvest" surface="parchment" id={news.id}>
+    <Reveal class="head">
+      {news.eyebrow && <Eyebrow align="center">{news.eyebrow}</Eyebrow>}
+      {news.title && <h2 class="head__title">{news.title}</h2>}
+      {(news.body ?? []).map((p) => <p class="head__lead">{p}</p>)}
+    </Reveal>
+    <Reveal stagger={100} class="news-photos">
+      <Photo photo="news-harvest" alt={t('news.photoHarvest')} />
+      <Photo photo="news-bundles" alt={t('news.photoBundles')} />
+    </Reveal>
+    {news.note && <p class="note note--center">{news.note}</p>}
+  </Section>
+
   {/* ================= IMPACT — tiles ================================== */}
   <Section accent="care" surface="sand" id={impact.id}>
     <Reveal class="head">
@@ -250,7 +275,7 @@ const facts = [
         ))
       }
     </Reveal>
-    <p class="note note--center">{t('impact.updated')}: {IMPACT.lastUpdated}</p>
+    <p class="note note--center">{t('impact.updated')}: {lastUpdated}</p>
 
     {
       /* Delivery notes, newest first. The `updates` content collection and this
@@ -327,7 +352,7 @@ const facts = [
         <Photo
           photo="bundle"
           alt={bundle.title ?? ''}
-          aspect="4 / 3"
+          aspect="3 / 4"
           wipe="up"
           class="feature__photo"
         />
@@ -426,16 +451,12 @@ const facts = [
       <h2 class="head__title">{t('gallery.title')}</h2>
     </Reveal>
     <div class="gallery" data-photo-group>
-      <Photo photo="garden" alt={t('gallery.garden')} aspect="4 / 3" wipe="up" />
-      <Photo photo="harvest" alt={t('gallery.harvest')} aspect="4 / 3" wipe="up" />
-      <Photo
-        photo="break-produce"
-        alt={t('gallery.potting')}
-        aspect="16 / 9"
-        wipe="up"
-        format="jpg"
-        class="gallery__wide"
-      />
+      {/* The founders' own photos. They replaced stock images (a market
+          stall, a potting bench) that were never our garden. No photo here
+          may repeat one used elsewhere on the page — the founders asked for
+          that, and the kale and bundle shots already sit in the news band. */}
+      <Photo photo="season-growing" alt={t('gallery.growing')} wipe="up" />
+      <Photo photo="season-pots" alt={t('gallery.pots')} wipe="up" />
     </div>
   </Section>
 
@@ -1058,6 +1079,15 @@ const facts = [
     box-shadow: var(--shadow-lift);
   }
 
+  /* The bundle photo is the founders' own portrait shot of basil. Shown at
+     its full 3:4 frame — a 4:3 crop zoomed into the leaves and lost the
+     garden behind the bowl — and capped so it does not tower over the copy. */
+  .feature__media {
+    width: 100%;
+    max-width: 22rem;
+    margin-inline: auto;
+  }
+
   .feature__title {
     font-size: var(--text-display);
     line-height: var(--text-display--line-height);
@@ -1084,11 +1114,36 @@ const facts = [
     }
   }
 
-  /* ================= GALLERY ========================================== */
-  .gallery {
+  /* ================= NEWS PHOTOS ====================================== */
+  /* Two portrait photos, side by side from small tablets up; capped so a
+     pair of 3:4 images never towers over the copy on a wide screen. */
+  .news-photos {
     display: grid;
     gap: 1.25rem;
-    margin-top: var(--spacing-block);
+    max-width: 36rem;
+    margin: var(--spacing-block) auto 0;
+  }
+
+  .news-photos :global(.photo) {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-soft);
+  }
+
+  @media (min-width: 36rem) {
+    .news-photos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ================= GALLERY ========================================== */
+  /* Portrait (3:4) photos, two across at every width, kept modest. If more
+     photos are added, widen to repeat(4, …) on wide screens. */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 36rem;
+    margin: var(--spacing-block) auto 0;
   }
 
   .gallery :global(.photo) {
@@ -1096,15 +1151,6 @@ const facts = [
     box-shadow: var(--shadow-soft);
   }
 
-  @media (min-width: 56rem) {
-    .gallery {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    /* The wide one spans both columns, so the grid is not a flat row. */
-    .gallery__wide {
-      grid-column: 1 / -1;
-    }
-  }
 
   /* ================= PEOPLE =========================================== */
   .people {

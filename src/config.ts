@@ -270,10 +270,13 @@ export const SOCIAL = {
  * are not recoverable if a clinic or an admissions reader ever checks.
  */
 export const IMPACT = {
-  bundlesDelivered: 0,
-  mothersServed: 0,
+  // First distribution 2026-11-04: 11 bundles to the partner clinic, which
+  // reported 11 mothers served. Volunteers stays 0 — the founders did all the
+  // growing themselves, and founders are not counted as volunteers.
+  bundlesDelivered: 11,
+  mothersServed: 11,
   volunteers: 0,
-  lastUpdated: '2026-07-27',
+  lastUpdated: '2026-11-04',
 } as const;
 
 /**

@@ -337,6 +337,17 @@ sections:
           Responsable de operaciones y tecnología. Coordina los calendarios de
           cultivo, la logística, el sistema de etiquetas y este sitio.
 
+  - id: news
+    eyebrow: ¡Gran noticia!
+    title: ¡Ya hicimos nuestra primera entrega!
+    body:
+      - >-
+        El 4 de noviembre, once paquetes llegaron a nuestra clínica aliada, y
+        de ahí a once madres. No mostramos la entrega en sí, porque la privacidad
+        de las madres es lo primero. En su lugar, aquí está lo que la hizo
+        posible: col rizada de nuestra primera cosecha y algunos de los
+        paquetes terminados.
+
   - id: impact
     eyebrow: Nuestro impacto
     title: Dónde estamos hoy.

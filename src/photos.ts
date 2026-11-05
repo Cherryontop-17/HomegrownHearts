@@ -68,6 +68,41 @@ export const PHOTO_SLOTS = {
       'between chapters, so it must read at a very shallow crop.',
     role: 'decorative',
   },
+  /*
+    First distribution, 2026-11-04 — the homepage "Big news" band. Real photos
+    from the founders. Bundles are shown alone, before delivery, never at the
+    handoff (COMPLIANCE Rule 3). A shot of the bundles at the clinic was left
+    out: its wall lettering could identify a partner that has not agreed to be
+    named.
+  */
+  'season-growing': {
+    id: 'season-growing',
+    aspect: '3 / 4',
+    tone: 'garden',
+    brief: 'Herb seedlings coming up in two of our pots, from above.',
+    role: 'meaningful',
+  },
+  'season-pots': {
+    id: 'season-pots',
+    aspect: '3 / 4',
+    tone: 'garden',
+    brief: 'The row of herb pots with a bowl of just-picked basil.',
+    role: 'meaningful',
+  },
+  'news-harvest': {
+    id: 'news-harvest',
+    aspect: '3 / 4',
+    tone: 'harvest',
+    brief: 'Kale from the first harvest, picked for the first distribution.',
+    role: 'meaningful',
+  },
+  'news-bundles': {
+    id: 'news-bundles',
+    aspect: '3 / 4',
+    tone: 'harvest',
+    brief: 'Finished bundles from the first distribution, before delivery.',
+    role: 'meaningful',
+  },
   'founder-kreeshma': {
     id: 'founder-kreeshma',
     aspect: '1 / 1',
